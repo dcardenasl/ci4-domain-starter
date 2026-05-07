@@ -8,19 +8,6 @@ use CodeIgniter\Test\CIUnitTestCase;
 
 class BaseRequestDtoConventionsTest extends CIUnitTestCase
 {
-    public function testBaseRequestDtoStaysPureAndFrameworkAgnostic(): void
-    {
-        $path = rtrim((string) ROOTPATH, DIRECTORY_SEPARATOR) . '/app/DTO/Request/BaseRequestDTO.php';
-        $source = file_get_contents($path);
-
-        $this->assertIsString($source);
-
-        $this->assertStringNotContainsString('enrichWithContext', $source);
-        $this->assertStringNotContainsString('ContextHolder', $source);
-        $this->assertStringNotContainsString('Services::request', $source);
-        $this->assertStringNotContainsString('?SecurityContext', $source);
-    }
-
     public function testAllRequestDtosDeclarePublicRulesMethod(): void
     {
         $root = rtrim((string) ROOTPATH, DIRECTORY_SEPARATOR);
@@ -47,7 +34,7 @@ class BaseRequestDtoConventionsTest extends CIUnitTestCase
             }
 
             $reflection = new \ReflectionClass($fqcn);
-            if (!$reflection->isSubclassOf(\App\DTO\Request\BaseRequestDTO::class)) {
+            if (!$reflection->isSubclassOf(\dcardenasl\Ci4ApiCore\Dto\BaseRequestDTO::class)) {
                 $violations[] = "{$relative}: does not extend BaseRequestDTO";
                 continue;
             }

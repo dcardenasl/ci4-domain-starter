@@ -12,7 +12,7 @@ namespace Config;
  */
 trait SystemMonitoringServices
 {
-    public static function auditService(bool $getShared = true): \App\Interfaces\System\AuditServiceInterface
+    public static function auditService(bool $getShared = true): \dcardenasl\Ci4ApiCore\Services\AuditServiceInterface
     {
         if ($getShared) {
             return static::getSharedInstance('auditService');
@@ -60,7 +60,7 @@ trait SystemMonitoringServices
         return new \App\Support\RequestAuditContextFactory();
     }
 
-    public static function auditResponseMapper(bool $getShared = true): \App\Interfaces\Mappers\ResponseMapperInterface
+    public static function auditResponseMapper(bool $getShared = true): \dcardenasl\Ci4ApiCore\Mappers\ResponseMapperInterface
     {
         if ($getShared) {
             return static::getSharedInstance('auditResponseMapper');

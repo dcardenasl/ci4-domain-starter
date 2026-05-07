@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Filters;
 
-use App\Libraries\ApiResponse;
 use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\IncomingRequest;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use Config\Services;
+use dcardenasl\Ci4ApiCore\Http\ApiResponse;
 
 /**
  * MaintenanceFilter — api-starter (audit B10.4, 2026-05-07)

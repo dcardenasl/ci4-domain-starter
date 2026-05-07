@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\DTO\System;
 
-use App\DTO\SecurityContext;
+use dcardenasl\Ci4ApiCore\Dto\SecurityContext;
 
 /**
  * Internal normalized representation of an audit event before persistence.

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Filters;
 
-use App\HTTP\ApiRequest;
 use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use Config\Services;
+use dcardenasl\Ci4ApiCore\Http\ApiRequest;
 
 class RequestLoggingFilter implements FilterInterface
 {

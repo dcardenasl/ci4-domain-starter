@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Support;
 
-use App\DTO\Request\BaseRequestDTO;
+use dcardenasl\Ci4ApiCore\Dto\BaseRequestDTO;
 
 /**
  * Central factory for constructing request DTOs with proper validation.

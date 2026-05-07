@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Support;
 
-use App\DTO\SecurityContext;
 use CodeIgniter\HTTP\RequestInterface;
+use dcardenasl\Ci4ApiCore\Dto\SecurityContext;
 
 /**
  * Builds consistent audit context metadata from HTTP requests.

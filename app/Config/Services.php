@@ -39,7 +39,7 @@ class Services extends BaseService
      *
      * @param \Config\App|bool $getShared
      */
-    public static function request($getShared = true): \App\HTTP\ApiRequest
+    public static function request($getShared = true): \dcardenasl\Ci4ApiCore\Http\ApiRequest
     {
         if (is_bool($getShared) && $getShared) {
             return static::getSharedInstance('request');
@@ -47,7 +47,7 @@ class Services extends BaseService
 
         $config = $getShared instanceof \Config\App ? $getShared : config('App');
 
-        return new \App\HTTP\ApiRequest(
+        return new \dcardenasl\Ci4ApiCore\Http\ApiRequest(
             $config,
             static::uri(),
             'php://input',

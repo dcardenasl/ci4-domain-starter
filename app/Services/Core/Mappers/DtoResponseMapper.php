@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\Core\Mappers;
 
-use App\Interfaces\DataTransferObjectInterface;
-use App\Interfaces\Mappers\ResponseMapperInterface;
+use dcardenasl\Ci4ApiCore\Dto\DataTransferObjectInterface;
+use dcardenasl\Ci4ApiCore\Mappers\ResponseMapperInterface;
 
 class DtoResponseMapper implements ResponseMapperInterface
 {

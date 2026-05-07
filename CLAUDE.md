@@ -75,12 +75,14 @@ The DTO-first layered pattern is identical to ci4-api-starter:
 Controller → [RequestDTO] → Service → Model → Entity → [ResponseDTO]
 ```
 
-Base classes are unchanged from api-starter (cloned at v0.1):
+Base classes live in `dcardenasl/ci4-api-core` (path repo `../ci4-api-core`,
+declared in `composer.json` and consumed under `vendor/dcardenasl/ci4-api-core/`).
+Generated and hand-written code imports them directly from the package namespace:
 
-- `App\Controllers\ApiController` — declarative `handleRequest()` orchestration
-- `App\Services\Core\BaseCrudService` — pure, transactional service layer
-- `App\DTO\Request\BaseRequestDTO` — auto-validating DTOs
-- `App\Models\BaseAuditableModel` — local audit logging via `Auditable` trait
+- `dcardenasl\Ci4ApiCore\Http\ApiController` — declarative `handleRequest()` orchestration
+- `dcardenasl\Ci4ApiCore\Services\BaseCrudService` — pure, transactional service layer
+- `dcardenasl\Ci4ApiCore\Dto\BaseRequestDTO` — auto-validating DTOs
+- `dcardenasl\Ci4ApiCore\Models\BaseAuditableModel` — local audit logging via `Auditable` trait
 
 What's **different** here:
 
@@ -168,4 +170,4 @@ composer quality
 ## Where to read next
 
 - `../ci4-api-starter/CLAUDE.md` — the hub's API patterns + service-token / introspect contracts.
-- `../ci4-api-crud-maker/docs/ARCHITECTURE_CONTRACT.md` — DTO-first patterns enforced by the scaffolding engine.
+- `vendor/dcardenasl/ci4-api-core/docs/ARCHITECTURE_CONTRACT.md` — DTO-first patterns enforced by the scaffolding engine (or `../ci4-api-core/docs/ARCHITECTURE_CONTRACT.md` while the path repo is symlinked).

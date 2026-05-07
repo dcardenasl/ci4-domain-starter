@@ -18,12 +18,10 @@ class CrudIndexContractsTest extends CIUnitTestCase
     private function indexedContracts(): array
     {
         return [
-            \App\Interfaces\Core\CrudServiceContract::class,
-            \App\Interfaces\Tokens\ApiKeyServiceInterface::class,
-            \App\Interfaces\System\AuditServiceInterface::class,
-            \App\Interfaces\Files\FileServiceInterface::class,
-            \App\Interfaces\Users\UserServiceInterface::class,
-            \App\Services\Core\BaseCrudService::class,
+            \dcardenasl\Ci4ApiCore\Services\CrudServiceContract::class,
+            \dcardenasl\Ci4ApiCore\Services\AuditServiceInterface::class,
+            \dcardenasl\Ci4ApiCore\Services\BaseCrudService::class,
+            \App\Interfaces\Example\ItemServiceInterface::class,
         ];
     }
 
@@ -36,20 +34,11 @@ class CrudIndexContractsTest extends CIUnitTestCase
             $returnType = $method->getReturnType();
             $typeName = $returnType !== null ? $returnType->getName() : '';
 
-            if ($typeName !== \App\Interfaces\DataTransferObjectInterface::class) {
-                $violations[] = "{$class}::index must return " . \App\Interfaces\DataTransferObjectInterface::class;
+            if ($typeName !== \dcardenasl\Ci4ApiCore\Dto\DataTransferObjectInterface::class) {
+                $violations[] = "{$class}::index must return " . \dcardenasl\Ci4ApiCore\Dto\DataTransferObjectInterface::class;
             }
         }
 
         $this->assertSame([], $violations, "CRUD index return contract violations:\n- " . implode("\n- ", $violations));
-    }
-
-    public function testBaseCrudServiceBuildsPaginatedResponseDto(): void
-    {
-        $path = rtrim((string) ROOTPATH, DIRECTORY_SEPARATOR) . '/app/Services/Core/BaseCrudService.php';
-        $source = file_get_contents($path);
-
-        $this->assertIsString($source);
-        $this->assertStringContainsString('PaginatedResponseDTO::fromArray', $source);
     }
 }

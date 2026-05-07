@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace Tests\Unit\Filters;
 
 use App\Filters\DomainAuthFilter;
-use App\HTTP\ApiRequest;
-use App\Libraries\ContextHolder;
 use App\Libraries\Hub\HubClient;
 use App\Libraries\Hub\IntrospectResult;
 use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\Test\CIUnitTestCase;
 use Config\App;
 use Config\Services;
+use dcardenasl\Ci4ApiCore\Http\ApiRequest;
+use dcardenasl\Ci4ApiCore\Http\ContextHolder;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(DomainAuthFilter::class)]

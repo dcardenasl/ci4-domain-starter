@@ -17,31 +17,12 @@ class ControllerDtoRequestContractsTest extends CIUnitTestCase
     private function controllerSnippets(): array
     {
         return [
-            'app/Controllers/Api/V1/Users/UserController.php' => [
-                "handleRequest('index', UserIndexRequestDTO::class)",
-                "handleRequest('store', UserCreateRequestDTO::class)",
-                "UserUpdateRequestDTO::class",
-            ],
-            'app/Controllers/Api/V1/Admin/ApiKeyController.php' => [
-                "handleRequest('index', ApiKeyIndexRequestDTO::class)",
-                "handleRequest('store', ApiKeyCreateRequestDTO::class)",
-                "ApiKeyUpdateRequestDTO::class",
-            ],
-            'app/Controllers/Api/V1/Admin/AuditController.php' => [
-                "handleRequest('index', AuditIndexRequestDTO::class)",
-                "handleRequest(\n            'byEntity',\n            AuditByEntityRequestDTO::class",
-            ],
-            'app/Controllers/Api/V1/Files/FileController.php' => [
-                "handleRequest('index', FileIndexRequestDTO::class)",
-                "handleRequest('upload', FileUploadRequestDTO::class)",
-                "fileService->destroy(\$id, \$context)",
-            ],
-            'app/Controllers/Api/V1/Admin/MetricsController.php' => [
-                "handleRequest('getOverview', MetricsQueryRequestDTO::class)",
-                "handleRequest('getRequestStats', MetricsQueryRequestDTO::class)",
-                "handleRequest('getSlowRequests', SlowRequestsQueryRequestDTO::class)",
-                "handleRequest(\n            'getCustomMetric',\n            CustomMetricQueryRequestDTO::class",
-                "handleRequest('record', RecordMetricRequestDTO::class)",
+            'app/Controllers/Api/V1/Example/ItemController.php' => [
+                "handleRequest('index', ItemIndexRequestDTO::class)",
+                "handleRequest('store', ItemCreateRequestDTO::class)",
+                "ItemUpdateRequestDTO::class",
+                "itemService->show(\$id, \$context)",
+                "itemService->destroy(\$id, \$context)",
             ],
         ];
     }

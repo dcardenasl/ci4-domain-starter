@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Traits;
 
-use App\Exceptions\BadRequestException;
+use dcardenasl\Ci4ApiCore\Exceptions\BadRequestException;
 
 /**
  * ValidatesRequiredFields Trait

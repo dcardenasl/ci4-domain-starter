@@ -7,6 +7,7 @@ namespace App\Models;
 use App\Entities\ItemEntity;
 use App\Traits\Filterable;
 use App\Traits\Searchable;
+use dcardenasl\Ci4ApiCore\Models\BaseAuditableModel;
 
 class ItemModel extends BaseAuditableModel
 {

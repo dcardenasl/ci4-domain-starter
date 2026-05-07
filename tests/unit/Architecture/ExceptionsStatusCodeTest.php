@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Architecture;
 
-use App\Interfaces\HasStatusCode;
 use CodeIgniter\Test\CIUnitTestCase;
+use dcardenasl\Ci4ApiCore\Exceptions\HasStatusCode;
 
 final class ExceptionsStatusCodeTest extends CIUnitTestCase
 {

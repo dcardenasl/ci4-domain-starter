@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Helpers;
 
-use App\Exceptions\BadRequestException;
 use CodeIgniter\Test\CIUnitTestCase;
+use dcardenasl\Ci4ApiCore\Exceptions\BadRequestException;
 
 /**
  * Security Helper Tests

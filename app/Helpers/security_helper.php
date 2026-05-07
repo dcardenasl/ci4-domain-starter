@@ -133,7 +133,7 @@ if (!function_exists('sanitize_filename')) {
      * @param string $filename Original filename
      * @param bool   $relativePath Allow relative paths (use with caution)
      * @return string Sanitized filename
-     * @throws \App\Exceptions\BadRequestException If path traversal detected or dangerous file type
+     * @throws \dcardenasl\Ci4ApiCore\Exceptions\BadRequestException If path traversal detected or dangerous file type
      */
     function sanitize_filename(string $filename, bool $relativePath = false): string
     {
@@ -143,7 +143,7 @@ if (!function_exists('sanitize_filename')) {
         if (!$relativePath) {
             // Strict mode: block any path traversal attempts
             if (str_contains($filename, '..')) {
-                throw new \App\Exceptions\BadRequestException(
+                throw new \dcardenasl\Ci4ApiCore\Exceptions\BadRequestException(
                     'Invalid filename',
                     ['filename' => 'Path traversal detected']
                 );
@@ -151,7 +151,7 @@ if (!function_exists('sanitize_filename')) {
 
             // Block directory separators in strict mode
             if (str_contains($filename, '/')) {
-                throw new \App\Exceptions\BadRequestException(
+                throw new \dcardenasl\Ci4ApiCore\Exceptions\BadRequestException(
                     'Invalid filename',
                     ['filename' => 'Directory separator not allowed']
                 );
@@ -166,7 +166,7 @@ if (!function_exists('sanitize_filename')) {
         $extension = pathinfo($filename, PATHINFO_EXTENSION);
 
         if (in_array(strtolower($extension), $dangerousExtensions, true)) {
-            throw new \App\Exceptions\BadRequestException(
+            throw new \dcardenasl\Ci4ApiCore\Exceptions\BadRequestException(
                 'Invalid file type',
                 ['filename' => 'File type not allowed']
             );

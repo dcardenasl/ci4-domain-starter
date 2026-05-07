@@ -16,14 +16,7 @@ class ServiceModelDependencyConventionsTest extends CIUnitTestCase
         $root = rtrim((string) ROOTPATH, DIRECTORY_SEPARATOR);
         $serviceDir = $root . DIRECTORY_SEPARATOR . 'app/Services';
 
-        $allowed = [
-            'app/Services/Auth/PasswordResetService.php',
-            'app/Services/Auth/ServiceTokenService.php',
-            'app/Services/Auth/UserInvitationService.php',
-            'app/Services/System/MetricsService.php',
-            'app/Services/Tokens/RefreshTokenService.php',
-            'app/Services/Tokens/TokenRevocationService.php',
-        ];
+        $allowed = [];
         sort($allowed);
 
         $found = [];

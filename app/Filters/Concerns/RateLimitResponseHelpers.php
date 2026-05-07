@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Filters\Concerns;
 
-use App\Libraries\ApiResponse;
 use CodeIgniter\HTTP\ResponseInterface;
+use dcardenasl\Ci4ApiCore\Http\ApiResponse;
 
 trait RateLimitResponseHelpers
 {

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
-use App\Interfaces\Core\RepositoryInterface;
 use App\Libraries\Query\QueryBuilder;
 use CodeIgniter\Model;
+use dcardenasl\Ci4ApiCore\Repositories\RepositoryInterface;
 
 /**
  * Base Repository

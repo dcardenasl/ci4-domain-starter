@@ -12,13 +12,10 @@ use Config\Services;
 class FeatureToggleFilterTest extends CIUnitTestCase
 {
     private FeatureToggleFilter $filter;
-    private \App\Interfaces\System\MetricsServiceInterface $metricsService;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->metricsService = $this->createMock(\App\Interfaces\System\MetricsServiceInterface::class);
-        Services::injectMock('metricsService', $this->metricsService);
         $this->filter = new FeatureToggleFilter();
     }
 
@@ -30,41 +27,9 @@ class FeatureToggleFilterTest extends CIUnitTestCase
         parent::tearDown();
     }
 
-    public function testBeforeRecordsFeatureToggleMetric(): void
-    {
-        $mockMetrics = $this->createMock(\App\Interfaces\System\MetricsServiceInterface::class);
-        $mockMetrics
-            ->expects($this->once())
-            ->method('recordFeatureToggle')
-            ->with('metrics', true);
-
-        Services::injectMock('metricsService', $mockMetrics);
-
-        $request = $this->createMock(IncomingRequest::class);
-        $this->filter->before($request, ['metrics']);
-    }
-
     public function testBeforeAllowsRequestWhenFeatureIsEnabled(): void
     {
         putenv('METRICS_ENABLED=true');
-
-        $request = $this->createMock(IncomingRequest::class);
-        $result = $this->filter->before($request, ['metrics']);
-
-        $this->assertInstanceOf(IncomingRequest::class, $result);
-    }
-
-    public function testBeforeAllowsRequestWhenMetricRecordingFails(): void
-    {
-        putenv('METRICS_ENABLED=true');
-
-        $mockMetrics = $this->createMock(\App\Interfaces\System\MetricsServiceInterface::class);
-        $mockMetrics
-            ->expects($this->once())
-            ->method('recordFeatureToggle')
-            ->willThrowException(new \RuntimeException('metrics unavailable'));
-
-        Services::injectMock('metricsService', $mockMetrics);
 
         $request = $this->createMock(IncomingRequest::class);
         $result = $this->filter->before($request, ['metrics']);

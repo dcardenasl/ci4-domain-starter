@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Exceptions;
 
+use dcardenasl\Ci4ApiCore\Exceptions\ApiException;
+
 /**
  * Conflict Exception (HTTP 409)
  *

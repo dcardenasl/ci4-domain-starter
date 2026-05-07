@@ -28,9 +28,9 @@ class QueryBuilder
 
     protected ?string $searchQuery = null;
 
-    public function __construct(\CodeIgniter\Model|\App\Interfaces\Core\RepositoryInterface $target)
+    public function __construct(\CodeIgniter\Model|\dcardenasl\Ci4ApiCore\Repositories\RepositoryInterface $target)
     {
-        if ($target instanceof \App\Interfaces\Core\RepositoryInterface) {
+        if ($target instanceof \dcardenasl\Ci4ApiCore\Repositories\RepositoryInterface) {
             $this->model = $target->getModel();
         } else {
             $this->model = $target;

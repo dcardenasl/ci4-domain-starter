@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Filters;
 
-use App\HTTP\ApiRequest;
-use App\Libraries\ApiResponse;
-use App\Libraries\ContextHolder;
 use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use Config\Services;
+use dcardenasl\Ci4ApiCore\Http\ApiRequest;
+use dcardenasl\Ci4ApiCore\Http\ApiResponse;
+use dcardenasl\Ci4ApiCore\Http\ContextHolder;
 
 /**
  * Permission-Based Access Control Filter

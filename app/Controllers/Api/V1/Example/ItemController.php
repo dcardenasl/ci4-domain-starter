@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Controllers\Api\V1\Example;
 
-use App\Controllers\ApiController;
 use App\DTO\Request\Example\ItemCreateRequestDTO;
 use App\DTO\Request\Example\ItemIndexRequestDTO;
 use App\DTO\Request\Example\ItemUpdateRequestDTO;
 use App\Interfaces\Example\ItemServiceInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use Config\Services;
+use dcardenasl\Ci4ApiCore\Http\ApiController;
 
 class ItemController extends ApiController
 {

@@ -6,7 +6,7 @@ namespace Config;
 
 trait ExampleDomainServices
 {
-    public static function itemResponseMapper(bool $getShared = true): \App\Interfaces\Mappers\ResponseMapperInterface
+    public static function itemResponseMapper(bool $getShared = true): \dcardenasl\Ci4ApiCore\Mappers\ResponseMapperInterface
     {
         if ($getShared) {
             return static::getSharedInstance('itemResponseMapper');

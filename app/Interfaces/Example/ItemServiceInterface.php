@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Interfaces\Example;
 
-use App\Interfaces\Core\CrudServiceContract;
+use dcardenasl\Ci4ApiCore\Services\CrudServiceContract;
 
 interface ItemServiceInterface extends CrudServiceContract
 {

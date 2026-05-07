@@ -12,9 +12,7 @@ class AuditableModelConventionsTest extends CIUnitTestCase
     {
         $root = rtrim((string) ROOTPATH, DIRECTORY_SEPARATOR);
         $models = [
-            'app/Models/UserModel.php',
-            'app/Models/FileModel.php',
-            'app/Models/ApiKeyModel.php',
+            'app/Models/ItemModel.php',
         ];
 
         $violations = [];
@@ -30,7 +28,7 @@ class AuditableModelConventionsTest extends CIUnitTestCase
                 $violations[] = "{$relative}: must extend BaseAuditableModel";
             }
 
-            if (str_contains($source, 'use App\Traits\Auditable;')) {
+            if (str_contains($source, 'use dcardenasl\Ci4ApiCore\Models\Auditable;')) {
                 $violations[] = "{$relative}: should not import Auditable directly";
             }
         }

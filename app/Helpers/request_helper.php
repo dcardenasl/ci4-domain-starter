@@ -8,7 +8,7 @@ declare(strict_types=1);
  * Provides common request validation and data extraction patterns.
  */
 
-use App\Exceptions\BadRequestException;
+use dcardenasl\Ci4ApiCore\Exceptions\BadRequestException;
 
 if (!function_exists('require_id')) {
     /**

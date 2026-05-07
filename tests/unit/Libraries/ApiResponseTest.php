@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Libraries;
 
-use App\Libraries\ApiResponse;
 use CodeIgniter\Test\CIUnitTestCase;
+use dcardenasl\Ci4ApiCore\Http\ApiResponse;
 
 /**
  * ApiResponse Unit Tests

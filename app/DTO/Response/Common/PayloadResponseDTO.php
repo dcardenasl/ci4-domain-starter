@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\DTO\Response\Common;
 
-use App\Interfaces\DataTransferObjectInterface;
+use dcardenasl\Ci4ApiCore\Dto\DataTransferObjectInterface;
 use OpenApi\Attributes as OA;
 
 /**

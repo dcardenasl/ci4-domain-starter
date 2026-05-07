@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace App\Services\System;
 
 use App\DTO\Response\Common\PayloadResponseDTO;
-use App\DTO\SecurityContext;
 use App\DTO\System\AuditEventDTO;
-use App\Interfaces\DataTransferObjectInterface;
-use App\Interfaces\Mappers\ResponseMapperInterface;
 use App\Interfaces\System\AuditRepositoryInterface;
 use App\Libraries\Queue\Jobs\WriteAuditLogJob;
 use App\Libraries\Queue\QueueManager;
-use App\Services\Core\BaseCrudService;
 use App\Services\Core\Support\RelationLabelLoader;
 use Config\Audit as AuditConfig;
+use dcardenasl\Ci4ApiCore\Dto\DataTransferObjectInterface;
+use dcardenasl\Ci4ApiCore\Dto\SecurityContext;
+use dcardenasl\Ci4ApiCore\Mappers\ResponseMapperInterface;
+use dcardenasl\Ci4ApiCore\Services\BaseCrudService;
 
 /**
  * Modernized Audit Service
@@ -22,7 +22,7 @@ use Config\Audit as AuditConfig;
  * Handles automated trail logging and provides queryable access to logs.
  * Inherits BaseCrudService for automated index and show operations.
  */
-class AuditService extends BaseCrudService implements \App\Interfaces\System\AuditServiceInterface
+class AuditService extends BaseCrudService implements \dcardenasl\Ci4ApiCore\Services\AuditServiceInterface
 {
     /**
      * @var bool Allow enabling audit logging during tests

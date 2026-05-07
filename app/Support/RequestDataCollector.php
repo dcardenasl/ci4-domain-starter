@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Support;
 
-use App\Exceptions\BadRequestException;
 use CodeIgniter\HTTP\IncomingRequest;
+use dcardenasl\Ci4ApiCore\Exceptions\BadRequestException;
 
 /**
  * Collect and normalize request input at the HTTP boundary.
