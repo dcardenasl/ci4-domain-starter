@@ -67,30 +67,38 @@ printf "This domain app delegates auth to a running ci4-api-starter (the hub).\n
 printf "You need: hub URL, an X-App-Key bound to a registered application,\n"
 printf "and the application code.\n\n"
 
-HUB_URL="$(ask_with_default 'Hub URL' 'http://localhost:8080')"
-HUB_APP_CODE="$(ask_with_default 'Application code (registered in hub)' 'example-domain')"
-read -r -p "X-App-Key: " HUB_API_KEY
+HUB_URL="$(ask_with_default 'Hub URL' "${CI4_DOMAIN_HUB_URL:-http://localhost:8080}")"
+HUB_APP_CODE="$(ask_with_default 'Application code (registered in hub)' "${CI4_DOMAIN_APP_CODE:-example-domain}")"
+
+# Allow ci4-kickstart (and CI) to pre-supply the X-App-Key via env var so this
+# script runs non-interactively. Falls back to a prompt for standalone runs.
+HUB_API_KEY="${CI4_DOMAIN_API_KEY:-}"
+if [ -z "$HUB_API_KEY" ]; then
+  read -r -p "X-App-Key: " HUB_API_KEY
+fi
 
 # ---------------------------------------------------------------------------
 # Database
 # ---------------------------------------------------------------------------
 
-DB_HOST="127.0.0.1"
-DB_PORT="3306"
-DB_USER="root"
-DB_PASS=""
-DB_NAME="ci4_domain"
-TEST_DB_NAME="ci4_domain_test"
+DB_HOST="${CI4_DOMAIN_DB_HOST:-127.0.0.1}"
+DB_PORT="${CI4_DOMAIN_DB_PORT:-3306}"
+DB_USER="${CI4_DOMAIN_DB_USER:-root}"
+DB_PASS="${CI4_DOMAIN_DB_PASS-}"
+DB_NAME="${CI4_DOMAIN_DB_NAME:-ci4_domain}"
+TEST_DB_NAME="${CI4_DOMAIN_TEST_DB_NAME:-ci4_domain_test}"
 
-[ -n "$DETECTED_DOCKER_PORT" ] && DB_PORT="$DETECTED_DOCKER_PORT"
+[ -n "$DETECTED_DOCKER_PORT" ] && [ -z "${CI4_DOMAIN_DB_PORT:-}" ] && DB_PORT="$DETECTED_DOCKER_PORT"
 
 if [ "$SKIP_DB" = false ]; then
   print_header "Database configuration"
   DB_HOST="$(ask_with_default 'MySQL host' "$DB_HOST")"
   DB_PORT="$(ask_with_default 'MySQL port' "$DB_PORT")"
   DB_USER="$(ask_with_default 'MySQL user' "$DB_USER")"
-  read -r -s -p "MySQL password (can be empty): " DB_PASS
-  printf "\n"
+  if [ -z "${CI4_DOMAIN_DB_PASS+x}" ]; then
+    read -r -s -p "MySQL password (can be empty): " DB_PASS
+    printf "\n"
+  fi
   DB_NAME="$(ask_with_default 'Database name' "$DB_NAME")"
   TEST_DB_NAME="$(ask_with_default 'Test database name' "$TEST_DB_NAME")"
 fi
@@ -140,11 +148,17 @@ fi
 
 if [ "$SKIP_SYNC" = false ]; then
   print_header "Registering permissions in the hub"
-  printf "domain:sync-permissions registers this app's permissions in the hub.\n"
-  printf "It needs a superadmin JWT (one-time setup — service tokens lack iam.superadmin-access).\n"
-  printf "Obtain one via: curl -X POST %s/api/v1/auth/login \\\n" "$HUB_URL"
-  printf '    -H "Content-Type: application/json" -d '"'"'{"email":"...","password":"..."}'"'"'\n\n'
-  read -r -p "Paste superadmin JWT (or press Enter to skip): " ADMIN_TOKEN
+
+  # ci4-kickstart pre-supplies the JWT via env var when orchestrating end-to-end;
+  # standalone runs prompt the user (TTY only).
+  ADMIN_TOKEN="${CI4_DOMAIN_ADMIN_TOKEN:-}"
+  if [ -z "$ADMIN_TOKEN" ] && [ -t 0 ]; then
+    printf "domain:sync-permissions registers this app's permissions in the hub.\n"
+    printf "It needs a superadmin JWT (one-time setup — service tokens lack iam.superadmin-access).\n"
+    printf "Obtain one via: curl -X POST %s/api/v1/auth/login \\\n" "$HUB_URL"
+    printf '    -H "Content-Type: application/json" -d '"'"'{"email":"...","password":"..."}'"'"'\n\n'
+    read -r -p "Paste superadmin JWT (or press Enter to skip): " ADMIN_TOKEN
+  fi
 
   if [ -n "$ADMIN_TOKEN" ]; then
     if php spark domain:sync-permissions --admin-token="$ADMIN_TOKEN"; then
