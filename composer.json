@@ -1,22 +1,27 @@
 {
-    "name": "codeigniter4/appstarter",
-    "description": "CodeIgniter4 starter app",
-    "license": "MIT",
+    "name": "ci4/domain-starter",
+    "description": "CodeIgniter 4 Domain App Starter — delegates auth to a hub via /auth/introspect.",
     "type": "project",
-    "homepage": "https://codeigniter.com",
-    "support": {
-        "forum": "https://forum.codeigniter.com/",
-        "source": "https://github.com/codeigniter4/CodeIgniter4",
-        "slack": "https://codeigniterchat.slack.com"
-    },
+    "license": "MIT",
     "require": {
         "php": "^8.2",
-        "codeigniter4/framework": "^4.7"
+        "codeigniter4/framework": "^4.5",
+        "monolog/monolog": "^3.5",
+        "sentry/sentry": "^4.6",
+        "zircote/swagger-php": "^6.0"
     },
+    "repositories": [
+        { "type": "path", "url": "../ci4-api-crud-maker", "options": { "symlink": false } }
+    ],
     "require-dev": {
+        "dcardenasl/ci4-api-crud-maker": "*",
         "fakerphp/faker": "^1.9",
+        "friendsofphp/php-cs-fixer": "^3.48",
         "mikey179/vfsstream": "^1.6",
-        "phpunit/phpunit": "^10.5.16"
+        "phpstan/extension-installer": "^1.3",
+        "phpstan/phpstan": "^2.0",
+        "phpstan/phpstan-phpunit": "^2.0",
+        "phpunit/phpunit": "^11.0"
     },
     "autoload": {
         "psr-4": {
@@ -29,15 +34,70 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\Support\\": "tests/_support"
+            "Tests\\": "tests/"
         }
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "chmod +x pre-commit",
+            "cp pre-commit .git/hooks/pre-commit"
+        ],
+        "post-update-cmd": [
+            "chmod +x pre-commit",
+            "cp pre-commit .git/hooks/pre-commit"
+        ],
+        "test:prepare-db": "php spark tests:prepare-db",
+        "test:unit": [
+            "@test:prepare-db",
+            "phpunit --testsuite=Unit --configuration=phpunit.xml --no-coverage --testdox"
+        ],
+        "test:integration": [
+            "@test:prepare-db",
+            "phpunit --testsuite=Integration --configuration=phpunit.xml --no-coverage --testdox"
+        ],
+        "test:feature": [
+            "@test:prepare-db",
+            "phpunit --testsuite=Feature --configuration=phpunit.xml --no-coverage --testdox"
+        ],
+        "test": [
+            "@test:prepare-db",
+            "phpunit --configuration=phpunit.xml --no-coverage --testdox"
+        ],
+        "test:coverage": [
+            "@test:prepare-db",
+            "phpunit --configuration=phpunit.xml --testdox"
+        ],
+        "coverage:check": "php scripts/check-coverage.php 70 tests/coverage/clover.xml",
+        "phpstan": "phpstan analyse --memory-limit=512M",
+        "cs-fix": "php-cs-fixer fix",
+        "cs-check": "php-cs-fixer fix --dry-run --diff --sequential",
+        "i18n-check": "php scripts/i18n-check.php",
+        "docs-i18n-check": "php scripts/docs-i18n-parity-check.php",
+        "arch-drift": [
+            "@swagger-validate",
+            "phpunit tests/Unit/Architecture --configuration=phpunit.xml --no-coverage --testdox",
+            "@i18n-check",
+            "@docs-i18n-check"
+        ],
+        "swagger-validate": "sh -c 'php spark swagger:generate && git --no-pager diff --exit-code public/swagger.json >/dev/null || (git --no-pager diff -- public/swagger.json; exit 1)'",
+        "quality": [
+            "@cs-check",
+            "@phpstan",
+            "@swagger-validate",
+            "@arch-drift",
+            "@i18n-check",
+            "@docs-i18n-check",
+            "@test"
+        ]
     },
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "phpstan/extension-installer": true
+        }
     },
-    "scripts": {
-        "test": "phpunit"
-    }
+    "minimum-stability": "stable",
+    "prefer-stable": true
 }
