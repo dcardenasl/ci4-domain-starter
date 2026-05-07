@@ -7,6 +7,17 @@ use DateTimeInterface;
 
 class Cookie extends BaseConfig
 {
+    public function __construct()
+    {
+        parent::__construct();
+
+        // Enable Secure flag in production to prevent cookie transmission over HTTP
+        if (ENVIRONMENT === 'production') {
+            $this->secure = true;
+            $this->samesite = 'Strict';
+        }
+    }
+
     /**
      * --------------------------------------------------------------------------
      * Cookie Prefix

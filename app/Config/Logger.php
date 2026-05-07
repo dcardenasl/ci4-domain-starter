@@ -79,7 +79,25 @@ class Logger extends BaseConfig
     public array $handlers = [
         /*
          * --------------------------------------------------------------------
-         * File Handler
+         * Monolog Handler (JSON Structured Logging + Sentry)
+         * --------------------------------------------------------------------
+         */
+        \App\Libraries\Logging\MonologHandler::class => [
+            'handles' => [
+                'critical',
+                'alert',
+                'emergency',
+                'debug',
+                'error',
+                'info',
+                'notice',
+                'warning',
+            ],
+        ],
+
+        /*
+         * --------------------------------------------------------------------
+         * File Handler (Fallback)
          * --------------------------------------------------------------------
          */
         FileHandler::class => [

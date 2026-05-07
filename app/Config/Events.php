@@ -53,3 +53,17 @@ Events::on('pre_system', static function (): void {
         }
     }
 });
+
+/**
+ * --------------------------------------------------------------------
+ * User Domain Events
+ * --------------------------------------------------------------------
+ */
+Events::on('user.created', static function ($user) {
+    try {
+        $invitationService = \Config\Services::userInvitationService();
+        $invitationService->sendInvitation($user);
+    } catch (\Throwable $e) {
+        log_message('error', 'Failed to send invitation email for user ' . $user->id . ': ' . $e->getMessage());
+    }
+});
