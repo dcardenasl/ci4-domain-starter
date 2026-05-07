@@ -1,41 +1,174 @@
 # ci4-domain-starter
 
-CodeIgniter 4 domain app template. Owns business logic and its own database;
-delegates auth / IAM / users to a central hub (`ci4-api-starter`) via
-`POST /api/v1/auth/introspect`.
+[![CI4](https://img.shields.io/badge/CodeIgniter-4.5-EF4223)](https://codeigniter.com/)
+[![PHP](https://img.shields.io/badge/PHP-8.2%2B-777BB4)](https://www.php.net/)
+[![PHPStan](https://img.shields.io/badge/PHPStan-level%208-2563EB)](phpstan.neon)
+[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+
+> **Status:** v0.1.0 — Spanish version: [README.es.md](README.es.md)
+
+CodeIgniter 4 template for **domain apps**: services that own their own business logic and database, but **delegate authentication, users, and IAM to a central hub** (`ci4-api-starter`). One hub can stand in front of many domain apps without re-implementing auth in each.
+
+```
+Browser / SPA  ───►  Domain App (this repo, :8090)  ───►  Domain DB
+                            │
+                            │  introspect / service-token  (HTTPS)
+                            ▼
+                     Hub (ci4-api-starter, :8080)  ───►  users, roles, perms
+```
+
+The split:
+
+- The **hub** issues JWTs, owns the `users` / `roles` / `permissions` tables, and resolves effective permissions per `(user, application)`.
+- The **domain app** validates incoming JWTs by calling `POST /api/v1/auth/introspect` on the hub, then enforces permissions locally with the `permission:<code>` filter.
+- The domain app **never** stores users, never issues JWTs, never reads the hub's database directly.
+
+---
 
 ## Quick start
 
 ```bash
 ./init.sh
-# Prompts for hub URL, X-App-Key, app code, and DB credentials.
-# Runs composer install, migrate, and registers permissions in the hub.
+# Prompts for: hub URL, X-App-Key, app code, DB credentials, optional superadmin JWT.
+# Runs: composer install → migrate → domain:sync-permissions.
+
 php spark serve --port 8090
 ```
 
-## Hub coordinates required
+Default port is **8090** to avoid colliding with the hub on `:8080` and the admin on `:8082`.
 
-Before running `init.sh` make sure the hub:
+### Hub coordinates required
 
-1. Has an entry in `applications` with the code you'll use here.
-2. Has an API key bound to that application (e.g. `php spark apps:bootstrap <code>`).
+Before `init.sh` can finish, the hub must already have:
 
-Without these, `domain:sync-permissions` cannot run. You can re-run it any time.
+1. An `applications` row with `code = <hub.appCode>` you'll set here.
+2. An API key bound to that application (`php spark apps:bootstrap <code>` on the hub side).
+3. *(For the first permission sync only)* a superadmin JWT — service tokens cannot satisfy `iam.superadmin-access`. Get one via `POST /api/v1/auth/login` on the hub with superadmin credentials.
+
+If any of these are missing, `domain:sync-permissions` will fail with a clear message; it is idempotent and safe to re-run.
+
+---
 
 ## What's in the box
 
-- `App\Filters\DomainAuthFilter` (alias `domainauth`) — JWT validation via the hub
-- `App\Libraries\Hub\HubClient` — introspect + service-token + register-permission
-- `App\Commands\SyncPermissions` (`php spark domain:sync-permissions`)
-- `Config\DomainPermissions` — declarative permission catalog for this app
-- `Config\Scaffolding` override — `make-crud` generates routes wrapped in `domainauth`
+| Component | Purpose |
+|---|---|
+| `App\Filters\DomainAuthFilter` (alias `domainauth`) | Replaces local JWT validation. Calls `HubClient::introspect()` and injects `(uid, permissions[])` into the request context. |
+| `App\Libraries\Hub\HubClient` | Single point of contact with the hub. Handles introspection caching (per JTI) and service-token caching with safety-margin refresh. |
+| `App\Commands\SyncPermissions` (`php spark domain:sync-permissions`) | Registers the permissions in `Config\DomainPermissions` with the hub via `POST /api/v1/iam/permissions`. Idempotent. |
+| `App\Config\DomainPermissions` | Declarative source of truth for the permissions this app owns. |
+| `App\Config\Scaffolding` override | `make-crud` generates routes already wrapped in `domainauth + permission:<code> + throttle`. |
+| `App\Models\BaseAuditableModel` + `Auditable` trait | Local audit logs persisted in this app's `audit_logs` table. |
+| Inherited hardening | Security headers, correlation IDs, idempotency keys, deprecation headers, RFC 7807 problem details, maintenance mode filter, JSON file logging, request logs / metrics / queue infra. |
 
 ## What's NOT in the box
 
-This is a domain app, not the hub. Out of scope here:
+This is a domain app, not the hub. The following are **out of scope** here and live in the hub instead:
 
-- Users, roles, password reset, email verification, Google OAuth, JWT issuance
-- `/api/v1/iam/*` administration endpoints
-- File storage drivers (S3, local) — re-add as a domain-specific module if needed
+- `users` / `roles` / `permissions` tables and admin endpoints (`/api/v1/iam/*`)
+- Login, logout, password reset, email verification, Google OAuth
+- JWT issuance and refresh
+- File storage drivers (S3, local) — re-add as a domain-specific module if a particular domain needs it
 
-See `CLAUDE.md` for working agreements and `TASKS.md` for in-flight tasks.
+---
+
+## Common commands
+
+```bash
+# Dev server
+php spark serve --port 8090
+
+# Database
+php spark migrate                    # Local migrations only — never touches the hub DB
+php spark tests:prepare-db           # Sync the test DB before feature tests
+
+# Hub permission sync (idempotent — safe to rerun)
+php spark domain:sync-permissions --admin-token=<jwt>     # or set hub.adminToken in .env
+
+# Tests
+vendor/bin/phpunit                   # All
+vendor/bin/phpunit tests/Unit        # Fast, no DB
+vendor/bin/phpunit tests/Integration # DB-level
+vendor/bin/phpunit tests/Feature     # HTTP endpoints (requires tests:prepare-db)
+
+# Quality gates
+composer quality                     # PHPStan level 8 + PHPUnit + cs-check
+composer cs-fix                      # Auto-fix style — run before committing
+
+# OpenAPI
+php spark swagger:generate
+```
+
+### Adding a new CRUD module
+
+Use the shell wrapper (non-TTY-safe — `php spark make:crud` directly hangs in CI / Claude Code):
+
+```bash
+bash vendor/bin/make-crud.sh Item Example 'name:string:required|searchable,description:text' yes
+php spark migrate
+pkill -f 'spark serve'; php spark serve --port 8090 &     # routes are not hot-reloaded
+php spark swagger:generate
+```
+
+The generator emits routes already wrapped in `domainauth + permission:items.read + throttle`. Adjust the per-verb permission codes if read and write should diverge.
+
+### Adding a new permission
+
+1. Append it to `app/Config/DomainPermissions.php::PERMISSIONS`.
+2. Run `php spark domain:sync-permissions` — registers it with the hub (idempotent).
+3. In the hub admin panel, attach the new permission to the role(s) that should carry it.
+4. Reference the code in your route filter: `permission:items.archive`.
+
+> **Permission separator is `.`, never `:`** — CI4's filter parser splits on `:` for arguments and silently truncates `permission:items:archive` to `permission:items`. See `TASKS.md` ⇒ "Architecture contracts".
+
+---
+
+## Configuration
+
+Required environment variables (see `.env.example`):
+
+| Variable | Purpose |
+|---|---|
+| `hub.url` | Base URL of the hub (e.g. `http://localhost:8080`) |
+| `hub.apiKey` | `X-App-Key` bound to this app's `applications` row in the hub |
+| `hub.appCode` | Application code as registered in the hub |
+| `hub.introspectCacheTtl` | *(optional)* Introspect-response cache TTL in seconds, default `60` |
+| `hub.adminToken` | *(optional)* Superadmin JWT for `domain:sync-permissions` — prefer the `--admin-token` flag for one-shot use |
+| `database.default.*` | This app's own MySQL connection |
+| `encryption.key` | CI4 encryption key (32 bytes after `hex2bin:` decode) |
+
+> **Tokens are server-side only.** Pass them via `Authorization: Bearer …` headers (SPA) or PHP sessions (server-rendered admin). Never store JWTs in `localStorage` or non-HttpOnly cookies.
+
+---
+
+## Architecture
+
+DTO-first layered pipeline, identical in shape to the hub:
+
+```
+Controller → [RequestDTO] → Service → Model → Entity → [ResponseDTO]
+```
+
+The base classes (`ApiController`, `BaseCrudService`, `BaseRequestDTO`, `BaseAuditableModel`) were cloned from `ci4-api-starter` at v0.1 and currently live in-tree. They will be extracted to `dcardenasl/ci4-api-core` once the divergence between hub and domain stabilises (see `TASKS.md` ⇒ DOM-104).
+
+For the full architecture and contracts:
+
+- [`docs/architecture/OVERVIEW.md`](docs/architecture/OVERVIEW.md) — layers, request flow, conventions
+- [`docs/architecture/AUTHENTICATION.md`](docs/architecture/AUTHENTICATION.md) — hub delegation in detail
+- [`docs/template/ARCHITECTURE_CONTRACT.md`](docs/template/ARCHITECTURE_CONTRACT.md) — what generated code must look like (SSOT)
+- [`CLAUDE.md`](CLAUDE.md) — working agreements for coding agents (also useful for humans)
+- [`TASKS.md`](TASKS.md) — current work and open backlog
+
+The full documentation index is at [`docs/README.md`](docs/README.md).
+
+---
+
+## Versioning & releases
+
+This template follows [Semantic Versioning](https://semver.org/). See [`CHANGELOG.md`](CHANGELOG.md) for what changed between versions.
+
+---
+
+## License
+
+[MIT](LICENSE).
