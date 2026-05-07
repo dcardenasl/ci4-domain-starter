@@ -1,19 +1,48 @@
-# Autenticación JWT
+# Validación de JWT (delegada al hub)
 
-Los tokens de acceso JWT se emiten al iniciar sesión y son validados por un filtro de solicitud. El sistema utiliza una arquitectura de gestión de tokens inmutable y orientada a dominios.
+> English version: [jwt-auth.md](jwt-auth.md). Para el flujo de delegación completo ver [`../architecture/AUTHENTICATION.es.md`](../architecture/AUTHENTICATION.es.md).
 
-Componentes Clave:
-- **`app/Services/Tokens/JwtService.php`**: Orquestador inmutable `readonly` para la codificación/decodificación de tokens.
-- **`app/Services/Tokens/TokenRevocationService.php`**: Gestiona la lista negra de tokens y el caché de revocación.
-- **`app/Filters/JwtAuthFilter.php`**: Intercepta las solicitudes para validar los tokens y establecer el contexto de seguridad inicial.
+Esta app de dominio **no emite, refresca ni revoca JWT**. Todas las operaciones del ciclo de vida del token viven en el hub (`ci4-api-starter`).
 
-Variables de Entorno:
-- `JWT_SECRET_KEY`: Secreto de mínimo 32 caracteres.
-- `JWT_ACCESS_TOKEN_TTL`: Expiración del token de acceso en segundos.
-- `JWT_REVOCATION_CACHE_TTL`: Duración del caché de rendimiento para tokens revocados.
+## Qué hace esta app
 
-Flujo Estándar:
-1. Se esperan los tokens en el encabezado `Authorization: Bearer <token>`.
-2. El `JwtAuthFilter` extrae y valida el token.
-3. Si es válido, comprueba si el claim `jti` está en la lista negra a través del `TokenRevocationService`.
-4. Si está autorizado, puebla el `SecurityContext` para su propagación automática.
+Cuando llega una petición con `Authorization: Bearer <jwt>`, `App\Filters\DomainAuthFilter` (alias `domainauth`) llama al hub:
+
+```
+POST <hub.url>/api/v1/auth/introspect
+X-App-Key: <hub.apiKey>
+Content-Type: application/json
+
+{ "token": "<jwt>" }
+```
+
+El hub responde con `{ active, uid, permissions[], jti, exp, ... }`. El filtro:
+
+1. Rechaza la petición con 401 si `active` es `false` (revocado, expirado o desconocido).
+2. Re-resuelve los permisos efectivos del usuario para el `application_id` de **esta app** (el hub usa `EffectivePermissionsResolver(uid, application_id)`), así que el `permissions[]` devuelto refleja lo que el usuario puede hacer *aquí*, no el scope literal del JWT.
+3. Cachea la respuesta por JTI durante `hub.introspectCacheTtl` segundos (por defecto `60`).
+4. Inyecta `(uid, permissions[])` en `ApiRequest::setAuthContext()` y `ContextHolder` para que los filtros `permission:<código>` y los audit writers downstream funcionen sin cambios.
+
+## Qué NO hace esta app
+
+- Emitir access tokens, refresh tokens ni tokens de password-reset.
+- Mantener tablas `users` / `refresh_tokens` / `password_resets` / `email_verifications`.
+- Decodificar JWT localmente (no hay secret de firma compartido con el hub — el endpoint de introspección es la frontera del contrato).
+- Llevar listas de revocación de JTI. El hub posee la revocación; confiamos en `active=false`.
+
+## Configuración
+
+Ver el [`README.es.md`](../../README.es.md) raíz § "Configuración" para la lista completa. Las variables relevantes para JWT son:
+
+| Variable | Propósito |
+|---|---|
+| `hub.url` | URL base del hub. |
+| `hub.apiKey` | `X-App-Key` vinculado a la fila de esta app en `applications` del hub. |
+| `hub.introspectCacheTtl` | TTL en segundos del cache de respuestas de introspect. Por defecto `60`. |
+
+## Dónde seguir leyendo
+
+- [`../architecture/AUTHENTICATION.es.md`](../architecture/AUTHENTICATION.es.md) — diagrama de secuencia completo, mapeo de errores, casos límite.
+- `app/Libraries/Hub/HubClient.php` — único punto de contacto con el hub.
+- `app/Filters/DomainAuthFilter.php` — el filtro montado en rutas protegidas.
+- Repo del hub (`ci4-api-starter`), `docs/tech/jwt-auth.md` — emisión, firma, blacklist y refresh de JWT.
