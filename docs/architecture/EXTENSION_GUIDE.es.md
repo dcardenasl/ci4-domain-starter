@@ -22,7 +22,7 @@ Proceso completo paso a paso:
 
 ## Inicio Rápido
 
-Ver [`../GETTING_STARTED.md`](../GETTING_STARTED.md) para un recorrido completo con ejemplos de código.
+Ver el [`../../README.es.md`](../../README.es.md) raíz § "Inicio rápido" y § "Añadir un nuevo módulo CRUD" para un recorrido completo con ejemplos de código.
 
 El repo incluye un módulo de ejemplo (`DemoProduct` en el dominio `Catalog`). Revisa su estructura (DTOs, controladores, servicios y tests) para entender cómo lucen los artefactos generados y usa `php spark module:check <Resource> --domain <Domain>` para validar tus propios módulos.
 

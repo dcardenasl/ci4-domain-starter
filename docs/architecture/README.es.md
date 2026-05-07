@@ -181,7 +181,7 @@ Para una referencia rápida condensada, basada en tablas, optimizada para búsqu
 → Ver [`../AGENT_QUICK_REFERENCE.md`](../AGENT_QUICK_REFERENCE.md)
 
 Para tutorial paso a paso, práctico:
-→ Ver [`../GETTING_STARTED.md`](../GETTING_STARTED.md)
+→ Ver el [`../../README.es.md`](../../README.es.md) raíz § "Inicio rápido" y § "Añadir un nuevo módulo CRUD".
 
 ## 🧾 Decisiones de Arquitectura (ADRs)
 

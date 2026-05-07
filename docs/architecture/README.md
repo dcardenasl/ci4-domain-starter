@@ -187,7 +187,7 @@ For a condensed, table-based quick reference optimized for rapid lookup:
 → See [`../AGENT_QUICK_REFERENCE.md`](../AGENT_QUICK_REFERENCE.md)
 
 For hands-on, step-by-step tutorial:
-→ See [`../GETTING_STARTED.md`](../GETTING_STARTED.md)
+→ See the root [`../../README.md`](../../README.md) § "Quick start" and § "Adding a new CRUD module".
 
 ## 🧾 Architecture Decisions (ADRs)
 
