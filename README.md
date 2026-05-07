@@ -9,13 +9,22 @@
 
 CodeIgniter 4 template for **domain apps**: services that own their own business logic and database, but **delegate authentication, users, and IAM to a central hub** (`ci4-api-starter`). One hub can stand in front of many domain apps without re-implementing auth in each.
 
+```mermaid
+flowchart LR
+    Client["Browser / SPA"]
+    Domain["Domain App<br/>(this repo) :8090"]
+    Hub["Hub<br/>(ci4-api-starter) :8080"]
+    DDB[("Domain DB<br/>business tables")]
+    HDB[("Hub DB<br/>users · roles · perms")]
+
+    Client -->|"Bearer JWT"| Domain
+    Domain -.->|"POST /auth/introspect<br/>(cached per JTI, TTL 60s)"| Hub
+    Domain -.->|"POST /auth/service-token<br/>(cached until expiry)"| Hub
+    Domain --- DDB
+    Hub --- HDB
 ```
-Browser / SPA  ───►  Domain App (this repo, :8090)  ───►  Domain DB
-                            │
-                            │  introspect / service-token  (HTTPS)
-                            ▼
-                     Hub (ci4-api-starter, :8080)  ───►  users, roles, perms
-```
+
+Solid arrows = traffic on every request. Dashed = upstream calls to the hub, both cached.
 
 The split:
 
@@ -145,9 +154,17 @@ Required environment variables (see `.env.example`):
 
 DTO-first layered pipeline, identical in shape to the hub:
 
+```mermaid
+flowchart LR
+    Controller --> RequestDTO["[ RequestDTO ]<br/>auto-validates"]
+    RequestDTO --> Service
+    Service --> Model
+    Model --> Entity
+    Entity --> ResponseDTO["[ ResponseDTO ]"]
+    ResponseDTO --> ApiResponse["ApiResponse envelope"]
 ```
-Controller → [RequestDTO] → Service → Model → Entity → [ResponseDTO]
-```
+
+Each step has one job: `RequestDTO` validates inputs at construction, `Service` runs pure business logic (DTO in, DTO out, transactional via `HandlesTransactions`), `Model` does persistence, `Entity` is the row, `ResponseDTO` is the contract emitted to clients. `ApiController::handleRequest()` orchestrates the wiring with no boilerplate.
 
 The base classes (`ApiController`, `BaseCrudService`, `BaseRequestDTO`, `BaseAuditableModel`) were cloned from `ci4-api-starter` at v0.1 and currently live in-tree. They will be extracted to `dcardenasl/ci4-api-core` once the divergence between hub and domain stabilises (see `TASKS.md` ⇒ DOM-104).
 

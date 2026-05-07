@@ -9,13 +9,22 @@
 
 Plantilla de CodeIgniter 4 para **apps de dominio**: servicios que poseen su propia lógica de negocio y base de datos, pero **delegan autenticación, usuarios e IAM a un hub central** (`ci4-api-starter`). Un único hub puede atender a varias apps de dominio sin re-implementar autenticación en cada una.
 
+```mermaid
+flowchart LR
+    Cliente["Navegador / SPA"]
+    Dominio["App de dominio<br/>(este repo) :8090"]
+    Hub["Hub<br/>(ci4-api-starter) :8080"]
+    BDD[("BD del dominio<br/>tablas de negocio")]
+    BDH[("BD del hub<br/>users · roles · perms")]
+
+    Cliente -->|"Bearer JWT"| Dominio
+    Dominio -.->|"POST /auth/introspect<br/>(cacheado por JTI, TTL 60s)"| Hub
+    Dominio -.->|"POST /auth/service-token<br/>(cacheado hasta expiración)"| Hub
+    Dominio --- BDD
+    Hub --- BDH
 ```
-Browser / SPA  ───►  App de dominio (este repo, :8090)  ───►  BD del dominio
-                              │
-                              │  introspect / service-token  (HTTPS)
-                              ▼
-                       Hub (ci4-api-starter, :8080)  ───►  users, roles, perms
-```
+
+Flechas sólidas = tráfico en cada request. Discontinuas = llamadas al hub, ambas cacheadas.
 
 El reparto:
 
@@ -146,9 +155,17 @@ Variables de entorno requeridas (ver `.env.example`):
 
 Pipeline en capas DTO-first, idéntico en forma al del hub:
 
+```mermaid
+flowchart LR
+    Controller --> RequestDTO["[ RequestDTO ]<br/>auto-valida"]
+    RequestDTO --> Service
+    Service --> Model
+    Model --> Entity
+    Entity --> ResponseDTO["[ ResponseDTO ]"]
+    ResponseDTO --> ApiResponse["envoltura ApiResponse"]
 ```
-Controller → [RequestDTO] → Service → Model → Entity → [ResponseDTO]
-```
+
+Cada paso tiene una sola responsabilidad: `RequestDTO` valida en construcción, `Service` ejecuta lógica de negocio pura (DTO entra, DTO sale, transaccional vía `HandlesTransactions`), `Model` persiste, `Entity` es la fila, `ResponseDTO` es el contrato emitido al cliente. `ApiController::handleRequest()` orquesta sin boilerplate.
 
 Las clases base (`ApiController`, `BaseCrudService`, `BaseRequestDTO`, `BaseAuditableModel`) se clonaron de `ci4-api-starter` en v0.1 y por ahora viven in-tree. Se extraerán a `dcardenasl/ci4-api-core` cuando la divergencia entre hub y dominio se estabilice (ver `TASKS.md` ⇒ DOM-104).
 
