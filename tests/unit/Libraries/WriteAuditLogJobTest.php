@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Libraries;
 
-use App\Interfaces\System\AuditRepositoryInterface;
-use App\Libraries\Queue\Jobs\WriteAuditLogJob;
-use App\Services\System\AuditWriter;
 use CodeIgniter\Test\CIUnitTestCase;
+use dcardenasl\Ci4ApiCore\Queue\Jobs\WriteAuditLogJob;
+use dcardenasl\Ci4ApiCore\Repositories\AuditRepositoryInterface;
+use dcardenasl\Ci4ApiCore\Services\Audit\AuditWriter;
 
 final class WriteAuditLogJobTest extends CIUnitTestCase
 {

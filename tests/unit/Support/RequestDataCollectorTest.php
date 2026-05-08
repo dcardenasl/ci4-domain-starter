@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Support;
 
-use App\Support\RequestDataCollector;
 use CodeIgniter\Test\CIUnitTestCase;
 use dcardenasl\Ci4ApiCore\Exceptions\BadRequestException;
 use dcardenasl\Ci4ApiCore\Http\ApiRequest;
+use dcardenasl\Ci4ApiCore\Support\RequestDataCollector;
 
 final class RequestDataCollectorTest extends CIUnitTestCase
 {

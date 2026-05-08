@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Support;
 
-use App\Support\RequestAuditContextFactory;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\Test\CIUnitTestCase;
+use dcardenasl\Ci4ApiCore\Support\RequestAuditContextFactory;
 
 final class RequestAuditContextFactoryTest extends CIUnitTestCase
 {

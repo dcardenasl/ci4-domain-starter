@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Traits;
 
-use App\Traits\ValidatesRequiredFields;
 use CodeIgniter\Test\CIUnitTestCase;
 use dcardenasl\Ci4ApiCore\Exceptions\BadRequestException;
+use dcardenasl\Ci4ApiCore\Validators\ValidatesRequiredFields;
 
 /**
  * ValidatesRequiredFields Trait Tests

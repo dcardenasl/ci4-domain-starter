@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Services\System;
 
-use App\Services\System\AuditPayloadSanitizer;
 use CodeIgniter\Test\CIUnitTestCase;
+use dcardenasl\Ci4ApiCore\Services\Audit\AuditPayloadSanitizer;
 
 final class AuditPayloadSanitizerTest extends CIUnitTestCase
 {
