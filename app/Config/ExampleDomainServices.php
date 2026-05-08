@@ -12,7 +12,7 @@ trait ExampleDomainServices
             return static::getSharedInstance('itemResponseMapper');
         }
 
-        return new \App\Services\Core\Mappers\DtoResponseMapper(
+        return new \dcardenasl\Ci4ApiCore\Mappers\DtoResponseMapper(
             \App\DTO\Response\Example\ItemResponseDTO::class
         );
     }
@@ -24,7 +24,7 @@ trait ExampleDomainServices
         }
 
         return new \App\Services\Example\ItemService(
-            new \App\Repositories\GenericRepository(model(\App\Models\ItemModel::class)),
+            new \dcardenasl\Ci4ApiCore\Repositories\GenericRepository(model(\App\Models\ItemModel::class)),
             static::itemResponseMapper()
         );
     }

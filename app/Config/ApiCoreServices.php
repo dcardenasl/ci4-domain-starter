@@ -12,39 +12,39 @@ namespace Config;
  */
 trait ApiCoreServices
 {
-    public static function requestDataCollector(bool $getShared = true): \App\Support\RequestDataCollector
+    public static function requestDataCollector(bool $getShared = true): \dcardenasl\Ci4ApiCore\Support\RequestDataCollector
     {
         if ($getShared) {
             return static::getSharedInstance('requestDataCollector');
         }
 
-        return new \App\Support\RequestDataCollector();
+        return new \dcardenasl\Ci4ApiCore\Support\RequestDataCollector();
     }
 
-    public static function requestDtoFactory(bool $getShared = true): \App\Support\RequestDtoFactory
+    public static function requestDtoFactory(bool $getShared = true): \dcardenasl\Ci4ApiCore\Support\RequestDtoFactory
     {
         if ($getShared) {
             return static::getSharedInstance('requestDtoFactory');
         }
 
-        return new \App\Support\RequestDtoFactory();
+        return new \dcardenasl\Ci4ApiCore\Support\RequestDtoFactory();
     }
 
-    public static function responseDtoFactory(bool $getShared = true): \App\Support\ResponseDtoFactory
+    public static function responseDtoFactory(bool $getShared = true): \dcardenasl\Ci4ApiCore\Support\ResponseDtoFactory
     {
         if ($getShared) {
             return static::getSharedInstance('responseDtoFactory');
         }
 
-        return new \App\Support\ResponseDtoFactory();
+        return new \dcardenasl\Ci4ApiCore\Support\ResponseDtoFactory();
     }
 
-    public static function queueManager(bool $getShared = true): \App\Libraries\Queue\QueueManager
+    public static function queueManager(bool $getShared = true): \dcardenasl\Ci4ApiCore\Queue\QueueManager
     {
         if ($getShared) {
             return static::getSharedInstance('queueManager');
         }
 
-        return new \App\Libraries\Queue\QueueManager();
+        return new \dcardenasl\Ci4ApiCore\Queue\QueueManager();
     }
 }
