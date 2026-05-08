@@ -17,13 +17,13 @@ class DtoResponseMapper implements ResponseMapperInterface
     ) {
     }
 
-    public function map(object $entity): DataTransferObjectInterface
+    public function map(object|array $source): DataTransferObjectInterface
     {
         if (!class_exists($this->responseDtoClass)) {
             throw new \RuntimeException(lang('Api.responseDtoNotDefined', [$this->responseDtoClass]));
         }
 
-        $data = $this->extractData($entity);
+        $data = $this->extractData($source);
 
         // Priority 1: Manual fromArray() method if defined in the DTO
         if (method_exists($this->responseDtoClass, 'fromArray')) {
@@ -127,14 +127,21 @@ class DtoResponseMapper implements ResponseMapperInterface
     }
 
     /**
-     * Attempt to convert the entity into an array.
+     * Normalize the input source into a plain associative array.
+     *
+     * @param object|array<string, mixed> $source
+     * @return array<string, mixed>
      */
-    private function extractData(object $entity): array
+    private function extractData(object|array $source): array
     {
-        if (method_exists($entity, 'toArray')) {
-            return $entity->toArray();
+        if (is_array($source)) {
+            return $source;
         }
 
-        return (array) $entity;
+        if (method_exists($source, 'toArray')) {
+            return $source->toArray();
+        }
+
+        return (array) $source;
     }
 }
