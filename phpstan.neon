@@ -4,7 +4,7 @@ includes:
 parameters:
     level: 8
     bootstrapFiles:
-        - app/Helpers/security_helper.php
+        - vendor/dcardenasl/ci4-api-core/src/Helpers/security.php
     paths:
         - app/Controllers
         - app/Services
