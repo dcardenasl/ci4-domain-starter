@@ -51,6 +51,20 @@ abstract class BaseRepository implements RepositoryInterface
         return $this->model->findAll($limit, $offset);
     }
 
+    public function findByIds(array $ids): array
+    {
+        if ($ids === []) {
+            return [];
+        }
+
+        // CI4's Model::find() accepts an array and returns the matching rows
+        // honoring the model's configured returnType. Re-index numerically so
+        // callers can iterate without caring about insertion order.
+        $result = $this->model->find($ids);
+
+        return is_array($result) ? array_values($result) : [];
+    }
+
     public function insert(array|object $data, bool $returnID = true): int|string|bool
     {
         return $this->model->insert($data, $returnID);
