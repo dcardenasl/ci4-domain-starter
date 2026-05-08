@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Entities\ItemEntity;
-use App\Traits\Filterable;
-use App\Traits\Searchable;
 use dcardenasl\Ci4ApiCore\Models\BaseAuditableModel;
+use dcardenasl\Ci4ApiCore\Models\Traits\Filterable;
+use dcardenasl\Ci4ApiCore\Models\Traits\Searchable;
 
 class ItemModel extends BaseAuditableModel
 {

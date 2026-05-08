@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Traits\Filterable;
-use App\Traits\Searchable;
 use CodeIgniter\Model;
+use dcardenasl\Ci4ApiCore\Models\Traits\Filterable;
+use dcardenasl\Ci4ApiCore\Models\Traits\Searchable;
 
 /**
  * Audit Log Model
