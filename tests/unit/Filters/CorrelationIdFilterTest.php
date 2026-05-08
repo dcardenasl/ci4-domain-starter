@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Filters;
 
-use App\Filters\CorrelationIdFilter;
-use App\Libraries\RequestIdHolder;
 use CodeIgniter\HTTP\IncomingRequest;
 use CodeIgniter\HTTP\Response;
 use CodeIgniter\HTTP\URI;
 use CodeIgniter\HTTP\UserAgent;
 use CodeIgniter\Test\CIUnitTestCase;
 use Config\App as AppConfig;
+use dcardenasl\Ci4ApiCore\Http\Filters\CorrelationIdFilter;
+use dcardenasl\Ci4ApiCore\Http\RequestIdHolder;
 
 /**
  * Audit B10.1 (2026-05-07): pin the correlation-id behavior so the

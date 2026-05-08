@@ -2,9 +2,9 @@
 
 namespace App\Controllers\Api\V1\System;
 
-use App\Libraries\Monitoring\HealthChecker;
 use CodeIgniter\Controller;
 use CodeIgniter\HTTP\ResponseInterface;
+use dcardenasl\Ci4ApiCore\Monitoring\HealthChecker;
 
 /**
  * Health Check Controller

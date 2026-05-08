@@ -2,12 +2,7 @@
 
 namespace Config;
 
-use App\Filters\CorsFilter;
-use App\Filters\FeatureToggleFilter;
-use App\Filters\LocaleFilter;
 use App\Filters\PermissionFilter;
-use App\Filters\RequestLoggingFilter;
-use App\Filters\SecurityHeadersFilter;
 use App\Filters\ThrottleFilter;
 use CodeIgniter\Config\Filters as BaseFilters;
 use CodeIgniter\Filters\CSRF;
@@ -17,6 +12,11 @@ use CodeIgniter\Filters\Honeypot;
 use CodeIgniter\Filters\InvalidChars;
 use CodeIgniter\Filters\PageCache;
 use CodeIgniter\Filters\PerformanceMetrics;
+use dcardenasl\Ci4ApiCore\Http\Filters\CorsFilter;
+use dcardenasl\Ci4ApiCore\Http\Filters\FeatureToggleFilter;
+use dcardenasl\Ci4ApiCore\Http\Filters\LocaleFilter;
+use dcardenasl\Ci4ApiCore\Http\Filters\RequestLoggingFilter;
+use dcardenasl\Ci4ApiCore\Http\Filters\SecurityHeadersFilter;
 
 class Filters extends BaseFilters
 {
@@ -48,10 +48,10 @@ class Filters extends BaseFilters
         'requestLogging'    => RequestLoggingFilter::class,
         'locale'             => LocaleFilter::class,
         'featureToggle'      => FeatureToggleFilter::class,
-        'deprecationheaders' => \App\Filters\DeprecationHeadersFilter::class,
-        'idempotency'        => \App\Filters\IdempotencyFilter::class,
-        'correlationid'      => \App\Filters\CorrelationIdFilter::class,
-        'maintenance'        => \App\Filters\MaintenanceFilter::class,
+        'deprecationheaders' => \dcardenasl\Ci4ApiCore\Http\Filters\DeprecationHeadersFilter::class,
+        'idempotency'        => \dcardenasl\Ci4ApiCore\Http\Filters\IdempotencyFilter::class,
+        'correlationid'      => \dcardenasl\Ci4ApiCore\Http\Filters\CorrelationIdFilter::class,
+        'maintenance'        => \dcardenasl\Ci4ApiCore\Http\Filters\MaintenanceFilter::class,
     ];
 
     /**

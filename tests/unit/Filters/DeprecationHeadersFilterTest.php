@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Filters;
 
-use App\Filters\DeprecationHeadersFilter;
 use CodeIgniter\Config\Factories;
 use CodeIgniter\HTTP\IncomingRequest;
 use CodeIgniter\HTTP\Response;
@@ -12,6 +11,7 @@ use CodeIgniter\HTTP\URI;
 use CodeIgniter\Test\CIUnitTestCase;
 use Config\Api as ApiConfig;
 use Config\App as AppConfig;
+use dcardenasl\Ci4ApiCore\Http\Filters\DeprecationHeadersFilter;
 
 /**
  * DeprecationHeadersFilter Unit Tests

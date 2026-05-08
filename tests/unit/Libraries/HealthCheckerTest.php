@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Libraries;
 
-use App\Libraries\Monitoring\HealthChecker;
 use CodeIgniter\Test\CIUnitTestCase;
 use CodeIgniter\Test\DatabaseTestTrait;
+use dcardenasl\Ci4ApiCore\Monitoring\HealthChecker;
 
 /**
  * HealthChecker Tests

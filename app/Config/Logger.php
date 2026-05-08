@@ -82,7 +82,7 @@ class Logger extends BaseConfig
          * Monolog Handler (JSON Structured Logging + Sentry)
          * --------------------------------------------------------------------
          */
-        \App\Libraries\Logging\MonologHandler::class => [
+        \dcardenasl\Ci4ApiCore\Logging\MonologHandler::class => [
             'handles' => [
                 'critical',
                 'alert',

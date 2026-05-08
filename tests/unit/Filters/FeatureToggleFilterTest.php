@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Filters;
 
-use App\Filters\FeatureToggleFilter;
 use CodeIgniter\HTTP\IncomingRequest;
 use CodeIgniter\Test\CIUnitTestCase;
 use Config\Services;
+use dcardenasl\Ci4ApiCore\Http\Filters\FeatureToggleFilter;
 
 class FeatureToggleFilterTest extends CIUnitTestCase
 {

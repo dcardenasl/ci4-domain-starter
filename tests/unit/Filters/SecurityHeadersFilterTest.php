@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Filters;
 
-use App\Filters\SecurityHeadersFilter;
 use CodeIgniter\HTTP\IncomingRequest;
 use CodeIgniter\HTTP\Response;
 use CodeIgniter\HTTP\URI;
 use CodeIgniter\Test\CIUnitTestCase;
+use dcardenasl\Ci4ApiCore\Http\Filters\SecurityHeadersFilter;
 
 /**
  * SecurityHeadersFilter Unit Tests

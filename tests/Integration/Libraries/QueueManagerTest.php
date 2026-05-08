@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Integration\Libraries;
 
-use App\Libraries\Queue\Job;
-use App\Libraries\Queue\QueueManager;
 use CodeIgniter\Test\CIUnitTestCase;
 use CodeIgniter\Test\DatabaseTestTrait;
 use Config\Database;
+use dcardenasl\Ci4ApiCore\Queue\Job;
+use dcardenasl\Ci4ApiCore\Queue\QueueManager;
 
 class QueueManagerTest extends CIUnitTestCase
 {
