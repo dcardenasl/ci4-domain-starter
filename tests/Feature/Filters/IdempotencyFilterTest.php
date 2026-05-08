@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Filters;
 
-use App\Filters\IdempotencyFilter;
+use dcardenasl\Ci4ApiCore\Http\Filters\IdempotencyFilter;
 use Tests\Support\ApiTestCase;
 
 /**
