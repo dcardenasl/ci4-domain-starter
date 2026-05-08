@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Repositories\System;
 
-use App\Interfaces\System\AuditRepositoryInterface;
-use App\Repositories\BaseRepository;
+use dcardenasl\Ci4ApiCore\Repositories\AuditRepositoryInterface;
+use dcardenasl\Ci4ApiCore\Repositories\BaseRepository;
 
 /**
  * Audit Repository Implementation
