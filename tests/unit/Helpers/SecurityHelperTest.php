@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Tests\Unit\Helpers;
 
 use CodeIgniter\Test\CIUnitTestCase;
-use dcardenasl\Ci4ApiCore\Exceptions\BadRequestException;
+use dcardenasl\Ci4ApiCore\Security\Hasher;
+use dcardenasl\Ci4ApiCore\Security\Token;
 
 /**
- * Security Helper Tests
+ * Security utility tests using the namespaced classes (Token, Hasher).
+ * The procedural security.php helper was removed in ci4-api-core v0.3.0.
  */
 class SecurityHelperTest extends CIUnitTestCase
 {
@@ -18,7 +20,7 @@ class SecurityHelperTest extends CIUnitTestCase
         helper('security');
     }
 
-    // ==================== sanitize_filename() TESTS ====================
+    // ==================== sanitize_filename() (CI4 built-in) TESTS ====================
 
     public function testSanitizeFilenameAllowsValidFilename(): void
     {
@@ -37,112 +39,25 @@ class SecurityHelperTest extends CIUnitTestCase
         }
     }
 
-    public function testSanitizeFilenameBlocksPathTraversalWithDoubleDots(): void
+    public function testSanitizeFilenameStripsPathTraversalWithDoubleDots(): void
     {
-        $this->expectException(BadRequestException::class);
+        $result = sanitize_filename('../etc/passwd');
 
-        sanitize_filename('../etc/passwd');
+        $this->assertStringNotContainsString('../', $result);
     }
 
-    public function testSanitizeFilenameBlocksPathTraversalInMiddle(): void
+    public function testSanitizeFilenameStripsDirectorySeparatorInStrictMode(): void
     {
-        $this->expectException(BadRequestException::class);
+        $result = sanitize_filename('subdir/file.txt');
 
-        sanitize_filename('uploads/../../../etc/passwd');
+        $this->assertStringNotContainsString('/', $result);
     }
 
-    public function testSanitizeFilenameBlocksBackslashPathTraversal(): void
+    public function testSanitizeFilenameWithRelativePathAllowsSlashes(): void
     {
-        $this->expectException(BadRequestException::class);
+        $result = sanitize_filename('uploads/user/file.txt', true);
 
-        sanitize_filename('..\\windows\\system32\\config');
-    }
-
-    public function testSanitizeFilenameBlocksDirectorySeparator(): void
-    {
-        $this->expectException(BadRequestException::class);
-
-        sanitize_filename('subdir/file.txt');
-    }
-
-    public function testSanitizeFilenameBlocksAbsolutePath(): void
-    {
-        $this->expectException(BadRequestException::class);
-
-        sanitize_filename('/etc/passwd');
-    }
-
-    public function testSanitizeFilenameBlocksPhpExtension(): void
-    {
-        $this->expectException(BadRequestException::class);
-
-        sanitize_filename('malicious.php');
-    }
-
-    public function testSanitizeFilenameBlocksPharExtension(): void
-    {
-        $this->expectException(BadRequestException::class);
-
-        sanitize_filename('exploit.phar');
-    }
-
-    public function testSanitizeFilenameBlocksPhtmlExtension(): void
-    {
-        $this->expectException(BadRequestException::class);
-
-        sanitize_filename('backdoor.phtml');
-    }
-
-    public function testSanitizeFilenameBlocksShellScripts(): void
-    {
-        $dangerousFiles = ['script.sh', 'run.bat', 'cmd.exe', 'program.com'];
-
-        foreach ($dangerousFiles as $filename) {
-            try {
-                sanitize_filename($filename);
-                $this->fail("Expected BadRequestException for {$filename}");
-            } catch (BadRequestException $e) {
-                $this->assertEquals('Invalid file type', $e->getMessage());
-            }
-        }
-    }
-
-    public function testSanitizeFilenameBlocksCaseVariationsOfDangerousExtensions(): void
-    {
-        $this->expectException(BadRequestException::class);
-
-        sanitize_filename('hack.PHP');
-    }
-
-    public function testSanitizeFilenameReplacesSpecialCharacters(): void
-    {
-        $result = sanitize_filename('file name with spaces.txt');
-
-        $this->assertEquals('file_name_with_spaces.txt', $result);
-    }
-
-    public function testSanitizeFilenameBlocksConsecutiveDotsForSecurity(): void
-    {
-        // Consecutive dots are blocked as they can be used for path traversal obfuscation
-        $this->expectException(BadRequestException::class);
-
-        sanitize_filename('file...txt');
-    }
-
-    public function testSanitizeFilenameBlocksLeadingDots(): void
-    {
-        // Leading dots can indicate hidden files or path traversal
-        $this->expectException(BadRequestException::class);
-
-        sanitize_filename('...file.txt');
-    }
-
-    public function testSanitizeFilenameAllowsSingleLeadingDot(): void
-    {
-        // Single leading dot for hidden files should be trimmed to prevent confusion
-        $result = sanitize_filename('.htaccess');
-
-        $this->assertEquals('htaccess', $result);
+        $this->assertEquals('uploads/user/file.txt', $result);
     }
 
     public function testSanitizeFilenameAllowsUnderscoresAndDashes(): void
@@ -159,110 +74,89 @@ class SecurityHelperTest extends CIUnitTestCase
         $this->assertEquals('Document123.txt', $result);
     }
 
-    public function testSanitizeFilenameWithRelativePathAllowsSlashes(): void
-    {
-        $result = sanitize_filename('uploads/user/file.txt', true);
-
-        $this->assertEquals('uploads/user/file.txt', $result);
-    }
-
-    public function testSanitizeFilenameWithRelativePathStillNormalizesBackslashes(): void
-    {
-        $result = sanitize_filename('uploads\\user\\file.txt', true);
-
-        $this->assertEquals('uploads/user/file.txt', $result);
-    }
-
-    public function testSanitizeFilenameWithRelativePathStillBlocksDangerousExtensions(): void
-    {
-        $this->expectException(BadRequestException::class);
-
-        sanitize_filename('uploads/script.php', true);
-    }
-
-    // ==================== generate_token() TESTS ====================
+    // ==================== Token::generate() TESTS ====================
 
     public function testGenerateTokenReturnsHexString(): void
     {
-        $token = generate_token();
+        $token = Token::generate();
 
         $this->assertMatchesRegularExpression('/^[a-f0-9]+$/', $token);
     }
 
     public function testGenerateTokenDefaultsTo64Characters(): void
     {
-        $token = generate_token();
+        $token = Token::generate();
 
         $this->assertEquals(64, strlen($token)); // 32 bytes = 64 hex chars
     }
 
     public function testGenerateTokenAcceptsCustomLength(): void
     {
-        $token = generate_token(16);
+        $token = Token::generate(16);
 
         $this->assertEquals(32, strlen($token)); // 16 bytes = 32 hex chars
     }
 
     public function testGenerateTokenReturnsUniqueValues(): void
     {
-        $token1 = generate_token();
-        $token2 = generate_token();
+        $token1 = Token::generate();
+        $token2 = Token::generate();
 
         $this->assertNotEquals($token1, $token2);
     }
 
-    // ==================== hash_password() TESTS ====================
+    // ==================== Hasher::password() TESTS ====================
 
     public function testHashPasswordReturnsHash(): void
     {
-        $hash = hash_password('MyPassword123!');
+        $hash = Hasher::password('MyPassword123!');
 
         $this->assertNotEquals('MyPassword123!', $hash);
-        $this->assertStringStartsWith('$2y$', $hash); // bcrypt identifier
+        $this->assertStringStartsWith('$2y$', $hash);
     }
 
     public function testHashPasswordVerifiesCorrectly(): void
     {
         $password = 'SecurePass456!';
-        $hash = hash_password($password);
+        $hash = Hasher::password($password);
 
         $this->assertTrue(password_verify($password, $hash));
     }
 
     public function testHashPasswordRejectsDifferentPassword(): void
     {
-        $hash = hash_password('CorrectPassword');
+        $hash = Hasher::password('CorrectPassword');
 
         $this->assertFalse(password_verify('WrongPassword', $hash));
     }
 
-    // ==================== constant_time_compare() TESTS ====================
+    // ==================== Token::constantTimeCompare() TESTS ====================
 
     public function testConstantTimeCompareReturnsTrueForEqualStrings(): void
     {
-        $result = constant_time_compare('secret123', 'secret123');
+        $result = Token::constantTimeCompare('secret123', 'secret123');
 
         $this->assertTrue($result);
     }
 
     public function testConstantTimeCompareReturnsFalseForDifferentStrings(): void
     {
-        $result = constant_time_compare('secret123', 'secret456');
+        $result = Token::constantTimeCompare('secret123', 'secret456');
 
         $this->assertFalse($result);
     }
 
     public function testConstantTimeCompareIsCaseSensitive(): void
     {
-        $result = constant_time_compare('Secret', 'secret');
+        $result = Token::constantTimeCompare('Secret', 'secret');
 
         $this->assertFalse($result);
     }
 
     public function testConstantTimeCompareHandlesEmptyStrings(): void
     {
-        $this->assertTrue(constant_time_compare('', ''));
-        $this->assertFalse(constant_time_compare('value', ''));
-        $this->assertFalse(constant_time_compare('', 'value'));
+        $this->assertTrue(Token::constantTimeCompare('', ''));
+        $this->assertFalse(Token::constantTimeCompare('value', ''));
+        $this->assertFalse(Token::constantTimeCompare('', 'value'));
     }
 }
