@@ -32,11 +32,15 @@ class GenerateSwagger extends BaseCommand
             // Write to file
             file_put_contents($outputPath, $openapi->toJson());
 
-            // Calculate statistics
-            $endpointCount = count($openapi->paths ?? []);
-            $schemaCount = count($openapi->components->schemas ?? []);
-            $responseCount = count($openapi->components->responses ?? []);
-            $requestBodyCount = count($openapi->components->requestBodies ?? []);
+            // Calculate statistics (components properties may be UNDEFINED sentinel when empty)
+            $paths = $openapi->paths ?? [];
+            $schemas = is_array($openapi->components->schemas ?? null) ? $openapi->components->schemas : [];
+            $responses = is_array($openapi->components->responses ?? null) ? $openapi->components->responses : [];
+            $requestBodies = is_array($openapi->components->requestBodies ?? null) ? $openapi->components->requestBodies : [];
+            $endpointCount = count($paths);
+            $schemaCount = count($schemas);
+            $responseCount = count($responses);
+            $requestBodyCount = count($requestBodies);
 
             CLI::write('OpenAPI documentation generated successfully!', 'green');
             CLI::write('Location: ' . $outputPath, 'green');
