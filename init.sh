@@ -142,6 +142,9 @@ if [ "$SKIP_DB" = false ]; then
   print_ok "Migrations applied"
 fi
 
+print_header "Validating ci4-api-core service wiring"
+php spark core:check || { print_error "Service wiring incomplete. Fix app/Config/Services.php before continuing."; exit 1; }
+
 # ---------------------------------------------------------------------------
 # Sync permissions to hub
 # ---------------------------------------------------------------------------
