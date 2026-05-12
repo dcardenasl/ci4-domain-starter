@@ -89,7 +89,7 @@
             "dist": {
                 "type": "path",
                 "url": "../ci4-api-core",
-                "reference": "1fba7a444242636a80bd7f3cec6e29570468b592"
+                "reference": "c794ad0138211ebabc8a3281849ec641daf2c573"
             },
             "require": {
                 "codeigniter4/framework": "^4.6",
@@ -97,6 +97,7 @@
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^3.95",
+                "infection/infection": "^0.29",
                 "monolog/monolog": "^3.5",
                 "phpstan/phpstan": "^2.0",
                 "phpunit/phpunit": "^10.5",
@@ -112,11 +113,14 @@
             "extra": {
                 "codeigniter4": {
                     "commands": [
-                        "dcardenasl\\Ci4ApiCore\\Commands\\CoreCheck"
+                        "dcardenasl\\Ci4ApiCore\\Commands\\CoreCheck",
+                        "dcardenasl\\Ci4ApiCore\\Commands\\CoreInstall",
+                        "dcardenasl\\Ci4ApiCore\\Commands\\EnvCheck",
+                        "dcardenasl\\Ci4ApiCore\\Commands\\QueueWork"
                     ]
                 },
                 "branch-alias": {
-                    "dev-main": "0.3.x-dev"
+                    "dev-main": "0.4.x-dev"
                 }
             },
             "autoload": {
@@ -139,6 +143,9 @@
                 "analyse": [
                     "phpstan analyse --level=8 --memory-limit=1G"
                 ],
+                "analyse:baseline": [
+                    "phpstan analyse --level=8 --memory-limit=1G --generate-baseline=phpstan-baseline.neon"
+                ],
                 "cs-check": [
                     "vendor/bin/php-cs-fixer fix --dry-run --diff --no-interaction"
                 ],
@@ -147,6 +154,9 @@
                 ],
                 "security": [
                     "composer audit --no-dev --locked"
+                ],
+                "mutate": [
+                    "infection --min-msi=60 --min-covered-msi=70 -j4"
                 ],
                 "quality": [
                     "@analyse",
@@ -168,11 +178,19 @@
             "homepage": "https://github.com/dcardenasl/ci4-api-core",
             "keywords": [
                 "api",
+                "audit",
                 "base-classes",
+                "ci4",
+                "codeigniter",
                 "codeigniter4",
                 "dto",
+                "dto-first",
                 "foundation",
-                "rest"
+                "queue",
+                "repository-pattern",
+                "rest",
+                "rest-api",
+                "service-layer"
             ],
             "support": {
                 "issues": "https://github.com/dcardenasl/ci4-api-core/issues",
