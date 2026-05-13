@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3eacde06e74db9751d65b6af482a7751",
+    "content-hash": "f003653cf71033671300765975c8c88c",
     "packages": [
         {
             "name": "codeigniter4/framework",
@@ -85,11 +85,17 @@
         },
         {
             "name": "dcardenasl/ci4-api-core",
-            "version": "dev-main",
+            "version": "v0.4.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dcardenasl/ci4-api-core.git",
+                "reference": "5cae68d6263f848fe4a7b5b715b41c7ddecccc27"
+            },
             "dist": {
-                "type": "path",
-                "url": "../ci4-api-core",
-                "reference": "c794ad0138211ebabc8a3281849ec641daf2c573"
+                "type": "zip",
+                "url": "https://api.github.com/repos/dcardenasl/ci4-api-core/zipball/5cae68d6263f848fe4a7b5b715b41c7ddecccc27",
+                "reference": "5cae68d6263f848fe4a7b5b715b41c7ddecccc27",
+                "shasum": ""
             },
             "require": {
                 "codeigniter4/framework": "^4.6",
@@ -111,6 +117,9 @@
             },
             "type": "library",
             "extra": {
+                "branch-alias": {
+                    "dev-main": "0.4.x-dev"
+                },
                 "codeigniter4": {
                     "commands": [
                         "dcardenasl\\Ci4ApiCore\\Commands\\CoreCheck",
@@ -118,53 +127,17 @@
                         "dcardenasl\\Ci4ApiCore\\Commands\\EnvCheck",
                         "dcardenasl\\Ci4ApiCore\\Commands\\QueueWork"
                     ]
-                },
-                "branch-alias": {
-                    "dev-main": "0.4.x-dev"
                 }
             },
             "autoload": {
-                "psr-4": {
-                    "dcardenasl\\Ci4ApiCore\\": "src/"
-                },
                 "files": [
                     "src/Helpers/date.php"
-                ]
-            },
-            "autoload-dev": {
+                ],
                 "psr-4": {
-                    "Tests\\": "tests/"
+                    "dcardenasl\\Ci4ApiCore\\": "src/"
                 }
             },
-            "scripts": {
-                "test": [
-                    "phpunit"
-                ],
-                "analyse": [
-                    "phpstan analyse --level=8 --memory-limit=1G"
-                ],
-                "analyse:baseline": [
-                    "phpstan analyse --level=8 --memory-limit=1G --generate-baseline=phpstan-baseline.neon"
-                ],
-                "cs-check": [
-                    "vendor/bin/php-cs-fixer fix --dry-run --diff --no-interaction"
-                ],
-                "cs-fix": [
-                    "vendor/bin/php-cs-fixer fix --no-interaction"
-                ],
-                "security": [
-                    "composer audit --no-dev --locked"
-                ],
-                "mutate": [
-                    "infection --min-msi=60 --min-covered-msi=70 -j4"
-                ],
-                "quality": [
-                    "@analyse",
-                    "@cs-check",
-                    "@security",
-                    "@test"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -178,28 +151,17 @@
             "homepage": "https://github.com/dcardenasl/ci4-api-core",
             "keywords": [
                 "api",
-                "audit",
                 "base-classes",
-                "ci4",
-                "codeigniter",
                 "codeigniter4",
                 "dto",
-                "dto-first",
                 "foundation",
-                "queue",
-                "repository-pattern",
-                "rest",
-                "rest-api",
-                "service-layer"
+                "rest"
             ],
             "support": {
                 "issues": "https://github.com/dcardenasl/ci4-api-core/issues",
                 "source": "https://github.com/dcardenasl/ci4-api-core"
             },
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
+            "time": "2026-05-10T07:26:34+00:00"
         },
         {
             "name": "guzzlehttp/psr7",
@@ -5878,9 +5840,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "dcardenasl/ci4-api-core": 20
-    },
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

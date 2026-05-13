@@ -6,13 +6,13 @@
     "require": {
         "php": "^8.2",
         "codeigniter4/framework": "^4.5",
-        "dcardenasl/ci4-api-core": "dev-main",
+        "dcardenasl/ci4-api-core": "^0.4.1",
         "monolog/monolog": "^3.5",
         "sentry/sentry": "^4.6",
         "zircote/swagger-php": "^6.0"
     },
     "repositories": [
-        { "type": "path", "url": "../ci4-api-core", "options": { "symlink": true } }
+        { "type": "path", "url": "../ci4-api-core", "options": { "symlink": true }, "canonical": false }
     ],
     "require-dev": {
         "fakerphp/faker": "^1.9",
