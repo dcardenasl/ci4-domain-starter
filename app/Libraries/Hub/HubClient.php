@@ -7,33 +7,48 @@ namespace App\Libraries\Hub;
 use CodeIgniter\Cache\CacheInterface;
 use CodeIgniter\HTTP\CURLRequest;
 use Config\Hub as HubConfig;
+use dcardenasl\Ci4ApiCore\Exceptions\ApiException;
+use dcardenasl\Ci4ApiCore\Exceptions\AuthenticationException;
+use dcardenasl\Ci4ApiCore\Exceptions\AuthorizationException;
+use dcardenasl\Ci4ApiCore\Exceptions\ConflictException;
+use dcardenasl\Ci4ApiCore\Exceptions\ServiceUnavailableException;
+use dcardenasl\Ci4ApiCore\Exceptions\ValidationException;
+use dcardenasl\Ci4ApiCore\Http\Client\AbstractServiceClient;
 
 /**
  * HTTP client for the central hub (ci4-api-starter).
  *
  * Responsibilities:
- *  - Validate user JWTs via POST /api/v1/auth/introspect (cached by token hash)
- *  - Obtain a service token via POST /api/v1/auth/service-token (cached until exp)
- *  - Register this domain app's permissions via POST /api/v1/iam/permissions
+ *  - Validate user JWTs via POST `Config\Hub::$introspectPath` (cached by token hash)
+ *  - Obtain a service token via POST `Config\Hub::$serviceTokenPath` (cached until exp)
+ *  - Register this domain app's permissions via POST `Config\Hub::$permissionsPath`
  *
- * The service token is reused across requests until it nears expiry (controlled
- * by `Hub::serviceTokenSafetyMargin`). Introspection results are cached by token
- * hash for `Hub::introspectCacheTtl` seconds.
+ * Inherits retry, timeout, header forwarding and canonical-error mapping from
+ * {@see AbstractServiceClient}. Endpoint paths live in `Config\Hub` so a hub
+ * API version bump is a one-config change.
  */
-class HubClient
+class HubClient extends AbstractServiceClient
 {
     private const SERVICE_TOKEN_CACHE_KEY = 'hub_service_token';
     private const INTROSPECT_CACHE_PREFIX = 'hub_introspect_';
 
     public function __construct(
         private readonly HubConfig $config,
-        private readonly CURLRequest $http,
+        CURLRequest $http,
         private readonly CacheInterface $cache,
     ) {
+        parent::__construct(
+            http: $http,
+            baseUrl: $this->config->url,
+            timeoutSeconds: $this->config->httpTimeout,
+        );
     }
 
     /**
-     * Validate a JWT against the hub. Cached by SHA-256(token).
+     * Validate a JWT against the hub. Cached by SHA-256(token). Any upstream
+     * failure (network, 4xx, 5xx) is downgraded to an `invalid` result — the
+     * domain app never propagates introspect errors as exceptions; a 401 to
+     * the client is the correct user-facing outcome.
      */
     public function introspect(string $token): IntrospectResult
     {
@@ -42,31 +57,22 @@ class HubClient
         }
 
         $cacheKey = self::INTROSPECT_CACHE_PREFIX . hash('sha256', $token);
-        $cached = $this->cache->get($cacheKey);
+        $cached   = $this->cache->get($cacheKey);
         if (is_array($cached)) {
             return IntrospectResult::fromArray($cached);
         }
 
         try {
-            $response = $this->http->post($this->endpoint('/api/v1/auth/introspect'), [
+            $payload = $this->request('POST', $this->config->introspectPath, [
                 'headers' => $this->appKeyHeaders(),
                 'json'    => ['token' => $token],
-                'timeout' => $this->config->httpTimeout,
-                'http_errors' => false,
             ]);
-        } catch (\Throwable $e) {
-            log_message('error', '[HubClient] introspect failed: ' . $e->getMessage());
+        } catch (ApiException) {
             return IntrospectResult::invalid('hub_unreachable');
         }
 
-        if ($response->getStatusCode() !== 200) {
-            return IntrospectResult::invalid('hub_unreachable');
-        }
+        $result = IntrospectResult::fromArray($payload);
 
-        $payload = $this->decodeData((string) $response->getBody());
-        $result  = IntrospectResult::fromArray($payload);
-
-        // Cache only positive results — invalid tokens shouldn't poison the cache.
         if ($result->valid) {
             $this->cache->save($cacheKey, $payload, $this->config->introspectCacheTtl);
         }
@@ -76,6 +82,8 @@ class HubClient
 
     /**
      * Return a valid service token for this domain app, refreshing if near expiry.
+     *
+     * @throws ServiceUnavailableException When the hub is unreachable or returns a malformed payload.
      */
     public function getServiceToken(): string
     {
@@ -88,30 +96,15 @@ class HubClient
             }
         }
 
-        try {
-            $response = $this->http->post($this->endpoint('/api/v1/auth/service-token'), [
-                'headers' => $this->appKeyHeaders(),
-                'timeout' => $this->config->httpTimeout,
-                'http_errors' => false,
-            ]);
-        } catch (\Throwable $e) {
-            throw new \RuntimeException('Hub unreachable during service-token request: ' . $e->getMessage(), 0, $e);
-        }
+        $payload = $this->request('POST', $this->config->serviceTokenPath, [
+            'headers' => $this->appKeyHeaders(),
+        ]);
 
-        if ($response->getStatusCode() !== 200) {
-            throw new \RuntimeException(sprintf(
-                'Hub returned %d for /auth/service-token: %s',
-                $response->getStatusCode(),
-                substr((string) $response->getBody(), 0, 200)
-            ));
-        }
-
-        $payload = $this->decodeData((string) $response->getBody());
-        $token   = (string) ($payload['access_token'] ?? '');
-        $ttl     = (int)    ($payload['expires_in']   ?? 0);
+        $token = is_string($payload['access_token'] ?? null) ? $payload['access_token'] : '';
+        $ttl   = is_numeric($payload['expires_in'] ?? null) ? (int) $payload['expires_in'] : 0;
 
         if ($token === '' || $ttl <= 0) {
-            throw new \RuntimeException('Hub returned malformed service-token payload.');
+            throw new ServiceUnavailableException('Hub returned malformed service-token payload.');
         }
 
         $expiresAt = time() + $ttl;
@@ -125,13 +118,17 @@ class HubClient
 
     /**
      * Register a single permission in the hub. Idempotent: returns false if the
-     * permission already existed (HTTP 409 / 422-on-duplicate), true on create.
+     * permission already existed (HTTP 409 or 422-on-duplicate), true on create.
      *
-     * Requires a superadmin JWT — the hub gates `/api/v1/iam/permissions` on
+     * Requires a superadmin JWT — the hub gates `permissionsPath` on
      * `iam.superadmin-access`, which service tokens cannot satisfy. Pass the
      * token explicitly; callers obtain it out-of-band (CLI flag / env var).
      *
      * @param array{code: string, resource: string, action: string, description?: string} $permission
+     *
+     * @throws AuthenticationException When the admin token is missing or invalid.
+     * @throws AuthorizationException When the admin token lacks `iam.superadmin-access`.
+     * @throws ServiceUnavailableException When the hub is unreachable or fails unexpectedly.
      */
     public function registerPermission(array $permission, string $bearerToken): bool
     {
@@ -144,41 +141,17 @@ class HubClient
         ];
 
         try {
-            $response = $this->http->post($this->endpoint('/api/v1/iam/permissions'), [
+            $this->request('POST', $this->config->permissionsPath, [
                 'headers' => array_merge($this->appKeyHeaders(), [
                     'Authorization' => 'Bearer ' . $bearerToken,
                 ]),
-                'json'    => $body,
-                'timeout' => $this->config->httpTimeout,
-                'http_errors' => false,
+                'json' => $body,
             ]);
-        } catch (\Throwable $e) {
-            throw new \RuntimeException('Hub unreachable during register-permission: ' . $e->getMessage(), 0, $e);
-        }
 
-        $status = $response->getStatusCode();
-        if ($status === 201 || $status === 200) {
             return true;
-        }
-
-        if ($status === 409 || $status === 422) {
-            // Treat as already-registered (idempotent).
+        } catch (ConflictException | ValidationException) {
             return false;
         }
-
-        if ($status === 401 || $status === 403) {
-            throw new \RuntimeException(sprintf(
-                'Hub rejected admin token: HTTP %d — token missing iam.superadmin-access (or expired/invalid).',
-                $status
-            ));
-        }
-
-        throw new \RuntimeException(sprintf(
-            'Hub returned %d for register-permission %s: %s',
-            $status,
-            $permission['code'],
-            substr((string) $response->getBody(), 0, 200)
-        ));
     }
 
     /**
@@ -188,32 +161,6 @@ class HubClient
     {
         return [
             'X-App-Key' => $this->config->apiKey,
-            'Accept'    => 'application/json',
         ];
-    }
-
-    private function endpoint(string $path): string
-    {
-        return rtrim($this->config->url, '/') . $path;
-    }
-
-    /**
-     * Decode an envelope of shape `{success, data, ...}` and return data, or
-     * the raw body if it isn't wrapped.
-     *
-     * @return array<string, mixed>
-     */
-    private function decodeData(string $body): array
-    {
-        $decoded = json_decode($body, true);
-        if (! is_array($decoded)) {
-            return [];
-        }
-
-        if (array_key_exists('data', $decoded) && is_array($decoded['data'])) {
-            return $decoded['data'];
-        }
-
-        return $decoded;
     }
 }

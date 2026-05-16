@@ -49,6 +49,14 @@ class Hub extends BaseConfig
     public int $httpTimeout = 5;
 
     /**
+     * Hub endpoint paths. Override here to point at a different hub API version
+     * without forking the HubClient.
+     */
+    public string $introspectPath   = '/api/v1/auth/introspect';
+    public string $serviceTokenPath = '/api/v1/auth/service-token';
+    public string $permissionsPath  = '/api/v1/iam/permissions';
+
+    /**
      * Optional superadmin JWT for setup-only operations (currently
      * `php spark domain:sync-permissions`). Empty by default. The CLI flag
      * `--admin-token=<jwt>` takes precedence over this value.
