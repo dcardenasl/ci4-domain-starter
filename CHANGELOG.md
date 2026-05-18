@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **`dcardenasl/ci4-api-core` bumped from `^0.4.1` to `^0.5.0`** — picks up `AbstractServiceClient` and the outbound HTTP config knobs introduced in core v0.5.0. The domain app's `HubClient` can migrate onto the shared base class in a follow-up.
+- **`codeigniter4/framework` constraint bumped from `^4.5` to `^4.7`** — locks to the current stable CI4 (v4.7.2); the effective floor was already 4.6 (transitively via `ci4-api-core`). README CI4 badge updated from 4.5 to 4.7.
+
+### Docs
+
+- **README** — corrected the stale paragraph claiming the base classes "live in-tree and will be extracted to `dcardenasl/ci4-api-core` (DOM-104)". The extraction already shipped in v1.0.0; the README now states the base classes are consumed from the `dcardenasl\Ci4ApiCore\…` namespace.
+
 ## [1.0.0] — 2026-05-13
 
 First stable release. This version formalises the commitment to semantic versioning — the 0.1.0 entry below is preserved as historical context for the pre-release codebase but was never tagged or published. v1.0.0 ships the runtime foundation, hub auth delegation, scaffolding overrides, the example `Items` module, the full hardening surface inherited from `dcardenasl/ci4-api-core`, the documentation overhaul (DOM-106), and a tag-driven release workflow.

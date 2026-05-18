@@ -1,6 +1,6 @@
 # ci4-domain-starter
 
-[![CI4](https://img.shields.io/badge/CodeIgniter-4.5-EF4223)](https://codeigniter.com/)
+[![CI4](https://img.shields.io/badge/CodeIgniter-4.7-EF4223)](https://codeigniter.com/)
 [![PHP](https://img.shields.io/badge/PHP-8.2%2B-777BB4)](https://www.php.net/)
 [![PHPStan](https://img.shields.io/badge/PHPStan-level%208-2563EB)](phpstan.neon)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
@@ -166,7 +166,7 @@ flowchart LR
 
 Each step has one job: `RequestDTO` validates inputs at construction, `Service` runs pure business logic (DTO in, DTO out, transactional via `HandlesTransactions`), `Model` does persistence, `Entity` is the row, `ResponseDTO` is the contract emitted to clients. `ApiController::handleRequest()` orchestrates the wiring with no boilerplate.
 
-The base classes (`ApiController`, `BaseCrudService`, `BaseRequestDTO`, `BaseAuditableModel`) were cloned from `ci4-api-starter` at v0.1 and currently live in-tree. They will be extracted to `dcardenasl/ci4-api-core` once the divergence between hub and domain stabilises (see `TASKS.md` ⇒ DOM-104).
+The base classes (`ApiController`, `BaseCrudService`, `BaseRequestDTO`, `BaseAuditableModel`, the audit chain, the `HandlesTransactions` trait, the `ApiException` family) live in the [`dcardenasl/ci4-api-core`](https://packagist.org/packages/dcardenasl/ci4-api-core) package and are imported from the `dcardenasl\Ci4ApiCore\…` namespace. The domain template only contains domain-specific code; runtime upgrades happen by bumping the package constraint in `composer.json`.
 
 For the full architecture and contracts:
 

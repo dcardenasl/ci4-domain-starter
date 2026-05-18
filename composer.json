@@ -5,7 +5,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
-        "codeigniter4/framework": "^4.5",
+        "codeigniter4/framework": "^4.7",
         "dcardenasl/ci4-api-core": "^0.5.0",
         "monolog/monolog": "^3.5",
         "sentry/sentry": "^4.6",
