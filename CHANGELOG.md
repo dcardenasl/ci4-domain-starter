@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] — 2026-05-17
+
 ### Changed
 
 - **`dcardenasl/ci4-api-core` bumped from `^0.4.1` to `^0.5.0`** — picks up `AbstractServiceClient` and the outbound HTTP config knobs introduced in core v0.5.0. The domain app's `HubClient` can migrate onto the shared base class in a follow-up.
