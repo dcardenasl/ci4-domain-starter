@@ -75,7 +75,7 @@
         "docs-i18n-check": "php scripts/docs-i18n-parity-check.php",
         "arch-drift": [
             "@swagger-validate",
-            "phpunit tests/Unit/Architecture --configuration=phpunit.xml --no-coverage --testdox",
+            "phpunit --testsuite=Architecture --configuration=phpunit.xml --no-coverage --testdox",
             "@i18n-check",
             "@docs-i18n-check"
         ],
