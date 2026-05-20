@@ -1,0 +1,607 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "CodeIgniter 4 API Starter",
+        "description": "RESTful API built with CodeIgniter 4, featuring JWT authentication, standardized responses, and comprehensive documentation.",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8080",
+            "description": "Local development server"
+        }
+    ],
+    "paths": {
+        "/api/v1/example/items": {
+            "get": {
+                "tags": [
+                    "Example"
+                ],
+                "summary": "List Items",
+                "operationId": "a9c15f362c34bdf13d604b22b481f9f5",
+                "responses": {
+                    "200": {
+                        "description": "List retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/ItemResponse"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Example"
+                ],
+                "summary": "Create new Item",
+                "operationId": "040e356e83903d42ebfe0d5ee257d19d",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ItemCreateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created successfully"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/api/v1/example/items/{id}": {
+            "get": {
+                "tags": [
+                    "Example"
+                ],
+                "summary": "Get Item by ID",
+                "operationId": "d69e979e9a4590f88f36d039d109b255",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ItemResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Example"
+                ],
+                "summary": "Update existing Item",
+                "operationId": "7369cb73cf024be82e3f0a1103404728",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ItemUpdateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ItemResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Example"
+                ],
+                "summary": "Delete Item by ID",
+                "operationId": "dd073e61a4304117c7d88d18d0844794",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Deleted successfully"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                }
+            }
+        },
+        "/health": {
+            "get": {
+                "tags": [
+                    "Health"
+                ],
+                "summary": "Health check",
+                "operationId": "8134f87e7bbe4107dc228a3b8d62d619",
+                "responses": {
+                    "200": {
+                        "description": "System healthy",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "healthy"
+                                        },
+                                        "timestamp": {
+                                            "type": "string"
+                                        },
+                                        "checks": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "System unhealthy or monitoring disabled"
+                    }
+                }
+            }
+        },
+        "/ping": {
+            "get": {
+                "tags": [
+                    "Health"
+                ],
+                "summary": "Ping",
+                "operationId": "dbed0a220ea82e65e99701b5a0827c7e",
+                "responses": {
+                    "200": {
+                        "description": "Service reachable",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "ok"
+                                        },
+                                        "timestamp": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ready": {
+            "get": {
+                "tags": [
+                    "Health"
+                ],
+                "summary": "Readiness check",
+                "operationId": "e5d2e3dea8c7b5d8c0113dce7beb0d09",
+                "responses": {
+                    "200": {
+                        "description": "Ready to serve",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "ready"
+                                        },
+                                        "timestamp": {
+                                            "type": "string"
+                                        },
+                                        "database": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Not ready"
+                    }
+                }
+            }
+        },
+        "/live": {
+            "get": {
+                "tags": [
+                    "Health"
+                ],
+                "summary": "Liveness check",
+                "operationId": "7a050261f6e4cedb42617b378f1e1415",
+                "responses": {
+                    "200": {
+                        "description": "Service alive",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "alive"
+                                        },
+                                        "timestamp": {
+                                            "type": "string"
+                                        },
+                                        "uptime_seconds": {
+                                            "type": "integer",
+                                            "example": 12345
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "AuthToken": {
+                "title": "Authentication Token",
+                "description": "JWT token with associated user data",
+                "required": [
+                    "token",
+                    "user"
+                ],
+                "properties": {
+                    "token": {
+                        "description": "JWT access token",
+                        "type": "string",
+                        "example": "eyJ0eXAiOiJKV1QiLCJhbGc..."
+                    },
+                    "user": {
+                        "description": "Authenticated user data",
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "ItemCreateRequest": {
+                "properties": {
+                    "name": {
+                        "description": "name",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "description",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "ItemIndexRequest": {},
+            "ItemUpdateRequest": {
+                "properties": {
+                    "name": {
+                        "description": "name",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "description": {
+                        "description": "description",
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "AuditResponse": {
+                "title": "Audit Response",
+                "description": "Audit log entry metadata",
+                "required": [
+                    "id",
+                    "action",
+                    "entity_type",
+                    "created_at"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "Unique log identifier",
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "action": {
+                        "description": "Action performed",
+                        "type": "string",
+                        "example": "update",
+                        "enum": [
+                            "create",
+                            "update",
+                            "delete",
+                            "login_success",
+                            "login_failure"
+                        ]
+                    },
+                    "entity_type": {
+                        "description": "Affected entity type",
+                        "type": "string",
+                        "example": "users"
+                    },
+                    "entity_id": {
+                        "description": "Affected entity ID",
+                        "type": "integer",
+                        "example": 5,
+                        "nullable": true
+                    },
+                    "old_values": {
+                        "description": "Values before the change",
+                        "type": "object",
+                        "nullable": true
+                    },
+                    "new_values": {
+                        "description": "Values after the change",
+                        "type": "object",
+                        "nullable": true
+                    },
+                    "user_id": {
+                        "description": "ID of user who performed the action",
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "user_email": {
+                        "description": "Email of user who performed the action",
+                        "type": "string",
+                        "example": "admin@example.com",
+                        "nullable": true
+                    },
+                    "user_full_name": {
+                        "description": "Full name of user who performed the action",
+                        "type": "string",
+                        "example": "Jane Doe",
+                        "nullable": true
+                    },
+                    "ip_address": {
+                        "description": "IP address of the requester",
+                        "type": "string",
+                        "example": "127.0.0.1",
+                        "nullable": true
+                    },
+                    "user_agent": {
+                        "description": "User-Agent of the requester",
+                        "type": "string",
+                        "example": "Mozilla/5.0...",
+                        "nullable": true
+                    },
+                    "result": {
+                        "description": "Execution result",
+                        "type": "string",
+                        "example": "success",
+                        "enum": [
+                            "success",
+                            "failure",
+                            "denied"
+                        ]
+                    },
+                    "severity": {
+                        "description": "Event severity",
+                        "type": "string",
+                        "example": "info",
+                        "enum": [
+                            "info",
+                            "warning",
+                            "critical"
+                        ]
+                    },
+                    "request_id": {
+                        "description": "Request correlation ID",
+                        "type": "string",
+                        "example": "req_01HZY...",
+                        "nullable": true
+                    },
+                    "metadata": {
+                        "description": "Additional sanitized metadata",
+                        "type": "object",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "description": "Log timestamp",
+                        "type": "string",
+                        "example": "2026-02-26 12:00:00"
+                    }
+                },
+                "type": "object"
+            },
+            "ItemResponse": {
+                "title": "Item Response",
+                "required": [
+                    "id",
+                    "name"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "Unique identifier",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "name",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "description",
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "description": "Creation timestamp",
+                        "type": "string",
+                        "example": "2026-02-26 12:00:00",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "description": "Last update timestamp",
+                        "type": "string",
+                        "example": "2026-02-26 12:00:00",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "responses": {
+            "UnauthorizedResponse": {
+                "description": "Unauthorized - Invalid or missing authentication token",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "properties": {
+                                "status": {
+                                    "description": "Response status",
+                                    "type": "string",
+                                    "example": "error"
+                                },
+                                "message": {
+                                    "description": "Error message (localized by Accept-Language)",
+                                    "type": "string",
+                                    "example": "Unauthorized / No autorizado"
+                                },
+                                "errors": {
+                                    "description": "Error details",
+                                    "type": "object",
+                                    "nullable": true
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "ValidationErrorResponse": {
+                "description": "Validation Error - Request data failed validation",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "properties": {
+                                "status": {
+                                    "description": "Response status",
+                                    "type": "string",
+                                    "example": "error"
+                                },
+                                "message": {
+                                    "description": "Main error message (localized by Accept-Language)",
+                                    "type": "string",
+                                    "example": "Validation failed / Validacion fallida"
+                                },
+                                "errors": {
+                                    "description": "Field-specific error messages (localized by Accept-Language)",
+                                    "type": "object",
+                                    "example": {
+                                        "email": "Localized validation message"
+                                    }
+                                },
+                                "code": {
+                                    "description": "Error code",
+                                    "type": "integer",
+                                    "example": 422,
+                                    "nullable": true
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "description": "Enter your JWT token in the format: Bearer {token}",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            },
+            "appKeyAuth": {
+                "type": "apiKey",
+                "description": "Per-application API key issued by this server, used to authenticate the calling app (no user JWT required).",
+                "name": "X-App-Key",
+                "in": "header"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Health",
+            "description": "Health and readiness endpoints"
+        },
+        {
+            "name": "Example",
+            "description": "Example"
+        }
+    ]
+}

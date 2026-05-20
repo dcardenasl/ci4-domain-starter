@@ -1,0 +1,93 @@
+version: '3.8'
+
+services:
+  # CodeIgniter 4 API Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ci4-api-app
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      - CI_ENVIRONMENT=${CI_ENVIRONMENT:-development}
+      - database.default.hostname=db
+      - database.default.database=${MYSQL_DATABASE:-ci4_api}
+      - database.default.username=${MYSQL_USER:-ci4_user}
+      - database.default.password=${MYSQL_PASSWORD}
+      - database.default.DBDriver=MySQLi
+      - database.default.port=3306
+    env_file:
+      - .env.docker
+    volumes:
+      # Mount writable directories for logs and cache
+      - ./writable:/var/www/html/writable
+      # Mount public directory for swagger.json updates
+      - ./public/swagger.json:/var/www/html/public/swagger.json
+    networks:
+      - ci4-network
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/ping"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 40s
+
+  # MySQL Database
+  db:
+    image: mysql:8.0
+    container_name: ci4-api-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-ci4_api}
+      MYSQL_USER: ${MYSQL_USER:-ci4_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3307:3306"
+    volumes:
+      # Persist database data
+      - mysql-data:/var/lib/mysql
+    networks:
+      - ci4-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+    command: --default-authentication-plugin=mysql_native_password
+
+  # phpMyAdmin (optional, for database management)
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: ci4-api-phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_USER: ${MYSQL_USER:-ci4_user}
+      PMA_PASSWORD: ${MYSQL_PASSWORD}
+      UPLOAD_LIMIT: 50M
+    networks:
+      - ci4-network
+    depends_on:
+      db:
+        condition: service_healthy
+    profiles:
+      - tools
+
+networks:
+  ci4-network:
+    driver: bridge
+    name: ci4-api-network
+
+volumes:
+  mysql-data:
+    name: ci4-mysql-data

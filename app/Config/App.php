@@ -16,7 +16,7 @@ class App extends BaseConfig
      *
      * E.g., http://example.com/
      */
-    public string $baseURL = 'http://localhost:8080/';
+    public string $baseURL = '';
 
     /**
      * Allowed Hostnames in the Site URL other than the hostname in the baseURL.
@@ -105,7 +105,7 @@ class App extends BaseConfig
      *
      * If false, no automatic detection will be performed.
      */
-    public bool $negotiateLocale = false;
+    public bool $negotiateLocale = true;
 
     /**
      * --------------------------------------------------------------------------
@@ -120,7 +120,7 @@ class App extends BaseConfig
      *
      * @var list<string>
      */
-    public array $supportedLocales = ['en'];
+    public array $supportedLocales = ['en', 'es'];
 
     /**
      * --------------------------------------------------------------------------
@@ -164,23 +164,42 @@ class App extends BaseConfig
      * Reverse Proxy IPs
      * --------------------------------------------------------------------------
      *
-     * If your server is behind a reverse proxy, you must whitelist the proxy
-     * IP addresses from which CodeIgniter should trust headers such as
-     * X-Forwarded-For or Client-IP in order to properly identify
-     * the visitor's IP address.
+     * If your server is behind a reverse proxy / load balancer, you MUST
+     * whitelist the proxy IP addresses from which CodeIgniter should trust
+     * headers such as X-Forwarded-For or X-Real-IP in order to properly
+     * identify the real visitor's IP. Without this, ThrottleFilter and audit
+     * logs will see every request coming from the proxy itself.
      *
-     * You need to set a proxy IP address or IP address with subnets and
-     * the HTTP header for the client IP address.
-     *
-     * Here are some examples:
-     *     [
-     *         '10.0.1.200'     => 'X-Forwarded-For',
-     *         '192.168.5.0/24' => 'X-Real-IP',
-     *     ]
+     * Configurable via env var `app.proxyIPs` in the form:
+     *     app.proxyIPs = '10.0.1.200=X-Forwarded-For,192.168.5.0/24=X-Real-IP'
      *
      * @var array<string, string>
      */
     public array $proxyIPs = [];
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        // Allow comma-separated `cidr=header` pairs in .env so deployments
+        // behind ALB / nginx / Cloudflare can whitelist their proxy without
+        // touching this Config class.
+        $raw = (string) (env('app.proxyIPs', '') ?? '');
+        if ($raw === '') {
+            return;
+        }
+
+        foreach (explode(',', $raw) as $pair) {
+            $pair = trim($pair);
+            if ($pair === '' || !str_contains($pair, '=')) {
+                continue;
+            }
+            [$cidr, $header] = array_map('trim', explode('=', $pair, 2));
+            if ($cidr !== '' && $header !== '') {
+                $this->proxyIPs[$cidr] = $header;
+            }
+        }
+    }
 
     /**
      * --------------------------------------------------------------------------

@@ -1,0 +1,47 @@
+includes:
+    - phpstan-baseline.neon
+
+parameters:
+    level: 8
+    paths:
+        - app/Controllers
+        - app/Services
+        - app/Models
+        - app/Libraries
+        - app/Entities
+        - app/Filters
+        - app/Interfaces
+    parallel:
+        jobSize: 20
+        processTimeout: 600.0
+        maximumNumberOfProcesses: 0
+        minimumNumberOfJobsPerProcess: 2
+        buffer: 134217728
+    excludePaths:
+        - vendor
+        - writable
+        - tests/_support (?)
+        - app/Config
+        - app/Views
+        - app/Commands
+    reportUnmatchedIgnoredErrors: false
+    treatPhpDocTypesAsCertain: false
+    # ignoreErrors limited to CI4 framework-dynamic patterns (not real bugs).
+    # Tech-debt-style errors (missingType.iterableValue, real argument.type
+    # mismatches) are captured in phpstan-baseline.neon below and shrunk over
+    # time. New errors of those kinds will fail CI.
+    ignoreErrors:
+        # CI4 helper functions (loaded globally via spark/autoloader)
+        - '#Function (esc|lang|service|helper|model|config|cache|view|is_cli|env|base_url|site_url|redirect|clean_path|log_message|old|cli|session|csrf_token|csrf_hash|csrf_field|csrf_meta|password_strength) not found#'
+        # CI4 framework constants
+        - '#Constant (APPPATH|FCPATH|ROOTPATH|WRITEPATH|ENVIRONMENT) not found#'
+        # CI4 query builder + magic methods
+        - '#Call to an undefined method CodeIgniter\\Database\\BaseBuilder::#'
+        # CI4 Entity dynamic properties (Entity uses __get/__set)
+        - '#Access to an undefined property App\\Entities\\.*::\$#'
+        # CI4 controller magic methods (request, response, etc.)
+        - '#Call to an undefined method App\\Controllers\\.*::(request|response|getVarString|getGetString|getVarInt|respondForbidden)\(\)#'
+        # Generic object access — appears when a service returns mixed-shape
+        # untyped data; should be progressively typed but not blocking.
+        - '#Call to an undefined method object::#'
+        - '#Access to an undefined property object::#'
