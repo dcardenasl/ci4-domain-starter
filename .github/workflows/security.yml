@@ -9,6 +9,9 @@ on:
     # Run every Monday at 9:00 AM UTC
     - cron: '0 9 * * 1'
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   security:
     name: Security Vulnerability Scan
@@ -26,7 +29,7 @@ jobs:
           coverage: none
 
       - name: Cache Composer packages
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: vendor
           key: ${{ runner.os }}-php-security-${{ hashFiles('**/composer.lock') }}
