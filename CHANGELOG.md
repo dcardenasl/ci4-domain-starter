@@ -7,15 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.0.0] — 2026-05-19
+## [1.0.0] — 2026-05-20
 
-First stable release. This version formalises the commitment to semantic versioning — the 0.1.0 entry below is preserved as historical context for the pre-release codebase but was never tagged or published. v1.0.0 ships the runtime foundation, hub auth delegation, scaffolding overrides, the example `Items` module, the full hardening surface inherited from `dcardenasl/ci4-api-core`, the documentation overhaul (DOM-106), a tag-driven release workflow, and dependency updates to `ci4-api-core ^0.6.0` and `codeigniter4/framework ^4.7`.
+First stable release. This version formalises the commitment to semantic versioning — the 0.1.0 entry below is preserved as historical context for the pre-release codebase but was never tagged or published. v1.0.0 ships the runtime foundation, hub auth delegation, scaffolding overrides, the example `Items` module, the full hardening surface inherited from `dcardenasl/ci4-api-core`, the documentation overhaul (DOM-106), a tag-driven release workflow, dependency updates to `ci4-api-core ^0.7.0` and `codeigniter4/framework ^4.7`, and the audit code fixes from BFF-M1/M2.
 
 ### Added
 - **Runtime foundation pinned to `dcardenasl/ci4-api-core` v0.4.1.** `composer.json` now declares the constraint `^0.4.1` against the published Packagist version (previously `dev-main` via path repository); the local `../ci4-api-core` path repository is preserved as a non-canonical override so workspace contributors can still cross-edit without modifying the constraint. Downstream consumers resolve cleanly from Packagist.
 
 ### Changed
-- **`dcardenasl/ci4-api-core` bumped to `^0.6.0`** — picks up `AbstractServiceClient` and the outbound HTTP config knobs introduced in core v0.5.0; v0.6.0 widens the core's own CI4 requirement to `^4.7`, matching the framework constraint below. The domain app's `HubClient` migrated onto `AbstractServiceClient`.
+- **`dcardenasl/ci4-api-core` bumped to `^0.7.0`** — picks up `AbstractServiceClient`, `IntrospectResult`, `AbstractIntrospectionFilter`, and `HubClientInterface` from core. The domain app's `HubClient` migrated onto `AbstractServiceClient` (v0.5.0); v0.6.0 widened the CI4 requirement to `^4.7`; v0.7.0 promotes the shared types described below.
+- **`DomainAuthFilter` refactored** — extends `dcardenasl\Ci4ApiCore\Http\Filters\AbstractIntrospectionFilter` instead of reimplementing the full introspect flow. Now implements only the `introspect(string $token): IntrospectResult` hook; Bearer extraction, `ContextHolder` population, and 401 responses are handled by the inherited `AbstractJwtAuthFilter`. Reduces the filter from 77 to ~20 lines.
+- **`ThrottleFilter` simplified** — empty extension of `dcardenasl\Ci4ApiCore\Http\Filters\AbstractThrottleFilter` (105 → 10 lines). `App\Filters\Concerns\RateLimitResponseHelpers` trait deleted; fixed-window IP + user-id bucketing is fully inherited from the core base class.
+- **`HubClient` now implements `HubClientInterface`** — declares `dcardenasl\Ci4ApiCore\Contracts\HubClientInterface`; `getUser()` method added to satisfy the interface contract.
+- **`IntrospectResult` local copy deleted** — all code imports `dcardenasl\Ci4ApiCore\Http\Client\IntrospectResult` from `ci4-api-core`.
+- **`codeigniter4/framework` constraint bumped to `^4.7`** — locks to the current stable CI4 (v4.7.2). README CI4 badge updated from 4.5 to 4.7.
 - **`codeigniter4/framework` constraint bumped to `^4.7`** — locks to the current stable CI4 (v4.7.2); the effective floor was already 4.6 (transitively via `ci4-api-core`). README CI4 badge updated from 4.5 to 4.7.
 - **`php-cs-fixer` bumped to `^3.95`** in dev dependencies.
 - **Consume base classes from `dcardenasl/ci4-api-core` (CORE-005).** All 24 inline base classes deleted from `app/` (HTTP, base DTOs, `PaginatedResponseDTO`, base exceptions, `BaseAuditableModel`, `Auditable` / `HandlesTransactions` traits, `ApiResult` / `OperationResult` / `ExceptionFormatter` support, base interfaces, `ApiController`, `BaseCrudService`, `AuditServiceInterface`). Domain code (controllers, services, models, exceptions, filters, repositories, mappers, factories, configs, tests) imports them from `dcardenasl\Ci4ApiCore\…`. Generated CRUDs from `vendor/bin/make-crud.sh` already emit the new namespace. Architecture tests pruned to the domain's actual surface (3 pure-core tests removed; 6 trimmed to domain artifacts; `FileModelConventionsTest` and the metrics-coupled assertions in `FeatureToggleFilterTest` removed). PHPStan level 8 clean, PHPUnit suite green, smoke `make-crud Widget Demo` + `module:check` + server `/health` 200 OK.
