@@ -7,12 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.1.0] — 2026-05-17
+## [1.1.0] — 2026-05-19
 
 ### Changed
 
-- **`dcardenasl/ci4-api-core` bumped from `^0.4.1` to `^0.5.0`** — picks up `AbstractServiceClient` and the outbound HTTP config knobs introduced in core v0.5.0. The domain app's `HubClient` can migrate onto the shared base class in a follow-up.
+- **`dcardenasl/ci4-api-core` bumped from `^0.4.1` to `^0.6.0`** — picks up `AbstractServiceClient` and the outbound HTTP config knobs introduced in core v0.5.0; v0.6.0 widens the core's own CI4 requirement to `^4.7`, matching the framework constraint below. The domain app's `HubClient` can migrate onto `AbstractServiceClient` in a follow-up.
 - **`codeigniter4/framework` constraint bumped from `^4.5` to `^4.7`** — locks to the current stable CI4 (v4.7.2); the effective floor was already 4.6 (transitively via `ci4-api-core`). README CI4 badge updated from 4.5 to 4.7.
+- **`php-cs-fixer` bumped to `^3.95`** in dev dependencies.
 
 ### Docs
 
