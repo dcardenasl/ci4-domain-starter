@@ -87,9 +87,12 @@ jobs:
           JWT_KEY=$(openssl rand -base64 64 | tr -d '\n')
           echo "JWT_SECRET_KEY = \"${JWT_KEY}\"" >> .env
 
-          # Generate encryption key (properly quoted)
-          ENC_KEY=$(php spark key:generate --show | sed 's/.*: //')
-          echo "encryption.key = \"${ENC_KEY}\"" >> .env
+          # Generate encryption key directly (hex2bin: prefix required by CI4)
+          ENC_KEY="hex2bin:$(openssl rand -hex 32)"
+          echo "encryption.key = ${ENC_KEY}" >> .env
+
+          # Hub credentials for CI (dummy values — tests don't call the real hub)
+          echo 'hub.apiKey = apk_ci_testing_only' >> .env
 
           # Email configuration for testing (override .env.example)
           sed -i 's/^EMAIL_FROM_ADDRESS =.*/EMAIL_FROM_ADDRESS = noreply@example.com/' .env
