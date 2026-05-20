@@ -7,6 +7,7 @@ namespace App\Libraries\Hub;
 use CodeIgniter\Cache\CacheInterface;
 use CodeIgniter\HTTP\CURLRequest;
 use Config\Hub as HubConfig;
+use dcardenasl\Ci4ApiCore\Contracts\HubClientInterface;
 use dcardenasl\Ci4ApiCore\Exceptions\ApiException;
 use dcardenasl\Ci4ApiCore\Exceptions\AuthenticationException;
 use dcardenasl\Ci4ApiCore\Exceptions\AuthorizationException;
@@ -14,6 +15,7 @@ use dcardenasl\Ci4ApiCore\Exceptions\ConflictException;
 use dcardenasl\Ci4ApiCore\Exceptions\ServiceUnavailableException;
 use dcardenasl\Ci4ApiCore\Exceptions\ValidationException;
 use dcardenasl\Ci4ApiCore\Http\Client\AbstractServiceClient;
+use dcardenasl\Ci4ApiCore\Http\Client\IntrospectResult;
 
 /**
  * HTTP client for the central hub (ci4-api-starter).
@@ -27,7 +29,7 @@ use dcardenasl\Ci4ApiCore\Http\Client\AbstractServiceClient;
  * {@see AbstractServiceClient}. Endpoint paths live in `Config\Hub` so a hub
  * API version bump is a one-config change.
  */
-class HubClient extends AbstractServiceClient
+class HubClient extends AbstractServiceClient implements HubClientInterface
 {
     private const SERVICE_TOKEN_CACHE_KEY = 'hub_service_token';
     private const INTROSPECT_CACHE_PREFIX = 'hub_introspect_';
@@ -152,6 +154,20 @@ class HubClient extends AbstractServiceClient
         } catch (ConflictException | ValidationException) {
             return false;
         }
+    }
+
+    /**
+     * Fetch a user profile from the hub. Caller forwards a valid bearer token.
+     *
+     * @return array<string, mixed>
+     */
+    public function getUser(int $userId, string $bearerToken): array
+    {
+        return $this->request('GET', '/api/v1/users/' . $userId, [
+            'headers' => array_merge($this->appKeyHeaders(), [
+                'Authorization' => 'Bearer ' . $bearerToken,
+            ]),
+        ]);
     }
 
     /**
