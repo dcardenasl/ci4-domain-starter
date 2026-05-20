@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Libraries\Hub;
 
-use App\Libraries\Hub\IntrospectResult;
 use CodeIgniter\Test\CIUnitTestCase;
+use dcardenasl\Ci4ApiCore\Http\Client\IntrospectResult;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(IntrospectResult::class)]
