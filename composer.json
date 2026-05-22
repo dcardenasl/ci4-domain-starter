@@ -15,6 +15,7 @@
         { "type": "path", "url": "../ci4-api-core", "options": { "symlink": true }, "canonical": false }
     ],
     "require-dev": {
+        "dcardenasl/ci4-api-scaffolding": "^0.5.0",
         "fakerphp/faker": "^1.9",
         "friendsofphp/php-cs-fixer": "^3.95",
         "mikey179/vfsstream": "^1.6",

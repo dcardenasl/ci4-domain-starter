@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.1] — 2026-05-22
+
+### Fixed
+
+- `CLAUDE.md`: added explicit warning that `--port=<n>` (equals sign) is silently ignored by `php spark serve`; use `--port <n>` (space) to avoid the server starting on the default port and colliding with the hub.
+- `init.sh`: switched `.env` value injection from raw `printf` appends to `php scripts/bootstrap_env.php` (handles quoted/unquoted existing values correctly) and added `php spark key:generate --force` for the encryption key.
+
+### Dependencies
+
+- Updated `dcardenasl/ci4-api-scaffolding` (require-dev) to `^0.5.0`.
+
 ## [1.0.0] — 2026-05-20
 
 First stable release. This version formalises the commitment to semantic versioning — the 0.1.0 entry below is preserved as historical context for the pre-release codebase but was never tagged or published. v1.0.0 ships the runtime foundation, hub auth delegation, scaffolding overrides, the example `Items` module, the full hardening surface inherited from `dcardenasl/ci4-api-core`, the documentation overhaul (DOM-106), a tag-driven release workflow, dependency updates to `ci4-api-core ^0.7.0` and `codeigniter4/framework ^4.7`, and the audit code fixes from BFF-M1/M2.
