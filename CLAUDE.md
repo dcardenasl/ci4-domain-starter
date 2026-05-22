@@ -45,6 +45,9 @@ Browser/SPA → Domain App (here)        → Database (this app's tables)
 
 ```bash
 # Dev server (default port 8090 to avoid colliding with hub on :8080 / admin on :8082)
+# IMPORTANT: CI4 spark serve requires a SPACE before the port — equals sign is silently ignored:
+#   php spark serve --port 8090   ✅
+#   php spark serve --port=8090   ❌ (starts on :8080 without warning, collides with hub)
 php spark serve --port 8090
 
 # Tests
