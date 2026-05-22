@@ -13,3 +13,7 @@ updates:
     labels:
       - "dependencies"
       - "php"
+    ignore:
+      # First-party package managed via path repository locally and bumped
+      # manually as part of platform release coordination — not via Dependabot.
+      - dependency-name: "dcardenasl/ci4-api-core"
