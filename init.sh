@@ -175,7 +175,14 @@ if [ "$SKIP_SYNC" = false ]; then
     read -r -p "Paste superadmin JWT (or press Enter to skip): " ADMIN_TOKEN
   fi
 
-  if [ -n "$ADMIN_TOKEN" ]; then
+  if [ -n "${CI4_DOMAIN_ADMIN_TOKEN:-}" ]; then
+    # Token was machine-supplied (e.g. by install.sh) — treat failure as a hard error
+    # so the orchestrator checkpoint fails cleanly instead of silently continuing.
+    php spark domain:sync-permissions --admin-token="$CI4_DOMAIN_ADMIN_TOKEN" \
+        || { print_err "Permission sync failed (token was machine-supplied). Check hub connectivity."; exit 1; }
+    print_ok "Permissions synced"
+  elif [ -n "$ADMIN_TOKEN" ]; then
+    # Token came from interactive prompt — soft failure is acceptable
     if php spark domain:sync-permissions --admin-token="$ADMIN_TOKEN"; then
       print_ok "Permissions synced"
     else
