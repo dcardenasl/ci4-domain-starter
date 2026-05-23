@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] — 2026-05-23
+
+### Added
+
+- **`init.sh` `--docker-container` support** — new optional CLI flag enables isolated Docker container initialization workflow. Useful for CI/CD pipelines and containerized development where environment isolation is critical.
+
 ## [1.0.2] — 2026-05-23
 
 ### Fixed
