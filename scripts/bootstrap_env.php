@@ -92,7 +92,7 @@ if ($lines === false) {
 
 $foundKeys = [];
 foreach ($lines as $index => $line) {
-    if (! preg_match('/^\s*([A-Za-z0-9_.]+)\s*=\s*(.*)$/', $line, $matches)) {
+    if (! preg_match('/^\s*(?:[;#]\s*)?([A-Za-z0-9_.]+)\s*=\s*(.*)$/', $line, $matches)) {
         continue;
     }
 
