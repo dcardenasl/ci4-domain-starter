@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] — 2026-05-23
+
+### Fixed
+
+- `scripts/bootstrap_env.php` now accepts commented placeholders (`; key = value` / `# key = value`) when updating `.env` files.
+
 ## [1.1.0] — 2026-05-23
 
 ### Added
@@ -82,5 +88,7 @@ First stable release. This version formalises the commitment to semantic version
 - **Docs**: `CLAUDE.md` (workflow, architecture, command reference), `README.md`, `TASKS.md`, `docs/architecture/`, `docs/runbooks/`, `docs/template/`.
 - **CI/CD**: `.github/workflows/ci.yml` (PHPStan level 8 + PHPUnit + CS-Fixer), `release.yml`, `dependabot.yml`. Multi-stage `Dockerfile` running as `www-data`, `docker-compose.yml`, `.dockerignore`.
 
-[unreleased]: https://github.com/dcardenasl/ci4-domain-starter/compare/v1.0.0...HEAD
+[unreleased]: https://github.com/dcardenasl/ci4-domain-starter/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/dcardenasl/ci4-domain-starter/compare/v1.1.0...v1.1.1
+[1.1.0]: https://github.com/dcardenasl/ci4-domain-starter/compare/v1.0.2...v1.1.0
 [1.0.0]: https://github.com/dcardenasl/ci4-domain-starter/releases/tag/v1.0.0
