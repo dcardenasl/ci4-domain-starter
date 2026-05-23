@@ -13,6 +13,7 @@ SKIP_DEPS=false
 SKIP_DB=false
 SKIP_SYNC=false
 SKIP_SERVER=false
+DOCKER_CONTAINER_ARG=""
 
 while [ $# -gt 0 ]; do
   case $1 in
@@ -20,14 +21,19 @@ while [ $# -gt 0 ]; do
     --skip-db)     SKIP_DB=true; shift ;;
     --skip-sync)   SKIP_SYNC=true; shift ;;
     --skip-server) SKIP_SERVER=true; shift ;;
+    --docker-container)
+      DOCKER_CONTAINER_ARG="$2"
+      shift 2
+      ;;
     --help)
       printf "Usage: ./init.sh [OPTIONS]\n\n"
       printf "Options:\n"
-      printf "  --skip-deps     Skip composer install\n"
-      printf "  --skip-db       Skip database creation and migrations\n"
-      printf "  --skip-sync     Skip permission sync against the hub\n"
-      printf "  --skip-server   Do not offer to start the development server\n"
-      printf "  --help          Show this help message\n"
+      printf "  --skip-deps           Skip composer install\n"
+      printf "  --skip-db             Skip database creation and migrations\n"
+      printf "  --skip-sync           Skip permission sync against the hub\n"
+      printf "  --skip-server         Do not offer to start the development server\n"
+      printf "  --docker-container    Specify Docker container name for MySQL\n"
+      printf "  --help                Show this help message\n"
       exit 0
       ;;
     *)
@@ -36,6 +42,11 @@ while [ $# -gt 0 ]; do
       ;;
   esac
 done
+
+# If Docker container was passed as an argument, use it
+if [ -n "$DOCKER_CONTAINER_ARG" ]; then
+  export CI4_DOCKER_CONTAINER="$DOCKER_CONTAINER_ARG"
+fi
 
 LOG_FILE="$(pwd)/init.log"
 exec > >(tee -a "$LOG_FILE") 2>&1
