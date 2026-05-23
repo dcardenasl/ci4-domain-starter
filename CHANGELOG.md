@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.2] — 2026-05-23
+
+### Fixed
+
+- `app/Config/Scaffolding.php`: updated namespace imports from the retired `dcardenasl\CI4ApiCrudMaker` to `dcardenasl\Ci4ApiScaffolding`. The stale namespace caused CI4's `config('Scaffolding')` to throw a class-not-found error, making `MakeCrud` fall back to empty `protectedRouteFilters` (routes generated without auth filters).
+
 ## [1.0.1] — 2026-05-22
 
 ### Fixed
