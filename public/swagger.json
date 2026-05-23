@@ -1,9 +1,9 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "CodeIgniter 4 API Starter",
-        "description": "RESTful API built with CodeIgniter 4, featuring JWT authentication, standardized responses, and comprehensive documentation.",
-        "version": "1.0.0"
+        "title": "CodeIgniter 4 Domain Starter",
+        "description": "CodeIgniter 4 domain app starter that delegates authentication and IAM to a central hub.",
+        "version": "1.1.2"
     },
     "servers": [
         {
