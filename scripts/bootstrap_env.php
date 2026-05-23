@@ -106,8 +106,8 @@ foreach ($lines as $index => $line) {
 }
 
 $missingKeys = array_values(array_diff(array_keys($sets), array_keys($foundKeys)));
-if ($missingKeys !== []) {
-    fail('Missing keys in env file: ' . implode(', ', $missingKeys), 2);
+foreach ($missingKeys as $key) {
+    $lines[] = sprintf('%s = %s', $key, $sets[$key]);
 }
 
 $newContent = implode(PHP_EOL, $lines);
