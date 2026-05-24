@@ -141,6 +141,7 @@ php scripts/bootstrap_env.php \
   --set "hub.url=${HUB_URL}" \
   --set "hub.appCode=${HUB_APP_CODE}" \
   --set "hub.apiKey=${HUB_API_KEY}" \
+  --set "hub.adminToken=${CI4_DOMAIN_ADMIN_TOKEN:-}" \
   --generate-jwt
 
 php spark key:generate --force >/dev/null
@@ -179,7 +180,7 @@ if [ "$SKIP_SYNC" = false ]; then
     # Token was machine-supplied (e.g. by install.sh) — treat failure as a hard error
     # so the orchestrator checkpoint fails cleanly instead of silently continuing.
     php spark domain:sync-permissions --admin-token="$CI4_DOMAIN_ADMIN_TOKEN" \
-        || { print_err "Permission sync failed (token was machine-supplied). Check hub connectivity."; exit 1; }
+        || { print_error "Permission sync failed (token was machine-supplied). Check hub connectivity."; exit 1; }
     print_ok "Permissions synced"
   elif [ -n "$ADMIN_TOKEN" ]; then
     # Token came from interactive prompt — soft failure is acceptable
