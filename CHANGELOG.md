@@ -7,12 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] — 2026-05-24
+
+### Added
+
+- **`init.sh --admin-token <jwt>`** — explicit CLI argument for passing the hub superadmin JWT, enabling fully non-interactive permission sync in automated and CI/CD workflows without relying on env-var guards.
+
+### Fixed
+
+- Hub admin token is now correctly persisted for non-interactive `domain:sync-permissions` runs when supplied via `--admin-token`.
+
+## [1.1.2] — 2026-05-23
+
+### Fixed
+
+- `app/Config/Project.php` now identifies the repo as `CodeIgniter 4 Domain Starter` instead of the API starter template, and `public/swagger.json` was regenerated to match.
+
 ## [1.1.1] — 2026-05-23
 
 ### Fixed
 
 - `scripts/bootstrap_env.php` now accepts commented placeholders (`; key = value` / `# key = value`) when updating `.env` files.
-- `app/Config/Project.php` now identifies the repo as `CodeIgniter 4 Domain Starter` instead of the API starter template, and `public/swagger.json` was regenerated to match.
 
 ## [1.1.0] — 2026-05-23
 
