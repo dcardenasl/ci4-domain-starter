@@ -3,7 +3,7 @@
     "info": {
         "title": "CodeIgniter 4 Domain Starter",
         "description": "CodeIgniter 4 domain app starter that delegates authentication and IAM to a central hub.",
-        "version": "1.2.0"
+        "version": "1.2.1"
     },
     "servers": [
         {

@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.1] — 2026-05-24
+
+### Fixed
+
+- `app/Config/Project.php`: bumped `VERSION` constant and `$version` property from `1.1.1` to `1.2.1`; the committed `public/swagger.json` had `1.1.2` while `Project.php` still said `1.1.1`, causing `swagger:generate` to produce a divergent version and the CI swagger-validate step to fail.
+- `public/swagger.json`: regenerated to reflect version `1.2.1`.
+
 ## [1.2.0] — 2026-05-24
 
 ### Added
