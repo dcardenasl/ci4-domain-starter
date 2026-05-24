@@ -14,6 +14,7 @@ SKIP_DB=false
 SKIP_SYNC=false
 SKIP_SERVER=false
 DOCKER_CONTAINER_ARG=""
+ADMIN_TOKEN_ARG=""
 
 while [ $# -gt 0 ]; do
   case $1 in
@@ -25,6 +26,10 @@ while [ $# -gt 0 ]; do
       DOCKER_CONTAINER_ARG="$2"
       shift 2
       ;;
+    --admin-token)
+      ADMIN_TOKEN_ARG="$2"
+      shift 2
+      ;;
     --help)
       printf "Usage: ./init.sh [OPTIONS]\n\n"
       printf "Options:\n"
@@ -33,6 +38,7 @@ while [ $# -gt 0 ]; do
       printf "  --skip-sync           Skip permission sync against the hub\n"
       printf "  --skip-server         Do not offer to start the development server\n"
       printf "  --docker-container    Specify Docker container name for MySQL\n"
+      printf "  --admin-token         Superadmin JWT for domain:sync-permissions (non-interactive)\n"
       printf "  --help                Show this help message\n"
       exit 0
       ;;
@@ -141,6 +147,7 @@ php scripts/bootstrap_env.php \
   --set "hub.url=${HUB_URL}" \
   --set "hub.appCode=${HUB_APP_CODE}" \
   --set "hub.apiKey=${HUB_API_KEY}" \
+  --set "hub.adminToken=${CI4_DOMAIN_ADMIN_TOKEN:-}" \
   --generate-jwt
 
 php spark key:generate --force >/dev/null
@@ -164,9 +171,11 @@ php spark core:check || { print_error "Service wiring incomplete. Fix app/Config
 if [ "$SKIP_SYNC" = false ]; then
   print_header "Registering permissions in the hub"
 
-  # ci4-kickstart pre-supplies the JWT via env var when orchestrating end-to-end;
-  # standalone runs prompt the user (TTY only).
-  ADMIN_TOKEN="${CI4_DOMAIN_ADMIN_TOKEN:-}"
+  # Priority: --admin-token CLI arg > CI4_DOMAIN_ADMIN_TOKEN env var > interactive prompt.
+  # The CLI arg path is used by ci4-kickstart orchestration; the env var is kept for
+  # backward compatibility; the interactive path is for standalone human-driven runs.
+  ADMIN_TOKEN="${ADMIN_TOKEN_ARG:-${CI4_DOMAIN_ADMIN_TOKEN:-}}"
+
   if [ -z "$ADMIN_TOKEN" ] && [ -t 0 ]; then
     printf "domain:sync-permissions registers this app's permissions in the hub.\n"
     printf "It needs a superadmin JWT (one-time setup — service tokens lack iam.superadmin-access).\n"
@@ -175,11 +184,11 @@ if [ "$SKIP_SYNC" = false ]; then
     read -r -p "Paste superadmin JWT (or press Enter to skip): " ADMIN_TOKEN
   fi
 
-  if [ -n "${CI4_DOMAIN_ADMIN_TOKEN:-}" ]; then
-    # Token was machine-supplied (e.g. by install.sh) — treat failure as a hard error
-    # so the orchestrator checkpoint fails cleanly instead of silently continuing.
-    php spark domain:sync-permissions --admin-token="$CI4_DOMAIN_ADMIN_TOKEN" \
-        || { print_err "Permission sync failed (token was machine-supplied). Check hub connectivity."; exit 1; }
+  if [ -n "${ADMIN_TOKEN_ARG:-}" ] || [ -n "${CI4_DOMAIN_ADMIN_TOKEN:-}" ]; then
+    # Token was machine-supplied (CLI arg or env var from orchestrator) — treat failure
+    # as a hard error so the checkpoint fails cleanly instead of silently continuing.
+    php spark domain:sync-permissions --admin-token="$ADMIN_TOKEN" \
+        || { print_error "Permission sync failed (token was machine-supplied). Check hub connectivity."; exit 1; }
     print_ok "Permissions synced"
   elif [ -n "$ADMIN_TOKEN" ]; then
     # Token came from interactive prompt — soft failure is acceptable

@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] — 2026-05-24
+
+### Added
+
+- **`init.sh --admin-token <jwt>`** — explicit CLI argument for passing the hub superadmin JWT, enabling fully non-interactive permission sync in automated and CI/CD workflows without relying on env-var guards.
+
+### Fixed
+
+- Hub admin token is now correctly persisted for non-interactive `domain:sync-permissions` runs when supplied via `--admin-token`.
+
 ## [1.1.2] — 2026-05-23
 
 ### Fixed
@@ -94,8 +104,7 @@ First stable release. This version formalises the commitment to semantic version
 - **Docs**: `CLAUDE.md` (workflow, architecture, command reference), `README.md`, `TASKS.md`, `docs/architecture/`, `docs/runbooks/`, `docs/template/`.
 - **CI/CD**: `.github/workflows/ci.yml` (PHPStan level 8 + PHPUnit + CS-Fixer), `release.yml`, `dependabot.yml`. Multi-stage `Dockerfile` running as `www-data`, `docker-compose.yml`, `.dockerignore`.
 
-[unreleased]: https://github.com/dcardenasl/ci4-domain-starter/compare/v1.1.2...HEAD
-[1.1.2]: https://github.com/dcardenasl/ci4-domain-starter/compare/v1.1.1...v1.1.2
+[unreleased]: https://github.com/dcardenasl/ci4-domain-starter/compare/v1.1.1...HEAD
 [1.1.1]: https://github.com/dcardenasl/ci4-domain-starter/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/dcardenasl/ci4-domain-starter/compare/v1.0.2...v1.1.0
 [1.0.0]: https://github.com/dcardenasl/ci4-domain-starter/releases/tag/v1.0.0
