@@ -151,7 +151,7 @@ class HubClient extends AbstractServiceClient implements HubClientInterface
             ]);
 
             return true;
-        } catch (ConflictException) {
+        } catch (ConflictException | ValidationException) {
             return false;
         }
     }
