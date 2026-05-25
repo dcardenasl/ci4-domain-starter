@@ -121,6 +121,8 @@ php spark swagger:generate
 
 The generator emits routes already wrapped in `domainauth + permission:items.read + throttle`. Adjust the per-verb permission codes if read and write should diverge.
 
+When the module grows beyond flat CRUD, use the documented aggregate-extension pattern instead of forcing everything into the generated shape: [`docs/architecture/EXTENSION_GUIDE.md`](docs/architecture/EXTENSION_GUIDE.md).
+
 ### Adding a new permission
 
 1. Append it to `app/Config/DomainPermissions.php::PERMISSIONS`.
