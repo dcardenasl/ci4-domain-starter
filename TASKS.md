@@ -3,7 +3,7 @@
 > Fuente de verdad para trabajo en este repo.
 > Historial de completadas: ver `TASKS_ARCHIVE.md`.
 > Cross-repo: ver `../TASKS.md`.
-> Última actualización: 2026-05-16 (BFF-107 ✅ completado — `HubClient` ahora extiende `AbstractServiceClient` del core, drift con el BFF eliminado)
+> Última actualización: 2026-05-25 (DOM-108 ✅ completado — onboarding desatendido)
 
 ---
 
@@ -20,6 +20,11 @@
 ---
 
 ## ✅ Completadas
+
+### DOM-108 — Onboarding desatendido y vinculación de roles (2026-05-25)
+- **Qué**: `init.sh` ahora acepta `--assign-to-role=ID|code` y lo pasa a `domain:sync-permissions`. `HubClient` captura `ValidationException` para tratar 422 como éxito idempotente. `init.sh` corre `php spark core:install` automáticamente.
+- **Por qué**: (Bulletproof V2) Permitir despliegues 100% automáticos desde el orquestador, vinculando nuevos permisos al rol `superadmin` sin intervención manual. Garantizar que el runtime del core esté listo tras el bootstrap.
+- **Verificado**: `php -l` limpio. Scripts probados en flujo de kickstart.
 
 ### DOM-107 — Patrón de aggregate extension documentado
 - **Qué**: `docs/architecture/EXTENSION_GUIDE.{md,es.md}` ahora documenta cuándo `make:crud` deja de alcanzar y cómo evolucionar el módulo generado hacia un aggregate con custom actions, nested resources, relation sync y response enrichment. `README.md` y `docs/README.md` enlazan explícitamente ese patrón.
@@ -61,5 +66,5 @@
 - **`composer cs-fix` antes de commitear.** No bypasear el pre-commit hook con `--no-verify`.
 
 ### 🚧 Technical Debt (Orchestration)
-- [ ] **Clean .env Management**: Migrate init.sh from appending to .env to using bootstrap_env.php to prevent duplicate keys.
-- [ ] **Permission Assignment**: Add --assign-to-role=superadmin option to domain:sync-permissions to automate linking new permissions.
+- [x] **Clean .env Management**: Migrate init.sh from appending to .env to using bootstrap_env.php to prevent duplicate keys. ✅ (Verificado en Bulletproof V2)
+- [x] **Permission Assignment**: Add --assign-to-role=superadmin option to domain:sync-permissions to automate linking new permissions. ✅ 2026-05-25
