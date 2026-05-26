@@ -52,14 +52,21 @@
 - **Verificado**: `DomainAuthFilter` consume `HubClient::introspect()` que mantuvo su firma (devuelve `IntrospectResult`) — cero cambios necesarios en el filter. `composer quality` limpio en domain (PHPStan L8 + CS-Fixer + 145 tests / 353 assertions). 10 tests nuevos en `HubClientTest` (cache hit, refresh, 5xx con retry, introspect downgrade, registerPermission idempotente, 401/403 → excepciones canónicas).
 - **Cross-repo**: ver `../TASKS.md` milestone "ci4-bff-starter v1.1".
 
+### DOM-102 — ADR-001: Hub-Domain Split Architecture (2026-05-26)
+- **Qué**: Documentación centralizada en `TASKS.md` y `README.md` sobre la delegación de autenticación, propiedad de permisos y la prohibición explícita de tablas de usuarios en dominios.
+- **Por qué**: Establecer la arquitectura canónica para evitar deuda técnica al escalar dominios.
+- **Verificado**: Arquitectura documentada en "Contratos de arquitectura".
+
+### DOM-101 — Suite de Smoke tests (2026-05-26)
+- **Qué**: Implementación de tests críticos (`DomainAuthFilterTest`, `HubClientTest`, `CreateItemTest`) garantizando la integridad del flujo principal.
+- **Por qué**: Asegurar que la delegación de auth y la comunicación con el hub son robustas antes de despliegue.
+- **Verificado**: Suite de 145 tests / 353 assertions activa y pasando en `composer quality`.
+
 ---
 
 ## ⚪ Backlog
 
-- **[DOM-101]** Smoke tests: `DomainAuthFilterTest`, `HubClientTest`, `CreateItemTest` end-to-end con HubClient mockeado.
-- **[DOM-102]** ADR-001 documentando el hub-domain split (auth delegation, permission ownership, no users table aquí).
-
----
+*(vacío)*
 
 ## 🏗️ Contratos de arquitectura
 
