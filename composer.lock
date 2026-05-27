@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "25f38a0d71c2a1d1cb5e20ababf8a05c",
+    "content-hash": "a721924d4f903a0c6c1b8bf1c1ad9d8b",
     "packages": [
         {
             "name": "codeigniter4/framework",
@@ -85,16 +85,16 @@
         },
         {
             "name": "dcardenasl/ci4-api-core",
-            "version": "v0.7.0",
+            "version": "v0.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dcardenasl/ci4-api-core.git",
-                "reference": "8c7135a6aeb05ca01eef6c865c92f1e5101f647a"
+                "reference": "76e5f761a63e8bfb20c057c51fbef3ce5173bf71"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dcardenasl/ci4-api-core/zipball/8c7135a6aeb05ca01eef6c865c92f1e5101f647a",
-                "reference": "8c7135a6aeb05ca01eef6c865c92f1e5101f647a",
+                "url": "https://api.github.com/repos/dcardenasl/ci4-api-core/zipball/76e5f761a63e8bfb20c057c51fbef3ce5173bf71",
+                "reference": "76e5f761a63e8bfb20c057c51fbef3ce5173bf71",
                 "shasum": ""
             },
             "require": {
@@ -170,7 +170,7 @@
                 "issues": "https://github.com/dcardenasl/ci4-api-core/issues",
                 "source": "https://github.com/dcardenasl/ci4-api-core"
             },
-            "time": "2026-05-20T17:58:54+00:00"
+            "time": "2026-05-27T21:50:12+00:00"
         },
         {
             "name": "guzzlehttp/psr7",
@@ -2390,21 +2390,21 @@
         },
         {
             "name": "dcardenasl/ci4-api-scaffolding",
-            "version": "v0.5.0",
+            "version": "v0.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dcardenasl/ci4-api-scaffolding.git",
-                "reference": "059a635b47d326b72566cd4751f7780baba91f41"
+                "reference": "7eb32379b7cb488c11232206e77eb3965c64381d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dcardenasl/ci4-api-scaffolding/zipball/059a635b47d326b72566cd4751f7780baba91f41",
-                "reference": "059a635b47d326b72566cd4751f7780baba91f41",
+                "url": "https://api.github.com/repos/dcardenasl/ci4-api-scaffolding/zipball/7eb32379b7cb488c11232206e77eb3965c64381d",
+                "reference": "7eb32379b7cb488c11232206e77eb3965c64381d",
                 "shasum": ""
             },
             "require": {
                 "codeigniter4/framework": "^4.7",
-                "dcardenasl/ci4-api-core": "^0.7.0",
+                "dcardenasl/ci4-api-core": "^0.8.0",
                 "nikic/php-parser": "^5.0",
                 "php": "^8.2"
             },
@@ -2473,7 +2473,7 @@
                 "issues": "https://github.com/dcardenasl/ci4-api-scaffolding/issues",
                 "source": "https://github.com/dcardenasl/ci4-api-scaffolding"
             },
-            "time": "2026-05-22T22:00:02+00:00"
+            "time": "2026-05-27T23:19:03+00:00"
         },
         {
             "name": "ergebnis/agent-detector",

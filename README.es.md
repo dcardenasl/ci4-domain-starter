@@ -5,7 +5,7 @@
 [![PHPStan](https://img.shields.io/badge/PHPStan-level%208-2563EB)](phpstan.neon)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
-> **Estado:** v1.1.1 — English version: [README.md](README.md)
+> **Estado:** v1.3.0 — English version: [README.md](README.md)
 
 Plantilla de CodeIgniter 4 para **apps de dominio**: servicios que poseen su propia lógica de negocio y base de datos, pero **delegan autenticación, usuarios e IAM a un hub central** (`ci4-api-starter`). Un único hub puede atender a varias apps de dominio sin re-implementar autenticación en cada una.
 
