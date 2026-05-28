@@ -5,7 +5,7 @@
 [![PHPStan](https://img.shields.io/badge/PHPStan-level%208-2563EB)](phpstan.neon)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
-> **Status:** v1.2.1 — Spanish version: [README.es.md](README.es.md)
+> **Status:** v1.3.0 — Spanish version: [README.es.md](README.es.md)
 
 CodeIgniter 4 template for **domain apps**: services that own their own business logic and database, but **delegate authentication, users, and IAM to a central hub** (`ci4-api-starter`). One hub can stand in front of many domain apps without re-implementing auth in each.
 
@@ -120,6 +120,8 @@ php spark swagger:generate
 ```
 
 The generator emits routes already wrapped in `domainauth + permission:items.read + throttle`. Adjust the per-verb permission codes if read and write should diverge.
+
+When the module grows beyond flat CRUD, use the documented aggregate-extension pattern instead of forcing everything into the generated shape: [`docs/architecture/EXTENSION_GUIDE.md`](docs/architecture/EXTENSION_GUIDE.md).
 
 ### Adding a new permission
 

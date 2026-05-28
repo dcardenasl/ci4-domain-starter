@@ -313,26 +313,6 @@
     },
     "components": {
         "schemas": {
-            "AuthToken": {
-                "title": "Authentication Token",
-                "description": "JWT token with associated user data",
-                "required": [
-                    "token",
-                    "user"
-                ],
-                "properties": {
-                    "token": {
-                        "description": "JWT access token",
-                        "type": "string",
-                        "example": "eyJ0eXAiOiJKV1QiLCJhbGc..."
-                    },
-                    "user": {
-                        "description": "Authenticated user data",
-                        "type": "object"
-                    }
-                },
-                "type": "object"
-            },
             "ItemCreateRequest": {
                 "properties": {
                     "name": {

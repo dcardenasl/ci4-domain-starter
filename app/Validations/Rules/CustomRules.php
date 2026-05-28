@@ -13,6 +13,45 @@ namespace App\Validations\Rules;
 class CustomRules
 {
     /**
+     * Validate "boolean-like" values accepted by the scaffolder.
+     *
+     * Accepts:
+     * - bool: true, false
+     * - int/string digits: 0, 1
+     * - common strings: true/false, yes/no, on/off
+     *
+     * @param mixed $value
+     */
+    public function boolean_like($value, ?string &$error = null): bool
+    {
+        if (is_bool($value)) {
+            return true;
+        }
+
+        if (is_int($value)) {
+            if ($value === 0 || $value === 1) {
+                return true;
+            }
+
+            $error = lang('Validation.boolean_like');
+
+            return false;
+        }
+
+        if (is_string($value)) {
+            $normalized = strtolower(trim($value));
+
+            if (in_array($normalized, ['0', '1', 'true', 'false', 'yes', 'no', 'on', 'off'], true)) {
+                return true;
+            }
+        }
+
+        $error = lang('Validation.boolean_like');
+
+        return false;
+    }
+
+    /**
      * Validate password strength
      *
      * Requirements:

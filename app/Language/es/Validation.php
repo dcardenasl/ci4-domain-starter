@@ -7,6 +7,9 @@
  * definidas en App\Validations\Rules\CustomRules
  */
 return [
+    // Mensaje de regla boolean-like
+    'boolean_like' => 'El campo {field} debe ser un valor booleano (true/false, 1/0, yes/no, on/off).',
+
     // Mensajes de regla de contraseña fuerte
     'strong_password'           => 'El campo {field} debe tener 8-128 caracteres y contener mayúscula, minúscula, dígito y carácter especial.',
     'strong_password_min_length' => 'La contraseña debe tener al menos 8 caracteres.',

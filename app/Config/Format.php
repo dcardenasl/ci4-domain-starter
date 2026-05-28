@@ -9,6 +9,13 @@ use CodeIgniter\Format\XMLFormatter;
 class Format extends BaseConfig
 {
     /**
+     * Maximum nesting depth used by the JSON formatter.
+     *
+     * CI 4.7.3 reads this property directly when formatting API responses.
+     */
+    public int $jsonEncodeDepth = 512;
+
+    /**
      * --------------------------------------------------------------------------
      * Available Response Formats
      * --------------------------------------------------------------------------

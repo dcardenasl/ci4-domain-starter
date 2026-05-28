@@ -36,6 +36,74 @@ The repository ships with a completed example module, `DemoProduct`, under the `
 
 The command generates migration, entity, model, interface, service, controller, validation, i18n files, OpenAPI placeholders, and tests. It uses a single schema to ensure synchronization across all layers.
 
+## Extending CRUD Into An Aggregate
+
+`make:crud` is the right bootstrap for a **flat resource**. It is not the end state for an aggregate that needs workflow actions, nested children, relation arrays, or enriched responses.
+
+Use this escalation path:
+
+1. Start with `make:crud` and get the generated module green with `php spark module:check`.
+2. Keep the generated controller as the HTTP shell and add only the extra endpoints you need.
+3. Push aggregate logic into the service layer, not the controller.
+4. Keep persistence explicit: simple CRUD stays in the generated model/repository path; relation sync and child-resource writes are coordinated in the service transaction.
+5. Add feature tests for every custom endpoint and every aggregate invariant you introduce.
+
+### When the scaffold is no longer enough
+
+Switch from “generated CRUD” to “aggregate extension” when the resource needs any of these:
+
+- custom actions such as `publish`, `archive`, `approve`
+- nested sub-resources such as `/items/{id}/media`
+- relation arrays in the request payload such as `tag_ids[]` or embedded `media[]`
+- post-save synchronization across multiple tables
+- response enrichment that returns children, computed fields, or denormalized summaries
+
+### Recommended pattern
+
+**Controller**
+
+- Keep standard CRUD endpoints on `handleRequest()` when they still match the generated flow.
+- Add explicit controller methods only for the non-CRUD endpoints (`publish`, `mediaIndex`, `mediaStore`, etc.).
+- Controllers should still only map HTTP → DTO/service call → response.
+
+**DTOs**
+
+- Add dedicated request DTOs for custom actions or nested payloads instead of overloading the generated create/update DTOs indefinitely.
+- Keep response DTOs honest: if the aggregate now returns children or computed data, extend the response DTO contract explicitly.
+
+**Service**
+
+- Treat the service as the aggregate boundary.
+- Validate cross-field and cross-table invariants here.
+- Coordinate relation sync here.
+- Wrap multi-table writes in one transaction.
+
+**Routes**
+
+- Keep the generated CRUD routes.
+- Add custom action routes and nested routes explicitly in the domain route file once the aggregate grows beyond flat CRUD.
+
+### Concrete example shape
+
+For a resource like `Item`, the progression usually looks like this:
+
+1. Scaffold `Item` with scalar fields and the primary table.
+2. Keep generated `index/show/store/update/delete`.
+3. Add `publish(string $id)` as a custom controller method and service method when the aggregate gets a workflow state.
+4. Add nested `/items/{id}/media` endpoints when child records stop fitting the parent CRUD payload cleanly.
+5. Move `tag_ids[]` / `media[]` synchronization into the service transaction after the base record is created or updated.
+6. Extend the response DTO so `show()` can return the item plus tags/media summary in one contract.
+
+### Practical checklist after the scaffold
+
+- Update request DTOs when the payload stops being scalar-only.
+- Update the service when writes touch more than one table.
+- Update routes for every custom action and nested resource.
+- Update response DTOs when the API shape grows beyond the generated fields.
+- Add or update Feature tests first for custom routes, then Unit/Integration coverage for the service and persistence logic.
+
+The scaffold remains valuable even in these cases: it gives you the baseline structure, naming, i18n files, tests, and service wiring. The extension work should deepen that structure, not replace it ad hoc.
+
 ## Quick Start
 
 See the root [`../../README.md`](../../README.md) § "Quick start" and § "Adding a new CRUD module" for a complete walkthrough with code examples.

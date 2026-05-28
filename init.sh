@@ -15,6 +15,7 @@ SKIP_SYNC=false
 SKIP_SERVER=false
 DOCKER_CONTAINER_ARG=""
 ADMIN_TOKEN_ARG=""
+ASSIGN_TO_ROLE_ARG=""
 
 while [ $# -gt 0 ]; do
   case $1 in
@@ -30,6 +31,10 @@ while [ $# -gt 0 ]; do
       ADMIN_TOKEN_ARG="$2"
       shift 2
       ;;
+    --assign-to-role)
+      ASSIGN_TO_ROLE_ARG="$2"
+      shift 2
+      ;;
     --help)
       printf "Usage: ./init.sh [OPTIONS]\n\n"
       printf "Options:\n"
@@ -39,6 +44,7 @@ while [ $# -gt 0 ]; do
       printf "  --skip-server         Do not offer to start the development server\n"
       printf "  --docker-container    Specify Docker container name for MySQL\n"
       printf "  --admin-token         Superadmin JWT for domain:sync-permissions (non-interactive)\n"
+      printf "  --assign-to-role      Automatically link permissions to this role code/ID\n"
       printf "  --help                Show this help message\n"
       exit 0
       ;;
@@ -187,12 +193,18 @@ if [ "$SKIP_SYNC" = false ]; then
   if [ -n "${ADMIN_TOKEN_ARG:-}" ] || [ -n "${CI4_DOMAIN_ADMIN_TOKEN:-}" ]; then
     # Token was machine-supplied (CLI arg or env var from orchestrator) — treat failure
     # as a hard error so the checkpoint fails cleanly instead of silently continuing.
-    php spark domain:sync-permissions --admin-token="$ADMIN_TOKEN" \
+    _sync_args="--admin-token=${ADMIN_TOKEN}"
+    [ -n "$ASSIGN_TO_ROLE_ARG" ] && _sync_args="${_sync_args} --assign-to-role=${ASSIGN_TO_ROLE_ARG}"
+
+    php spark domain:sync-permissions ${_sync_args} \
         || { print_error "Permission sync failed (token was machine-supplied). Check hub connectivity."; exit 1; }
     print_ok "Permissions synced"
   elif [ -n "$ADMIN_TOKEN" ]; then
     # Token came from interactive prompt — soft failure is acceptable
-    if php spark domain:sync-permissions --admin-token="$ADMIN_TOKEN"; then
+    _sync_args="--admin-token=${ADMIN_TOKEN}"
+    [ -n "$ASSIGN_TO_ROLE_ARG" ] && _sync_args="${_sync_args} --assign-to-role=${ASSIGN_TO_ROLE_ARG}"
+
+    if php spark domain:sync-permissions ${_sync_args}; then
       print_ok "Permissions synced"
     else
       print_warn "Permission sync failed — re-run later with:"

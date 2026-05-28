@@ -37,6 +37,7 @@ If you've never scaffolded a CRUD in this kit, follow this order:
 - [Testing](architecture/TESTING.md)
 - [Drift Guide](architecture/DRIFT_GUIDE.md)
 - [Extension Guide](architecture/EXTENSION_GUIDE.md)
+  Includes the aggregate-extension pattern: when to stop treating a scaffold as flat CRUD and how to evolve it into custom actions, nested resources, relation sync, and response enrichment.
 
 ## ⚙️ Technical guides
 

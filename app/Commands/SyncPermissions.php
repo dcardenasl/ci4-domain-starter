@@ -26,11 +26,12 @@ class SyncPermissions extends BaseCommand
     protected $group       = 'Domain';
     protected $name        = 'domain:sync-permissions';
     protected $description = 'Register this domain app\'s permissions in the hub (idempotent). Requires a superadmin JWT.';
-    protected $usage       = 'domain:sync-permissions [--admin-token=<jwt>]';
+    protected $usage       = 'domain:sync-permissions [--admin-token=<jwt>] [--assign-to-role=<ID|code>]';
 
     /** @var array<string, string> */
     protected $options = [
-        '--admin-token' => 'Superadmin JWT for the hub. Falls back to env hub.adminToken.',
+        '--admin-token'    => 'Superadmin JWT for the hub. Falls back to env hub.adminToken.',
+        '--assign-to-role' => 'Automatically link new permissions to this role ID or code (e.g. superadmin).',
     ];
 
     public function run(array $params)
@@ -45,10 +46,11 @@ class SyncPermissions extends BaseCommand
             return EXIT_ERROR;
         }
 
-        $hub        = Services::hubClient();
-        $registered = 0;
-        $existed    = 0;
-        $errors     = 0;
+        $hub            = Services::hubClient();
+        $registered     = 0;
+        $existed        = 0;
+        $errors         = 0;
+        $processedCodes = [];
 
         foreach (DomainPermissions::PERMISSIONS as $permission) {
             try {
@@ -56,9 +58,11 @@ class SyncPermissions extends BaseCommand
                 if ($created) {
                     $registered++;
                     CLI::write(sprintf('[+] %s', $permission['code']), 'green');
+                    $processedCodes[] = $permission['code'];
                 } else {
                     $existed++;
                     CLI::write(sprintf('[=] %s (already registered)', $permission['code']), 'yellow');
+                    $processedCodes[] = $permission['code'];
                 }
             } catch (\Throwable $e) {
                 $errors++;
@@ -73,6 +77,32 @@ class SyncPermissions extends BaseCommand
 
                     return EXIT_ERROR;
                 }
+            }
+        }
+
+        // Automatic assignment to role
+        $roleArg = CLI::getOption('assign-to-role');
+        if (is_string($roleArg) && $roleArg !== '' && !empty($processedCodes)) {
+            CLI::newLine();
+            CLI::write(sprintf('Linking permissions to role: %s', $roleArg), 'cyan');
+
+            try {
+                $roleId = is_numeric($roleArg) ? (int) $roleArg : null;
+                if ($roleId === null) {
+                    $role = $hub->findRoleByCode($roleArg, $token);
+                    if ($role === null) {
+                        CLI::error(sprintf('Role not found by code: %s', $roleArg));
+                    } else {
+                        $roleId = (int) $role['id'];
+                    }
+                }
+
+                if ($roleId !== null) {
+                    $hub->attachPermissionsToRole($roleId, $processedCodes, $token);
+                    CLI::write(sprintf('Successfully linked %d permissions to role ID %d.', count($processedCodes), $roleId), 'green');
+                }
+            } catch (\Throwable $e) {
+                CLI::error(sprintf('Failed to link permissions to role: %s', $e->getMessage()));
             }
         }
 

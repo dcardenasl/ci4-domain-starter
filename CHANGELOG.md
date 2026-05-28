@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0] — 2026-05-27
+
+### Added
+
+- **`php spark domain:doctor`** — diagnostic command that validates hub connectivity, API key validity, JWT introspection, service-token acquisition, and permission sync status. Reports each check as pass/warn/fail with actionable messages. Covered by 141-line unit test suite (`tests/unit/Commands/DoctorTest.php`).
+- **Automatic permission-to-role assignment in `domain:sync-permissions`** — after registering permissions with the hub, the command now assigns them to the configured default roles. `HubClient` extended with `assignPermissionToRole()` and `registerPermission()` methods. `init.sh` wired to pass `--admin-token` to the command automatically.
+- **Custom validation rules** (`app/Validations/Rules/CustomRules.php`) — extensible base for domain-specific validation logic. Covered by `tests/unit/Validations/CustomRulesTest.php`.
+- **Extension guide docs** (`docs/architecture/EXTENSION_GUIDE.md` + `.es.md`) — step-by-step instructions for adding new modules, permissions, and hub integrations.
+
+### Changed
+
+- **`dcardenasl/ci4-api-core` bumped to `^0.8.0`**; `dcardenasl/ci4-api-scaffolding` bumped to `^0.6.0`.
+- **Example `ItemService` and Swagger contract aligned** — `ItemService` uses typed generics from `BaseCrudService<ItemEntity>`; `public/swagger.json` regenerated.
+- **CodeIgniter 4 updated to v4.7.3**.
+
+### Fixed
+
+- **`HubClient` robustness** — service-token and introspect calls now handle network timeouts and malformed hub responses gracefully; exceptions carry the upstream HTTP status.
+- **`init.sh` automation** — `--admin-token` is now forwarded as an explicit positional argument to `domain:sync-permissions`, fixing silent no-op when the flag arrived only as an env var.
+
 ## [1.2.1] — 2026-05-24
 
 ### Fixed
