@@ -144,7 +144,10 @@ First stable release. This version formalises the commitment to semantic version
 - **Docs**: `CLAUDE.md` (workflow, architecture, command reference), `README.md`, `TASKS.md`, `docs/architecture/`, `docs/runbooks/`, `docs/template/`.
 - **CI/CD**: `.github/workflows/ci.yml` (PHPStan level 8 + PHPUnit + CS-Fixer), `release.yml`, `dependabot.yml`. Multi-stage `Dockerfile` running as `www-data`, `docker-compose.yml`, `.dockerignore`.
 
-[unreleased]: https://github.com/dcardenasl/ci4-domain-starter/compare/v1.1.1...HEAD
+[unreleased]: https://github.com/dcardenasl/ci4-domain-starter/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/dcardenasl/ci4-domain-starter/compare/v1.3.0...v1.4.0
+[1.3.0]: https://github.com/dcardenasl/ci4-domain-starter/compare/v1.2.0...v1.3.0
+[1.2.0]: https://github.com/dcardenasl/ci4-domain-starter/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/dcardenasl/ci4-domain-starter/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/dcardenasl/ci4-domain-starter/compare/v1.0.2...v1.1.0
 [1.0.0]: https://github.com/dcardenasl/ci4-domain-starter/releases/tag/v1.0.0
