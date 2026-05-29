@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **`AppExceptionHandler`** (`app/Libraries/Exceptions/`) — app-level exception handler extending `BaseExceptionHandler` from `ci4-api-core`; wired into CI4 via `Config\Exceptions::handler()`.
+- **Health route delegation** — `GET /health` in `Routes/v1/system.php` now delegates to `\dcardenasl\Ci4ApiCore\Http\HealthCheckController::index`.
+
 ## [1.4.0] — 2026-05-29
 
 ### Changed
