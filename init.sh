@@ -149,6 +149,10 @@ php scripts/bootstrap_env.php \
   --set "database.default.username=${DB_USER}" \
   --set "database.default.password=${DB_PASS}" \
   --set "database.default.database=${DB_NAME}" \
+  --set "database.tests.hostname=${DB_HOST}" \
+  --set "database.tests.port=${DB_PORT}" \
+  --set "database.tests.username=${DB_USER}" \
+  --set "database.tests.password=${DB_PASS}" \
   --set "database.tests.database=${TEST_DB_NAME}" \
   --set "hub.url=${HUB_URL}" \
   --set "hub.appCode=${HUB_APP_CODE}" \

@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.0] — 2026-05-29
+
+### Changed
+
+- **Platform Coherence:**
+  - Migrated authentication and client logic to `ci4-api-core` v0.9.0.
+  - Refactored hub client and infrastructure to align with v2.x architecture.
+
 ## [1.3.0] — 2026-05-27
 
 ### Added

@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
 
 class CreateRequestLogsTable extends Migration
 {
-    public function up()
+    public function up(): void
     {
         $this->forge->addField([
             'id' => [
@@ -57,7 +59,7 @@ class CreateRequestLogsTable extends Migration
         $this->forge->createTable('request_logs');
     }
 
-    public function down()
+    public function down(): void
     {
         $this->forge->dropTable('request_logs');
     }

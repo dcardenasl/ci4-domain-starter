@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Commands;
 
 use CodeIgniter\CLI\BaseCommand;
@@ -62,7 +64,7 @@ class QueueWork extends BaseCommand
      * @param array<int, string> $params
      * @return void
      */
-    public function run(array $params)
+    public function run(array $params): void
     {
         // CI4's CLI parser does not support --option=value format; it stores
         // the entire "option=value" string as the key. We resolve both formats:

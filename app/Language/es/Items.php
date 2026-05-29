@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'create_success' => 'Item creado(a) exitosamente.',
     'update_success' => 'Item actualizado(a) exitosamente.',

@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
 
 class CreateFailedJobsTable extends Migration
 {
-    public function up()
+    public function up(): void
     {
         $this->forge->addField([
             'id' => [
@@ -39,7 +41,7 @@ class CreateFailedJobsTable extends Migration
         $this->forge->createTable('failed_jobs', true);
     }
 
-    public function down()
+    public function down(): void
     {
         $this->forge->dropTable('failed_jobs', true);
     }

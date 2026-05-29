@@ -21,7 +21,7 @@ use CodeIgniter\Database\RawSql;
  */
 class CreateIdempotencyKeysTable extends Migration
 {
-    public function up()
+    public function up(): void
     {
         $this->forge->addField([
             'idempotency_key' => [
@@ -76,7 +76,7 @@ class CreateIdempotencyKeysTable extends Migration
         $this->forge->createTable('idempotency_keys');
     }
 
-    public function down()
+    public function down(): void
     {
         $this->forge->dropTable('idempotency_keys', true);
     }

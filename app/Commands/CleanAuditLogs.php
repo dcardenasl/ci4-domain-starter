@@ -19,7 +19,7 @@ class CleanAuditLogs extends BaseCommand
         'days' => 'Optional retention window in days. Defaults to AUDIT_RETENTION_DAYS or 90.',
     ];
 
-    public function run(array $params)
+    public function run(array $params): void
     {
         $configuredDays = (int) env('AUDIT_RETENTION_DAYS', 90);
         $retentionDays = isset($params[0]) ? (int) $params[0] : $configuredDays;

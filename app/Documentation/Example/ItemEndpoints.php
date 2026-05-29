@@ -35,7 +35,7 @@ class ItemEndpoints
             ),
         ]
     )]
-    public function index()
+    public function index(): void
     {
     }
 
@@ -52,7 +52,7 @@ class ItemEndpoints
             new OA\Response(response: 422, description: 'Validation error')
         ]
     )]
-    public function store()
+    public function store(): void
     {
     }
 
@@ -72,7 +72,7 @@ class ItemEndpoints
             new OA\Response(response: 404, description: 'Not found')
         ]
     )]
-    public function show()
+    public function show(): void
     {
     }
 
@@ -97,7 +97,7 @@ class ItemEndpoints
             new OA\Response(response: 422, description: 'Validation error')
         ]
     )]
-    public function update()
+    public function update(): void
     {
     }
 
@@ -113,7 +113,7 @@ class ItemEndpoints
             new OA\Response(response: 404, description: 'Not found')
         ]
     )]
-    public function delete()
+    public function delete(): void
     {
     }
 }
