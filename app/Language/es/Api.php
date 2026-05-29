@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'requestFailed' => 'La solicitud ha fallado.',
     'validationFailed' => 'La validación ha fallado.',

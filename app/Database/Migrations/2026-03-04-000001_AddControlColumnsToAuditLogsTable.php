@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
 
 class AddControlColumnsToAuditLogsTable extends Migration
 {
-    public function up()
+    public function up(): void
     {
         $this->forge->addColumn('audit_logs', [
             'result' => [
@@ -43,7 +45,7 @@ class AddControlColumnsToAuditLogsTable extends Migration
         $this->forge->processIndexes('audit_logs');
     }
 
-    public function down()
+    public function down(): void
     {
         $this->forge->dropKey('audit_logs', 'idx_audit_action_created_at');
         $this->forge->dropKey('audit_logs', 'idx_audit_severity_created_at');

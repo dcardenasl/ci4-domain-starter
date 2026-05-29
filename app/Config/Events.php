@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Config;
 
 use CodeIgniter\Events\Events;
@@ -59,7 +61,7 @@ Events::on('pre_system', static function (): void {
  * User Domain Events
  * --------------------------------------------------------------------
  */
-Events::on('user.created', static function ($user) {
+Events::on('user.created', static function ($user): void {
     try {
         $invitationService = \Config\Services::userInvitationService();
         $invitationService->sendInvitation($user);

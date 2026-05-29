@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use CodeIgniter\Router\RouteCollection;
 
 /**
@@ -93,7 +95,7 @@ if (file_exists(APPPATH . 'Config/Routes/v1/system.php')) {
 }
 
 // 2. Load Domain routes under api/v1 group
-$routes->group('api/v1', function ($routes) {
+$routes->group('api/v1', function ($routes): void {
     $routesDir = APPPATH . 'Config/Routes/v1';
 
     if (is_dir($routesDir)) {

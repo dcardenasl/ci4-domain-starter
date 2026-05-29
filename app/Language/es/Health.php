@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Cadenas de endpoints de salud (Español)
  */

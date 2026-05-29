@@ -32,7 +32,7 @@ class AppProxyIPsTest extends CIUnitTestCase
 
     public function testEmptyEnvLeavesProxyIpsEmpty(): void
     {
-        $this->withProxyIpsEnv('', function () {
+        $this->withProxyIpsEnv('', function (): void {
             $config = new App();
             $this->assertSame([], $config->proxyIPs);
         });
@@ -40,7 +40,7 @@ class AppProxyIPsTest extends CIUnitTestCase
 
     public function testSinglePairIsParsed(): void
     {
-        $this->withProxyIpsEnv('10.0.0.0/8=X-Forwarded-For', function () {
+        $this->withProxyIpsEnv('10.0.0.0/8=X-Forwarded-For', function (): void {
             $config = new App();
             $this->assertSame(['10.0.0.0/8' => 'X-Forwarded-For'], $config->proxyIPs);
         });
@@ -48,7 +48,7 @@ class AppProxyIPsTest extends CIUnitTestCase
 
     public function testMultiplePairsAreParsed(): void
     {
-        $this->withProxyIpsEnv('10.0.1.200=X-Forwarded-For,192.168.5.0/24=X-Real-IP', function () {
+        $this->withProxyIpsEnv('10.0.1.200=X-Forwarded-For,192.168.5.0/24=X-Real-IP', function (): void {
             $config = new App();
             $this->assertSame([
                 '10.0.1.200'     => 'X-Forwarded-For',
@@ -59,7 +59,7 @@ class AppProxyIPsTest extends CIUnitTestCase
 
     public function testWhitespaceAroundPairsIsTrimmed(): void
     {
-        $this->withProxyIpsEnv(' 10.0.0.1 = X-Forwarded-For ,  192.168.0.0/16 = X-Real-IP ', function () {
+        $this->withProxyIpsEnv(' 10.0.0.1 = X-Forwarded-For ,  192.168.0.0/16 = X-Real-IP ', function (): void {
             $config = new App();
             $this->assertSame([
                 '10.0.0.1'       => 'X-Forwarded-For',
@@ -71,7 +71,7 @@ class AppProxyIPsTest extends CIUnitTestCase
     public function testMalformedPairsAreSkipped(): void
     {
         // A bare entry without `=` should be silently dropped, not crash.
-        $this->withProxyIpsEnv('10.0.0.1=X-Forwarded-For,no-equals-sign,=onlyHeader,onlyCidr=', function () {
+        $this->withProxyIpsEnv('10.0.0.1=X-Forwarded-For,no-equals-sign,=onlyHeader,onlyCidr=', function (): void {
             $config = new App();
             $this->assertSame(['10.0.0.1' => 'X-Forwarded-For'], $config->proxyIPs);
         });

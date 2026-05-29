@@ -8,7 +8,7 @@ use CodeIgniter\Database\Migration;
 
 class CreateItemsTable extends Migration
 {
-    public function up()
+    public function up(): void
     {
         $this->forge->addField([
             'id' => [
@@ -45,7 +45,7 @@ class CreateItemsTable extends Migration
         $this->forge->createTable('items');
     }
 
-    public function down()
+    public function down(): void
     {
         $this->forge->dropTable('items');
     }
