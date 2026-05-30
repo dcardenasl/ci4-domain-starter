@@ -24,8 +24,7 @@ class DomainPermissions
      * @var list<array{code: string, resource: string, action: string, description?: string}>
      */
     public const PERMISSIONS = [
-        ['code' => 'items.read',   'resource' => 'items', 'action' => 'read',   'description' => 'Read items'],
-        ['code' => 'items.write',  'resource' => 'items', 'action' => 'write',  'description' => 'Create or update items'],
-        ['code' => 'items.delete', 'resource' => 'items', 'action' => 'delete', 'description' => 'Delete items'],
+        // Populated by make:crud via ConfigWireman.
+        // Example: ['code' => 'faq.read', 'resource' => 'faqs', 'action' => 'read']
     ];
 }
