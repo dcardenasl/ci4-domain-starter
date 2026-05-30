@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.0] — 2026-05-30
+
+### Fixed
+
+- **Test directory case sensitivity** — renamed `tests/Unit` → `tests/unit`, `tests/Feature` → `tests/feature`, `tests/Integration` → `tests/integration` for compatibility with case-sensitive CI runners on Linux/GitHub Actions.
+- **phpunit.xml configuration** — updated to reference lowercase test paths.
+
 ## [1.5.2] — 2026-05-30
 
 ### Changed
