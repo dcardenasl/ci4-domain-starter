@@ -149,7 +149,7 @@ To seed against future regressions of these findings. Each test goes in `tests/U
 
 After fixes implemented between the original audit and today, the same 14 scenarios were re-run
 against a fresh disposable copy at `/tmp/ci4-audit/audit-kit-api/` (MySQL on the existing
-`teatromuseo_mysql` container, port 3306, databases `audit_api`/`audit_api_test`).
+`mysql` container, port 3306, databases `audit_api`/`audit_api_test`).
 Raw traces in `/tmp/ci4-audit/_audit/traces/`.
 
 ### Closed findings
