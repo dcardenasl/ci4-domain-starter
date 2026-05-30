@@ -1,6 +1,6 @@
 {
     "name": "ci4/domain-starter",
-    "description": "CodeIgniter 4 Domain App Starter — delegates auth to a hub via /auth/introspect.",
+    "description": "CodeIgniter 4 Domain App Starter \u2014 delegates auth to a hub via /auth/introspect.",
     "type": "project",
     "license": "MIT",
     "require": {
@@ -12,7 +12,14 @@
         "zircote/swagger-php": "^6.0"
     },
     "repositories": [
-        { "type": "path", "url": "../ci4-api-core", "options": { "symlink": true }, "canonical": false }
+        {
+            "type": "path",
+            "url": "../ci4-api-core",
+            "options": {
+                "symlink": true
+            },
+            "canonical": false
+        }
     ],
     "require-dev": {
         "dcardenasl/ci4-api-scaffolding": "^0.7.1",

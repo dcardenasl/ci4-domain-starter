@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.5.2] — 2026-05-30
+
+### Changed
+
+- **`dcardenasl/ci4-api-core` bumped to `v0.9.2`** — lockfile updated to commit `7c64e19`.
+- **Audit doc** (`docs/audits/make-crud-audit.md`) — replaced project-specific container name `teatromuseo_mysql` with the canonical `mysql` reference.
+
 ## [1.5.1] — 2026-05-29
 
 ### Fixed
