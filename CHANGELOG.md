@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.5.1] — 2026-05-29
+
+### Fixed
+
+- **Health route** — `GET /health` now delegates to the app's own `HealthCheckController` instead of the removed `\dcardenasl\Ci4ApiCore\Http\HealthCheckController`; aligns with `ci4-api-core` v0.9.2 which removed that core controller.
+
 ## [1.5.0] — 2026-05-29
 
 ### Added
