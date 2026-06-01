@@ -61,7 +61,11 @@ if [ -n "$DOCKER_CONTAINER_ARG" ]; then
 fi
 
 LOG_FILE="$(pwd)/init.log"
-exec > >(tee -a "$LOG_FILE") 2>&1
+if [ "${CI4_FORCE_LOG_TO_FILE:-false}" = "true" ]; then
+  exec >"$LOG_FILE" 2>&1
+else
+  exec > >(tee -a "$LOG_FILE") 2>&1
+fi
 printf "Init log: %s\n" "$LOG_FILE"
 
 print_header "CI4 Domain Starter — Environment Setup"
