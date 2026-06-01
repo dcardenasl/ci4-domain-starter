@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.1] — 2026-05-31
+
+### Fixed
+
+- **PSR-4 autoload mapping** — corrected namespace-to-path mismatch in `composer.json` that caused class-loading failures in non-standard environments; scaffolding defaults cleaned up accordingly.
+
 ## [1.6.0] — 2026-05-30
 
 ### Fixed
