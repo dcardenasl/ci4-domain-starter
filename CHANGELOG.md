@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **`domain:sync-permissions` spark command** — new CLI command for registering domain permissions in the hub. Idempotent operation supports `--admin-token`, `--assign-to-role`, and `--mirror-to-self` flags for setup automation. Replaces manual permission registration in the hub's IAM after domain deployment.
+
+### Fixed
+
+- **Test infrastructure** — registered `Tests\Support\` namespace in `composer.json` autoload-dev for proper test helper and fixture discovery.
+
+### Changed
+
+- **`init.sh`** — enabled `CI4_FORCE_LOG_TO_FILE` conditional flag for log file handling in containerized/CI environments, improving operational visibility without breaking local development.
+
 ## [1.6.1] — 2026-05-31
 
 ### Fixed

@@ -16,6 +16,7 @@ SKIP_SERVER=false
 DOCKER_CONTAINER_ARG=""
 ADMIN_TOKEN_ARG=""
 ASSIGN_TO_ROLE_ARG=""
+MIRROR_TO_SELF="${CI4_DOMAIN_MIRROR_TO_SELF:-false}"
 
 while [ $# -gt 0 ]; do
   case $1 in
@@ -35,6 +36,10 @@ while [ $# -gt 0 ]; do
       ASSIGN_TO_ROLE_ARG="$2"
       shift 2
       ;;
+    --mirror-to-self)
+      MIRROR_TO_SELF=true
+      shift
+      ;;
     --help)
       printf "Usage: ./init.sh [OPTIONS]\n\n"
       printf "Options:\n"
@@ -45,6 +50,7 @@ while [ $# -gt 0 ]; do
       printf "  --docker-container    Specify Docker container name for MySQL\n"
       printf "  --admin-token         Superadmin JWT for domain:sync-permissions (non-interactive)\n"
       printf "  --assign-to-role      Automatically link permissions to this role code/ID\n"
+      printf "  --mirror-to-self      Also register permissions under hub app self (ID=1)\n"
       printf "  --help                Show this help message\n"
       exit 0
       ;;
@@ -61,7 +67,11 @@ if [ -n "$DOCKER_CONTAINER_ARG" ]; then
 fi
 
 LOG_FILE="$(pwd)/init.log"
-exec > >(tee -a "$LOG_FILE") 2>&1
+if [ "${CI4_FORCE_LOG_TO_FILE:-false}" = "true" ]; then
+  exec >"$LOG_FILE" 2>&1
+else
+  exec > >(tee -a "$LOG_FILE") 2>&1
+fi
 printf "Init log: %s\n" "$LOG_FILE"
 
 print_header "CI4 Domain Starter — Environment Setup"
@@ -199,6 +209,7 @@ if [ "$SKIP_SYNC" = false ]; then
     # as a hard error so the checkpoint fails cleanly instead of silently continuing.
     _sync_args="--admin-token=${ADMIN_TOKEN}"
     [ -n "$ASSIGN_TO_ROLE_ARG" ] && _sync_args="${_sync_args} --assign-to-role=${ASSIGN_TO_ROLE_ARG}"
+    [ "$MIRROR_TO_SELF" = true ] && _sync_args="${_sync_args} --mirror-to-self"
 
     php spark domain:sync-permissions ${_sync_args} \
         || { print_error "Permission sync failed (token was machine-supplied). Check hub connectivity."; exit 1; }
@@ -207,6 +218,7 @@ if [ "$SKIP_SYNC" = false ]; then
     # Token came from interactive prompt — soft failure is acceptable
     _sync_args="--admin-token=${ADMIN_TOKEN}"
     [ -n "$ASSIGN_TO_ROLE_ARG" ] && _sync_args="${_sync_args} --assign-to-role=${ASSIGN_TO_ROLE_ARG}"
+    [ "$MIRROR_TO_SELF" = true ] && _sync_args="${_sync_args} --mirror-to-self"
 
     if php spark domain:sync-permissions ${_sync_args}; then
       print_ok "Permissions synced"

@@ -99,13 +99,17 @@ What's **different** here:
   expiry).
 - `App\Commands\SyncPermissions` (`php spark domain:sync-permissions`) registers
   every permission in `Config\DomainPermissions::PERMISSIONS` with the hub.
+  The CRUD scaffolder appends the standard `{resource}.read/write/delete`
+  entries automatically when you generate a new resource.
 - `Config\Scaffolding` overrides `protectedRouteFilters` to
   `['domainauth', 'permission:items.read', 'throttle']` — generated CRUDs are
   protected by `domainauth` automatically.
 
 ## Adding a new permission
 
-1. Edit `app/Config/DomainPermissions.php` — append to the `PERMISSIONS` array.
+1. Edit `app/Config/DomainPermissions.php` only for manual/legacy permissions —
+   the CRUD scaffold appends the standard `{resource}.read/write/delete`
+   entries automatically for new resources.
 2. Run `php spark domain:sync-permissions` — registers in the hub (idempotent).
 3. In the hub admin panel, attach the new permission to the role(s) that should
    carry it.
@@ -149,6 +153,10 @@ call **requires:**
    `iam.superadmin-access` — service tokens cannot satisfy that filter, so
    permission registration is a setup-time human-in-the-loop step). Obtain one
    via `POST /api/v1/auth/login` with superadmin credentials.
+
+If the domain also needs its permissions visible to the admin UI, pass
+`--mirror-to-self` (or set `CI4_DOMAIN_MIRROR_TO_SELF=true`) so the command
+also registers them under hub app `self` (`application_id = 1`).
 
 Without those, `domain:sync-permissions` will fail. You can re-run it any time
 after fixing the hub side (idempotent).

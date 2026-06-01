@@ -57,7 +57,7 @@ final class DoctorTest extends CIUnitTestCase
                 );
             }
 
-            public function registerPermission(array $permission, string $bearerToken): bool
+            public function registerPermission(array $permission, string $bearerToken, ?int $applicationId = null): bool
             {
                 $this->registerPermissionCalls++;
 
@@ -101,7 +101,7 @@ final class DoctorTest extends CIUnitTestCase
                 throw new \RuntimeException('Introspect should not be called when no token is provided.');
             }
 
-            public function registerPermission(array $permission, string $bearerToken): bool
+            public function registerPermission(array $permission, string $bearerToken, ?int $applicationId = null): bool
             {
                 throw new \RuntimeException('registerPermission should not be called when no admin token is provided.');
             }
