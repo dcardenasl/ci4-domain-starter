@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.2] — 2026-06-01
+
+
 ### Added
 
 - **`domain:sync-permissions` spark command** — new CLI command for registering domain permissions in the hub. Idempotent operation supports `--admin-token`, `--assign-to-role`, and `--mirror-to-self` flags for setup automation. Replaces manual permission registration in the hub's IAM after domain deployment.
