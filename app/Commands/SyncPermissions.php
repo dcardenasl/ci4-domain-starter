@@ -11,104 +11,87 @@ use Config\Hub as HubConfig;
 use Config\Services;
 
 /**
- * php spark domain:sync-permissions --admin-token=<jwt>
+ * php spark domain:sync-permissions [--admin-token=<jwt>] [--assign-to-role=<ID|code>] [--mirror-to-self]
  *
  * Registers every permission listed in DomainPermissions::PERMISSIONS in the
- * hub's IAM. Idempotent — already-registered codes are skipped without error.
+ * hub's IAM using the domain's own X-App-Key (POST /api/v1/iam/self-permissions).
+ * No superadmin JWT required for the primary registration.
  *
- * Setup-only operation: the hub gates `/api/v1/iam/permissions` on
- * `iam.superadmin-access`, which service tokens cannot satisfy. The operator
- * must supply a superadmin JWT obtained out-of-band, either via the
- * `--admin-token` flag or the `hub.adminToken` env var.
+ * --admin-token is only required when:
+ *   - --mirror-to-self is set (registers under hub app self, ID=1, for admin UI access)
+ *   - --assign-to-role is set (links permissions to a role)
  */
 class SyncPermissions extends BaseCommand
 {
     protected $group       = 'Domain';
     protected $name        = 'domain:sync-permissions';
-    protected $description = 'Register this domain app\'s permissions in the hub (idempotent). Requires a superadmin JWT.';
+    protected $description = 'Register this domain app\'s permissions in the hub via its own API key (idempotent).';
     protected $usage       = 'domain:sync-permissions [--admin-token=<jwt>] [--assign-to-role=<ID|code>] [--mirror-to-self]';
 
     /** @var array<string, string> */
     protected $options = [
-        '--admin-token'    => 'Superadmin JWT for the hub. Falls back to env hub.adminToken.',
+        '--admin-token'    => 'Superadmin JWT. Required only for --mirror-to-self or --assign-to-role.',
         '--assign-to-role' => 'Automatically link new permissions to this role ID or code (e.g. superadmin).',
         '--mirror-to-self' => 'Also register the same permissions under hub app self (ID=1) for admin UI access.',
     ];
 
     private const SELF_APPLICATION_ID = 1;
 
-    public function run(array $params)
+    public function run(array $params): int
     {
-        $token = $this->resolveAdminToken();
-        if ($token === '') {
-            $this->writeError('No admin token provided.');
+        $mirrorToSelf = $this->shouldMirrorToSelf();
+        $roleArg      = CLI::getOption('assign-to-role');
+        $roleArg      = is_string($roleArg) && $roleArg !== '' ? $roleArg : null;
+
+        $needsToken = $mirrorToSelf || $roleArg !== null;
+        $token      = $this->resolveAdminToken();
+
+        if ($needsToken && $token === '') {
+            $this->writeError('--admin-token is required when using --mirror-to-self or --assign-to-role.');
             $this->writeLine('Pass --admin-token=<jwt> or set hub.adminToken in .env.', 'yellow');
-            $this->writeLine('Obtain one by logging in to the hub as a superadmin:', 'cyan');
-            $this->writeLine('  POST {hub.url}/api/v1/auth/login', 'cyan');
+            $this->writeLine('Obtain one via: POST {hub.url}/api/v1/auth/login', 'cyan');
 
             return 1;
         }
 
-        $roleArg = CLI::getOption('assign-to-role');
-        $roleArg = is_string($roleArg) && $roleArg !== '' ? $roleArg : null;
-
-        return $this->syncPermissions($token, $this->shouldMirrorToSelf(), $roleArg);
+        return $this->syncPermissions($mirrorToSelf, $roleArg, $token);
     }
 
     /**
      * @return int EXIT_SUCCESS|EXIT_ERROR
      */
-    public function syncPermissions(string $token, bool $mirrorToSelf, ?string $roleArg = null): int
+    public function syncPermissions(bool $mirrorToSelf, ?string $roleArg = null, string $token = ''): int
     {
-        $hub              = Services::hubClient();
-        $registered       = 0;
-        $existed          = 0;
-        $errors           = 0;
-        $processedCodes   = [];
-        $mirrorRegistered = 0;
-        $mirrorExisted    = 0;
-        $mirrorErrors     = 0;
+        $hub            = Services::hubClient();
+        $permissions    = DomainPermissions::PERMISSIONS;
+        $mirrorErrors   = 0;
 
-        foreach (DomainPermissions::PERMISSIONS as $permission) {
-            try {
-                $created = $hub->registerPermission($permission, $token);
-                if ($created) {
-                    $registered++;
-                    $this->writeLine(sprintf('[+] %s', $permission['code']), 'green');
-                    $processedCodes[] = $permission['code'];
-                } else {
-                    $existed++;
-                    $this->writeLine(sprintf('[=] %s (already registered)', $permission['code']), 'yellow');
-                    $processedCodes[] = $permission['code'];
-                }
-            } catch (\Throwable $e) {
-                $errors++;
-                $message = $e->getMessage();
-                $this->writeError(sprintf('[!] %s — %s', $permission['code'], $message));
+        // Primary registration: domain registers its own permissions via X-App-Key.
+        // The hub assigns application_id from the key — no superadmin JWT needed.
+        $this->writeLine(sprintf('Syncing %d permission(s) via self-permissions endpoint...', count($permissions)), 'cyan');
 
-                // Short-circuit on auth failure: every subsequent call would hit
-                // the same wall, no point spamming the hub.
-                if (str_contains($message, 'Hub rejected admin token')) {
-                    $this->newLine();
-                    $this->writeLine('Aborting: token is invalid or lacks iam.superadmin-access.', 'red');
+        try {
+            $result         = $hub->registerSelfPermissions($permissions);
+            $registered     = (int) ($result['created'] ?? 0);
+            $existed        = (int) ($result['existing'] ?? 0);
+            $errors         = (int) ($result['rejected'] ?? 0);
+            $processedCodes = array_column($permissions, 'code');
+        } catch (\Throwable $e) {
+            $this->writeError(sprintf('Self-permissions sync failed: %s', $e->getMessage()));
 
-                    return 1;
-                }
-            }
+            return 1;
         }
 
         if ($mirrorToSelf) {
             $this->newLine();
-            $this->writeLine(sprintf('Mirroring permissions to hub app self (ID %d)', self::SELF_APPLICATION_ID), 'cyan');
+            $this->writeLine(sprintf('Mirroring permissions to hub app self (ID %d)...', self::SELF_APPLICATION_ID), 'cyan');
 
-            foreach (DomainPermissions::PERMISSIONS as $permission) {
+            foreach ($permissions as $permission) {
                 try {
                     $created = $hub->registerPermission($permission, $token, self::SELF_APPLICATION_ID);
                     if ($created) {
-                        $mirrorRegistered++;
                         $this->writeLine(sprintf('[+] %s (self)', $permission['code']), 'green');
                     } else {
-                        $mirrorExisted++;
                         $this->writeLine(sprintf('[=] %s (self already registered)', $permission['code']), 'yellow');
                     }
                 } catch (\Throwable $e) {
@@ -149,14 +132,12 @@ class SyncPermissions extends BaseCommand
         $this->newLine();
         if ($mirrorToSelf) {
             $this->writeLine(sprintf(
-                'Self mirror: registered %d, existed %d, errors %d.',
-                $mirrorRegistered,
-                $mirrorExisted,
+                'Self mirror: errors %d.',
                 $mirrorErrors
             ), $mirrorErrors === 0 ? 'green' : 'yellow');
         }
         $this->writeLine(sprintf(
-            'Done. Registered: %d, existed: %d, errors: %d.',
+            'Done. Registered: %d, existed: %d, rejected: %d.',
             $registered,
             $existed,
             $errors
