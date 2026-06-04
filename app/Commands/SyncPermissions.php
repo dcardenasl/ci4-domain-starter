@@ -119,6 +119,7 @@ class SyncPermissions extends BaseCommand
         }
 
         // Automatic assignment to role
+        $roleLinkFailed = false;
         if (is_string($roleArg) && $roleArg !== '' && !empty($processedCodes)) {
             $this->newLine();
             $this->writeLine(sprintf('Linking permissions to role: %s', $roleArg), 'cyan');
@@ -128,7 +129,8 @@ class SyncPermissions extends BaseCommand
                 if ($roleId === null) {
                     $role = $hub->findRoleByCode($roleArg, $token);
                     if ($role === null) {
-                        $this->writeError(sprintf('Role not found by code: %s', $roleArg));
+                        $this->writeError(sprintf('Role linking failed: %s not found — nothing attached.', $roleArg));
+                        $roleLinkFailed = true;
                     } else {
                         $roleId = (int) $role['id'];
                     }
@@ -139,7 +141,8 @@ class SyncPermissions extends BaseCommand
                     $this->writeLine(sprintf('Successfully linked %d permissions to role ID %d.', count($processedCodes), $roleId), 'green');
                 }
             } catch (\Throwable $e) {
-                $this->writeError(sprintf('Failed to link permissions to role: %s', $e->getMessage()));
+                $this->writeError(sprintf('Role linking failed: %s', $e->getMessage()));
+                $roleLinkFailed = true;
             }
         }
 
@@ -159,7 +162,7 @@ class SyncPermissions extends BaseCommand
             $errors
         ), ($errors === 0 && $mirrorErrors === 0) ? 'green' : 'yellow');
 
-        return ($errors === 0 && $mirrorErrors === 0) ? 0 : 1;
+        return ($errors === 0 && $mirrorErrors === 0 && !$roleLinkFailed) ? 0 : 1;
     }
 
     protected function resolveAdminToken(): string

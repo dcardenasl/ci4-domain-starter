@@ -65,6 +65,16 @@ final class SyncPermissionsTest extends TestCase
         }
     }
 
+    public function testRoleLinkingReturnsErrorExitWhenRoleNotFound(): void
+    {
+        $stub = $this->makeHubStubWithRoleNotFound();
+        Services::injectMock('hubClient', $stub);
+
+        $exitCode = $this->makeCommand(false)->syncPermissions('admin-token', false, 'nonexistent-role');
+
+        $this->assertSame(1, $exitCode);
+    }
+
     private function makeHubStub(): object
     {
         return new class () extends HubClient {
@@ -86,6 +96,25 @@ final class SyncPermissionsTest extends TestCase
                 ];
 
                 return true;
+            }
+        };
+    }
+
+    private function makeHubStubWithRoleNotFound(): object
+    {
+        return new class () extends HubClient {
+            public function __construct()
+            {
+            }
+
+            public function registerPermission(array $permission, string $bearerToken, ?int $applicationId = null): bool
+            {
+                return true;
+            }
+
+            public function findRoleByCode(string $code, string $bearerToken): ?array
+            {
+                return null;
             }
         };
     }
