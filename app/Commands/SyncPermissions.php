@@ -103,7 +103,7 @@ class SyncPermissions extends BaseCommand
 
         // Automatic assignment to role
         $roleLinkFailed = false;
-        if (is_string($roleArg) && $roleArg !== '' && !empty($processedCodes)) {
+        if (is_string($roleArg) && $roleArg !== '') {
             $this->newLine();
             $this->writeLine(sprintf('Linking permissions to role: %s', $roleArg), 'cyan');
 
