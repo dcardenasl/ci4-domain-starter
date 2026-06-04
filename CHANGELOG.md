@@ -7,9 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.7.0] — 2026-06-04
+
 ### Changed
 
 - **`domain:sync-permissions` primary registration** — now calls `POST /api/v1/iam/self-permissions` via the domain's own X-App-Key instead of `POST /api/v1/iam/permissions` with a superadmin JWT. `--admin-token` is now only required when `--mirror-to-self` or `--assign-to-role` is also set; domain permissions are registered with the correct `application_id` automatically (KICK-021).
+- **`dcardenasl/ci4-api-core` constraint** — bumped from `^0.9.0` to `^1.0`; `dcardenasl/ci4-api-scaffolding` bumped to `^0.7.7`.
 
 ### Fixed
 
