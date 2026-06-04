@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.7.0] — 2026-06-04
+
+### Changed
+
+- **`domain:sync-permissions` primary registration** — now calls `POST /api/v1/iam/self-permissions` via the domain's own X-App-Key instead of `POST /api/v1/iam/permissions` with a superadmin JWT. `--admin-token` is now only required when `--mirror-to-self` or `--assign-to-role` is also set; domain permissions are registered with the correct `application_id` automatically (KICK-021).
+- **`dcardenasl/ci4-api-core` constraint** — bumped from `^0.9.0` to `^1.0`; `dcardenasl/ci4-api-scaffolding` bumped to `^0.7.7`.
+
+### Fixed
+
+- **`HubClient::findRoleByCode` role lookup** — the IAM roles index endpoint returns a paginated collection `{items:[...], meta:{...}}` after `decode()` unwraps the `data` envelope. The method was incorrectly reading `$data[0]` (always null on an object) instead of `$data['items'][0]`. Fixed with a tolerant fallback that works on both list and collection shapes.
+- **`SyncPermissions` silent role-link failure** — `syncPermissions()` now tracks a `$roleLinkFailed` flag when `--assign-to-role` is set but the role cannot be found or the attach call throws. The exit code is `≠ 0` in that case, making `install.sh` aware of the failure instead of reporting success.
+- **`ci4-api-core` locked to v0.9.3** — `composer.lock` updated to include `HubClient::registerPermission(array, string, ?int)` three-parameter signature. Previously locked to v0.9.2, which discarded the optional `applicationId`, causing `--mirror-to-self` to register all permissions under `application_id = null` instead of `1`.
+
 ## [1.6.2] — 2026-06-01
 
 

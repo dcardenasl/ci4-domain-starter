@@ -27,7 +27,8 @@ class HubClient extends CoreHubClient
             'query' => ['filter[code]' => $code, 'per_page' => 1],
         ]);
 
-        return $data[0] ?? null;
+        $items = $data['items'] ?? $data;
+        return is_array($items) ? ($items[0] ?? null) : null;
     }
 
     /**

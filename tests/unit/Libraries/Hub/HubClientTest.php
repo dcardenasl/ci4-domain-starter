@@ -191,6 +191,33 @@ class HubClientTest extends CIUnitTestCase
         ], 'expired');
     }
 
+    public function testFindRoleByCodeReturnsFirstItemFromHubResponse(): void
+    {
+        $roleData = ['id' => 5, 'code' => 'superadmin', 'name' => 'Super Admin'];
+        $http     = $this->createMock(CURLRequest::class);
+        $http->method('request')->willReturn($this->jsonResponse(200, [
+            'data' => ['items' => [$roleData], 'meta' => ['total' => 1]],
+        ]));
+
+        $client = new HubClient($this->makeConfig(), $http, $this->createMock(CacheInterface::class));
+        $result = $client->findRoleByCode('superadmin', 'admin-token');
+
+        $this->assertSame($roleData, $result);
+    }
+
+    public function testFindRoleByCodeReturnsNullOnEmptyItems(): void
+    {
+        $http = $this->createMock(CURLRequest::class);
+        $http->method('request')->willReturn($this->jsonResponse(200, [
+            'data' => ['items' => [], 'meta' => ['total' => 0]],
+        ]));
+
+        $client = new HubClient($this->makeConfig(), $http, $this->createMock(CacheInterface::class));
+        $result = $client->findRoleByCode('nonexistent', 'admin-token');
+
+        $this->assertNull($result);
+    }
+
     /**
      * @param array<string, mixed> $body
      */
