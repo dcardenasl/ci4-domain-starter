@@ -37,8 +37,9 @@ Browser/SPA → Domain App (here)        → Database (this app's tables)
 
 - Domain app **never issues JWTs**. The hub does.
 - Domain app **validates JWTs** by calling `POST /api/v1/auth/introspect` on the hub.
-- Domain app **registers its permissions** in the hub via `POST /api/v1/iam/permissions`
-  (using a service token obtained from `POST /api/v1/auth/service-token`).
+- Domain app **registers its permissions** in the hub via `POST /api/v1/iam/self-permissions`
+  using its own X-App-Key (`hub.apiKey`). No superadmin JWT required for the primary registration.
+  `--admin-token` is only needed when `--mirror-to-self` or `--assign-to-role` is also set.
 - Domain app **does not store users**. There is no `users` table here.
 
 ## Essential commands
@@ -98,9 +99,11 @@ What's **different** here:
   and service-token caching (refreshed `serviceTokenSafetyMargin` seconds before
   expiry).
 - `App\Commands\SyncPermissions` (`php spark domain:sync-permissions`) registers
-  every permission in `Config\DomainPermissions::PERMISSIONS` with the hub.
-  The CRUD scaffolder appends the standard `{resource}.read/write/delete`
-  entries automatically when you generate a new resource.
+  every permission in `Config\DomainPermissions::PERMISSIONS` using the domain's
+  own `X-App-Key` via `POST /api/v1/iam/self-permissions` — no superadmin JWT needed
+  for the primary registration. Use `--mirror-to-self --admin-token=<jwt>` to also
+  register the permissions under hub app `self` (application_id=1) for admin UI gating.
+  The CRUD scaffolder appends the standard `{resource}.read/write/delete` entries automatically.
 - `Config\Scaffolding` overrides `protectedRouteFilters` to
   `['domainauth', 'permission:items.read', 'throttle']` — generated CRUDs are
   protected by `domainauth` automatically.
@@ -135,31 +138,31 @@ module needs distinct read/write codes.
 | `hub.apiKey` | X-App-Key bound to this domain app's `applications` row in the hub |
 | `hub.appCode` | Application code as registered in the hub |
 | `hub.introspectCacheTtl` | (optional) TTL in seconds for cached introspect responses, default 60 |
-| `hub.adminToken` | (optional) Superadmin JWT used by `domain:sync-permissions`. Prefer the `--admin-token` flag for one-shot use. |
+| `hub.adminToken` | (optional) Superadmin JWT. Only needed when running `domain:sync-permissions --mirror-to-self` or `--assign-to-role`. |
 | `database.default.*` | Domain app's own MySQL connection |
 | `encryption.key` | CI4 encryption key (32 bytes after `hex2bin:` decode) |
 
 ## Setup prerequisite
 
-`init.sh` prompts for a superadmin JWT and runs
-`php spark domain:sync-permissions --admin-token=<jwt>` against the hub. That
-call **requires:**
+`init.sh` runs `php spark domain:sync-permissions --admin-token=<jwt>` against the hub.
+The primary permission registration uses the domain's own X-App-Key (`hub.apiKey`) via
+`POST /api/v1/iam/self-permissions` — **no superadmin JWT required** for this step.
+
+The call requires:
 
 1. The hub is running and reachable.
 2. An entry in the hub's `applications` table with `code = hub.appCode`.
 3. An API key in the hub bound to that application (see `php spark apps:bootstrap`
-   on the hub side).
-4. A superadmin JWT (the hub gates `/api/v1/iam/permissions` on
-   `iam.superadmin-access` — service tokens cannot satisfy that filter, so
-   permission registration is a setup-time human-in-the-loop step). Obtain one
-   via `POST /api/v1/auth/login` with superadmin credentials.
+   on the hub side). Kickstart sets this automatically during `DOMAIN_BOOTSTRAP`.
+4. `--admin-token` is required only when `--mirror-to-self` or `--assign-to-role`
+   is set. The hub gates `POST /api/v1/iam/permissions` (used for the mirror) on
+   `iam.superadmin-access`. Obtain via `POST /api/v1/auth/login` as superadmin.
 
-If the domain also needs its permissions visible to the admin UI, pass
-`--mirror-to-self` (or set `CI4_DOMAIN_MIRROR_TO_SELF=true`) so the command
-also registers them under hub app `self` (`application_id = 1`).
+To also register permissions under hub app `self` (`application_id = 1`) for admin
+UI gating, pass `--mirror-to-self`. Kickstart controls this via `mirror_to_hub: true`
+in `template.json`.
 
-Without those, `domain:sync-permissions` will fail. You can re-run it any time
-after fixing the hub side (idempotent).
+You can re-run `domain:sync-permissions` at any time — it is idempotent.
 
 ## Static analysis
 
