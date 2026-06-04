@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **`domain:sync-permissions` primary registration** — now calls `POST /api/v1/iam/self-permissions` via the domain's own X-App-Key instead of `POST /api/v1/iam/permissions` with a superadmin JWT. `--admin-token` is now only required when `--mirror-to-self` or `--assign-to-role` is also set; domain permissions are registered with the correct `application_id` automatically (KICK-021).
+
 ### Fixed
 
 - **`HubClient::findRoleByCode` role lookup** — the IAM roles index endpoint returns a paginated collection `{items:[...], meta:{...}}` after `decode()` unwraps the `data` envelope. The method was incorrectly reading `$data[0]` (always null on an object) instead of `$data['items'][0]`. Fixed with a tolerant fallback that works on both list and collection shapes.
