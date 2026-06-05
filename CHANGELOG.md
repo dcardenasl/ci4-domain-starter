@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.7.1] — 2026-06-05
+
+### Fixed
+
+- **`init.sh`** — added support for equals-form CLI arguments (`--flag=value`) alongside the existing space-form (`--flag value`) for `--docker-container`, `--admin-token`, and `--assign-to-role`; also switched `_sync_args` from a plain string to a bash array so arguments with spaces or special characters are passed to `php spark` without word-splitting.
+
 ## [1.7.0] — 2026-06-04
 
 ### Changed
