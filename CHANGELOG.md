@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **Test directory casing** — migrated `tests/unit`, `tests/integration`, `tests/feature` to PascalCase (`tests/Unit`, `tests/Integration`, `tests/Feature`), removed stale case-duplicate entries left in the git index, simplified `autoload-dev` to a single `"Tests\\": "tests/"` PSR-4 root, and aligned `phpunit.xml`. The directories now match the PascalCase test namespaces and the scaffolding engine's default output paths, so generated CRUD tests are discovered on case-sensitive filesystems instead of being silently skipped.
+
 ## [1.7.1] — 2026-06-05
 
 ### Fixed

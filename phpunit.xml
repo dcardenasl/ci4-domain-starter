@@ -9,17 +9,17 @@
          failOnWarning="true">
     <testsuites>
         <testsuite name="Unit">
-            <directory>tests/unit</directory>
-            <exclude>tests/unit/Architecture</exclude>
+            <directory>tests/Unit</directory>
+            <exclude>tests/Unit/Architecture</exclude>
         </testsuite>
         <testsuite name="Architecture">
-            <directory>tests/unit/Architecture</directory>
+            <directory>tests/Unit/Architecture</directory>
         </testsuite>
         <testsuite name="Integration">
-            <directory>tests/integration</directory>
+            <directory>tests/Integration</directory>
         </testsuite>
         <testsuite name="Feature">
-            <directory>tests/feature</directory>
+            <directory>tests/Feature</directory>
         </testsuite>
     </testsuites>
 
