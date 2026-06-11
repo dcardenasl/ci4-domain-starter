@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.8.0] — 2026-06-10
+
+### Added
+
+- **`domain:sync-permissions` auto-mint token in development** — in `development` environment, the command now autonomously generates a temporary superadmin JWT by querying the Hub's local database, eliminating the need to manually capture and paste `--admin-token` during local dev setup (DOM-110).
+- **`domain:sync-permissions` auto-cache flush** — after a successful sync in `development`, the command automatically runs `cache:clear` in the domain, hub, and admin projects if their directories are detected (DOM-110).
+- **`docs/architecture/permissions.md`** — new architecture document detailing the cross-app permission flow (self vs domain application IDs), the `domain:sync-permissions` dev DX, and introspection cache management (DOM-111).
+
+### Changed
+
+- **`dcardenasl/ci4-api-scaffolding`** — updated constraint from `^0.7.6.2` to `^1.0` following the stable v1.0.0 release of the scaffolding package.
+
 ## [1.7.2] — 2026-06-06
 
 ### Changed

@@ -11,15 +11,20 @@
 
 *(vacío)*
 
----
-
-## 🟡 Próximo
+---## 🟡 Próximo
 
 *(vacío)*
 
 ---
 
 ## ✅ Completadas
+
+### DOM-110 — Automatización de Sync de Permisos en Desarrollo (DX)
+- Modificar `app/Commands/SyncPermissions.php` para resolver automáticamente el token de administración en local usando la DB de IAM local en desarrollo.
+- Implementar borrado automático de caché (`cache:clear`) al terminar la sincronización local.
+
+### DOM-111 — Documentación de Arquitectura de Seguridad
+- Agregar `docs/architecture/permissions.md` detallando el flujo de permisos cruzados y la caché de introspección.
 
 ### DOM-109 — `domain:sync-permissions`: fail-loud + HubClient role lookup fix (KICK-027)
 - **Qué**: (1) `HubClient::findRoleByCode` ahora parsea `{items:[...]}` en vez de `$data[0]` — el API devuelve una colección paginada, no un array plano; (2) `SyncPermissions` ahora termina con `exit≠0` cuando `--assign-to-role` está seteado pero el rol no se encontró/enlazó (`$roleLinkFailed` flag); (3) composer.lock actualizado a ci4-api-core v0.9.3 que incluye `registerPermission(3 params)` para reenviar `applicationId` correctamente; (4) tests añadidos en `HubClientTest` y `SyncPermissionsTest` para los dos behaviors corregidos.

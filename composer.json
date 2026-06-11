@@ -22,7 +22,7 @@
         }
     ],
     "require-dev": {
-        "dcardenasl/ci4-api-scaffolding": "^0.7.6.2",
+        "dcardenasl/ci4-api-scaffolding": "^1.0",
         "fakerphp/faker": "^1.9",
         "friendsofphp/php-cs-fixer": "^3.95",
         "mikey179/vfsstream": "^1.6",
