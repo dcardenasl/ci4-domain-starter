@@ -16,14 +16,14 @@ final class IntrospectResultTest extends CIUnitTestCase
         $result = IntrospectResult::fromArray([
             'valid'       => true,
             'uid'         => 42,
-            'permissions' => ['items.read', 'items.write'],
+            'permissions' => ['items.read', 'items.create', 'items.update', 'items.delete'],
             'exp'         => 1735689600,
             'error'       => null,
         ]);
 
         $this->assertTrue($result->valid);
         $this->assertSame(42, $result->uid);
-        $this->assertSame(['items.read', 'items.write'], $result->permissions);
+        $this->assertSame(['items.read', 'items.create', 'items.update', 'items.delete'], $result->permissions);
         $this->assertSame(1735689600, $result->exp);
         $this->assertNull($result->error);
     }
