@@ -11,8 +11,8 @@ namespace Config;
  *
  *     php spark domain:sync-permissions
  *
- * to register them in the hub. The command is idempotent — pre-existing codes
- * are left untouched.
+ * to register them in the hub and attach them to superadmin. The command is
+ * idempotent — pre-existing codes are left untouched.
  *
  * Permission codes use `.` as separator (NOT `:`) because CodeIgniter splits
  * filter arguments on `:` (`permission:foo:bar` would be parsed as filter=foo,
