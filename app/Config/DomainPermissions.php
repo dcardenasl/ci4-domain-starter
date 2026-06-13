@@ -24,10 +24,7 @@ class DomainPermissions
      * @var list<array{code: string, resource: string, action: string, description?: string}>
      */
     public const PERMISSIONS = [
-        // Item module (Example domain) — granular permissions compatible with v1.1.0
-        ['code' => 'items.read', 'resource' => 'items', 'action' => 'read', 'description' => 'Read items'],
-        ['code' => 'items.create', 'resource' => 'items', 'action' => 'create', 'description' => 'Create item'],
-        ['code' => 'items.update', 'resource' => 'items', 'action' => 'update', 'description' => 'Update item'],
-        ['code' => 'items.delete', 'resource' => 'items', 'action' => 'delete', 'description' => 'Delete item'],
+        // Populated by make:crud via ConfigWireman.
+        // Example: ['code' => 'faq.read', 'resource' => 'faqs', 'action' => 'read']
     ];
 }
