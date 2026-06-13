@@ -51,7 +51,7 @@ final class DoctorTest extends CIUnitTestCase
                 return new IntrospectResult(
                     valid: true,
                     uid: 42,
-                    permissions: ['items.read', 'items.write'],
+                    permissions: ['items.read', 'items.create', 'items.update', 'items.delete'],
                     exp: time() + 3600,
                     error: null,
                 );
@@ -75,7 +75,7 @@ final class DoctorTest extends CIUnitTestCase
         $this->assertSame('acquired (17 chars)', $report['checks'][0]['detail']);
         $this->assertSame('ok', $report['checks'][1]['status']);
         $this->assertSame('introspect', $report['checks'][1]['label']);
-        $this->assertSame('valid for user 42 (2 permissions)', $report['checks'][1]['detail']);
+        $this->assertSame('valid for user 42 (4 permissions)', $report['checks'][1]['detail']);
         $this->assertSame('ok', $report['checks'][2]['status']);
         $this->assertSame('register-permission', $report['checks'][2]['label']);
         $this->assertSame('hub returned a structured response', $report['checks'][2]['detail']);

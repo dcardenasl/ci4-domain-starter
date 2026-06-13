@@ -72,7 +72,7 @@ final class DomainAuthFilterTest extends CIUnitTestCase
         $this->bindHubClient($this->makeHubClientStub(new IntrospectResult(
             valid: true,
             uid: 42,
-            permissions: ['items.read', 'items.write'],
+            permissions: ['items.read', 'items.create', 'items.update', 'items.delete'],
             exp: time() + 3600,
             error: null,
         )));
@@ -84,12 +84,12 @@ final class DomainAuthFilterTest extends CIUnitTestCase
 
         $this->assertSame($request, $result, 'Filter should return the request on success.');
         $this->assertSame(42, $request->getAuthUserId());
-        $this->assertSame(['items.read', 'items.write'], $request->getAuthPermissions());
+        $this->assertSame(['items.read', 'items.create', 'items.update', 'items.delete'], $request->getAuthPermissions());
 
         $context = ContextHolder::get();
         $this->assertNotNull($context);
         $this->assertSame(42, $context->user_id);
-        $this->assertSame(['items.read', 'items.write'], $context->permissions);
+        $this->assertSame(['items.read', 'items.create', 'items.update', 'items.delete'], $context->permissions);
     }
 
     private function makeRequest(string $authorization): ApiRequest

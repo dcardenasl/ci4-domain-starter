@@ -2390,16 +2390,16 @@
         },
         {
             "name": "dcardenasl/ci4-api-scaffolding",
-            "version": "v1.0.0",
+            "version": "v1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dcardenasl/ci4-api-scaffolding.git",
-                "reference": "cc8e87edc647d6746dbe9efa671cd6666831894f"
+                "reference": "a046fb50b26bce451c58a3a8b0f532ed37a028fb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dcardenasl/ci4-api-scaffolding/zipball/cc8e87edc647d6746dbe9efa671cd6666831894f",
-                "reference": "cc8e87edc647d6746dbe9efa671cd6666831894f",
+                "url": "https://api.github.com/repos/dcardenasl/ci4-api-scaffolding/zipball/a046fb50b26bce451c58a3a8b0f532ed37a028fb",
+                "reference": "a046fb50b26bce451c58a3a8b0f532ed37a028fb",
                 "shasum": ""
             },
             "require": {
@@ -2473,7 +2473,7 @@
                 "issues": "https://github.com/dcardenasl/ci4-api-scaffolding/issues",
                 "source": "https://github.com/dcardenasl/ci4-api-scaffolding"
             },
-            "time": "2026-06-11T03:20:09+00:00"
+            "time": "2026-06-13T04:35:50+00:00"
         },
         {
             "name": "ergebnis/agent-detector",

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 $routes->group('example', ['namespace' => '\App\Controllers\Api\V1\Example'], function ($routes): void {
 
-    // Auth & Admin Protected Group
+    // Item Routes - all under read permission for now (will be split in v1.8.3 with proper scaffolding regeneration)
     $routes->group('', ['filter' => ['domainauth', 'permission:items.read', 'throttle']], function ($routes): void {
         // Item Routes
         $routes->get('items', 'ItemController::index');
