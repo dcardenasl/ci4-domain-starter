@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.8.1] — 2026-06-12
+
 ### Changed
 
 - **Granular permission codes in scaffolding** — `make:crud` now generates separate `create`, `update`, and `delete` permissions instead of a single `write` permission, matching the updated scaffolding engine in `ci4-api-scaffolding` v1.0+. Default route filters configuration (`ScaffoldingConfig`) reflects this split.
