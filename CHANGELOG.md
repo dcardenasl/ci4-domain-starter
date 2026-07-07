@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **`Hub` configuration validation** — hub URL, API key, and app code are now strictly validated at boot time. Missing or empty values throw clear errors with remediation hints. `introspectCacheTtl` default lowered from 60s to 30s for faster revocation latency.
+- **`QueueManager` driver support** — configuration factory now supports `sync`, `redis`, and default queue drivers, enabling flexible queue backends for domain apps (configurable via `Queue::$driver`).
+- **Items example module removed** — the template no longer includes the Items CRUD scaffold example. Use `bash vendor/bin/make-crud.sh` to scaffold your own domain-specific modules.
+
 ## [1.8.2] — 2026-06-13
 
 ### Changed
