@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Config;
 
+use dcardenasl\Ci4ApiCore\Queue\QueueManagerInterface;
+
 /**
  * API Core Services
  *
@@ -39,12 +41,34 @@ trait ApiCoreServices
         return new \dcardenasl\Ci4ApiCore\Support\ResponseDtoFactory();
     }
 
-    public static function queueManager(bool $getShared = true): \dcardenasl\Ci4ApiCore\Queue\QueueManager
+    public static function queueManager(bool $getShared = true): QueueManagerInterface
     {
         if ($getShared) {
             return static::getSharedInstance('queueManager');
         }
 
-        return new \dcardenasl\Ci4ApiCore\Queue\QueueManager();
+        $queueConfig = config('Queue');
+        $driver = strtolower(trim((string) $queueConfig->driver));
+
+        return match ($driver) {
+            'sync' => new \dcardenasl\Ci4ApiCore\Queue\SyncQueueManager(true),
+            'redis' => new \dcardenasl\Ci4ApiCore\Queue\RedisQueueManager(self::buildRedisClient($queueConfig)),
+            default => new \dcardenasl\Ci4ApiCore\Queue\QueueManager(),
+        };
+    }
+
+    private static function buildRedisClient(\Config\Queue $queueConfig): \Redis
+    {
+        $redis = new \Redis();
+        $redis->connect((string) $queueConfig->redis['host'], (int) $queueConfig->redis['port']);
+
+        $password = (string) ($queueConfig->redis['password'] ?? '');
+        if ($password !== '') {
+            $redis->auth($password);
+        }
+
+        $redis->select((int) ($queueConfig->redis['database'] ?? 0));
+
+        return $redis;
     }
 }
