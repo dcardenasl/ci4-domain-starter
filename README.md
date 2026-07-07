@@ -93,7 +93,14 @@ php spark tests:prepare-db           # Sync the test DB before feature tests
 
 # Hub permission sync (idempotent — safe to rerun)
 php spark domain:sync-permissions --admin-token=<jwt>     # or set hub.adminToken in .env
+```
 
+This command traverses the full manifest, so `created`, `existing`, and `rejected` can all appear
+in the result. `self-permissions` only accepts permissions that match this app's namespace, so a
+`rejected: N` count is expected when the manifest also includes shared, non-namespaced permissions
+that are handled separately during role attachment.
+
+```bash
 # Tests
 vendor/bin/phpunit                   # All
 vendor/bin/phpunit tests/Unit        # Fast, no DB
@@ -107,6 +114,22 @@ composer cs-fix                      # Auto-fix style — run before committing
 # OpenAPI
 php spark swagger:generate
 ```
+
+### Required vs. optional bootstrap
+
+**Only two things are actually required for this app to function:**
+
+1. `php spark migrate` — creates the schema. Without this, nothing works.
+2. `php spark domain:sync-permissions` (with the hub's `RbacBootstrapSeeder` already run on the hub
+   side) — registers this app's permission codes so RBAC gating on domain routes works.
+
+**This template ships with no seed/demo content** — there is no bootstrap seeder to run. A fresh
+install with only migrations applied is a fully working, empty app: create your first resources
+from scratch through its own CRUD screens (`bash vendor/bin/make-crud.sh` scaffolds new ones; see
+below). Losing or resetting the schema (e.g. by re-running `php spark migrate:refresh` against a
+database you didn't mean to touch) does not break the application — it just leaves you with an
+empty domain app again. Re-run `php spark migrate` and rebuild through the app's own CRUD screens;
+there is no seed data to lose.
 
 ### Adding a new CRUD module
 

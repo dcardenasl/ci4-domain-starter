@@ -166,7 +166,12 @@ You can re-run `domain:sync-permissions` at any time — it is idempotent.
 
 ## Static analysis
 
-PHPStan runs at level 8 with no baseline. Run before pushing:
+PHPStan runs at level 8 with a `phpstan-baseline.neon` that tracks historical type-debt.
+**Rule:** the baseline entry count can only decrease. New code must not introduce new errors
+against the level-8 ruleset. Current count: **124 baselined entries** (covering 125 suppressed
+errors). This is type-debt still to drain — not a clean slate. New code must not add to it.
+
+Run before pushing:
 
 ```bash
 composer quality
@@ -180,6 +185,15 @@ composer quality
   (admin/web layer) or pass via Authorization header (SPAs).
 - ❌ Hardcoding permission strings — use `DomainPermissions::PERMISSIONS` and
   `domain:sync-permissions` so the hub stays in sync.
+- ❌ **Running `php spark migrate` (or any migration/refresh command) without checking which
+  database you're targeting.** With no `-g` flag it targets `database.default` — the persistent
+  **dev** database — not `database.tests`. Test-only workflows must use
+  `php spark tests:prepare-db` (which explicitly connects to the `tests` group) or pass
+  `-g tests` yourself. Running an untargeted `migrate --all`/`migrate:refresh` against a database
+  you didn't mean to touch can drop and recreate its schema empty. This template ships with no
+  seed/demo data (see "Required vs. optional bootstrap" in README.md), so recovering just means
+  re-running `php spark migrate` and rebuilding through the app's own CRUD screens — there is no
+  seeder to fall back on.
 
 ## Where to read next
 
