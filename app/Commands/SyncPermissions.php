@@ -21,6 +21,12 @@ use Config\Services;
  * --admin-token is only required when:
  *   - --mirror-to-self is set (registers under hub app self, ID=1, for admin UI access)
  *   - --assign-to-role is set (links permissions to an additional role)
+ *
+ * --mirror-to-self is [DEPRECATED]: the hub resolves permissions across every
+ * registered application via resolveAll(), so permissions registered here under
+ * this app's own X-App-Key are already included in issued JWTs without mirroring
+ * them into the hub's self (ID=1) namespace. The flag will be removed in a future
+ * release.
  */
 class SyncPermissions extends BaseCommand
 {
@@ -32,8 +38,8 @@ class SyncPermissions extends BaseCommand
     /** @var array<string, string> */
     protected $options = [
         '--admin-token'    => 'Superadmin JWT. Required only for --mirror-to-self or --assign-to-role.',
-        '--assign-to-role' => 'Also link permissions to this non-superadmin role ID or code.',
-        '--mirror-to-self' => 'Also register the same permissions under hub app self (ID=1) for admin UI access.',
+        '--assign-to-role' => 'Optionally link synced permissions to another role ID or code, in addition to superadmin — the hub attaches superadmin automatically, this flag is only for additional roles.',
+        '--mirror-to-self' => '[DEPRECATED] Also register the same permissions under hub app self (ID=1) for admin UI access. No longer necessary now that the hub resolves permissions across all applications via resolveAll(); will be removed in a future release.',
     ];
 
     private const SELF_APPLICATION_ID = 1;
@@ -41,6 +47,17 @@ class SyncPermissions extends BaseCommand
     public function run(array $params): int
     {
         $mirrorToSelf = $this->shouldMirrorToSelf();
+
+        if ($mirrorToSelf) {
+            $this->writeLine(
+                '[DEPRECATED] --mirror-to-self is no longer needed. The hub now resolves permissions across '
+                . 'all registered applications via resolveAll(), so permissions registered under this app\'s own '
+                . 'X-App-Key are already picked up without mirroring them into the hub\'s self (ID=1) namespace. '
+                . 'This flag will be removed in a future release.',
+                'yellow'
+            );
+        }
+
         $roleArg      = $this->resolveOption('assign-to-role');
         $roleArg      = is_string($roleArg) && $roleArg !== '' ? $roleArg : null;
 

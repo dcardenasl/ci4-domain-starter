@@ -49,4 +49,36 @@ class HubClient extends CoreHubClient
             'json' => ['permission_codes' => $permissionCodes],
         ]);
     }
+
+    /**
+     * Queue an email via the Hub's internal email endpoint.
+     *
+     * The Hub is the single email sender — domain apps must never send emails directly.
+     * Fail-safe: any transport/auth/validation error is caught and logged, never
+     * propagated, so a transient Hub outage never breaks the caller's flow.
+     *
+     * @return int Job ID (0 if queuing failed)
+     */
+    public function queueEmail(string $to, string $subject, string $message, ?string $textMessage = null): int
+    {
+        try {
+            $data = $this->request('POST', '/api/v1/internal/email/queue', [
+                'headers' => $this->appKeyHeaders(),
+                'json'    => [
+                    'to'           => $to,
+                    'subject'      => $subject,
+                    'message'      => $message,
+                    'text_message' => $textMessage,
+                ],
+            ]);
+
+            // AbstractServiceClient::decode() already unwraps the top-level
+            // "data" envelope, so a Hub body of {"data":{"job_id":128}}
+            // arrives here as {"job_id":128} — do not index ['data'] again.
+            return (int) ($data['job_id'] ?? 0);
+        } catch (\Throwable $e) {
+            log_message('error', '[HubClient] queueEmail failed: ' . $e->getMessage());
+            return 0;
+        }
+    }
 }
