@@ -78,14 +78,14 @@ class AuditLogModel extends Model
      *
      * @param string $entityType Entity type (e.g., 'user', 'file')
      * @param int $entityId Entity ID
-     * @return array
+     * @return list<\App\Entities\AuditLogEntity>
      */
     public function getByEntity(string $entityType, int $entityId): array
     {
-        return $this->where('entity_type', $entityType)
+        return $this->onlyEntities($this->where('entity_type', $entityType)
             ->where('entity_id', $entityId)
             ->orderBy('id', 'DESC')
-            ->findAll();
+            ->findAll());
     }
 
     /**
@@ -93,25 +93,42 @@ class AuditLogModel extends Model
      *
      * @param int $userId
      * @param int $limit
-     * @return array
+     * @return list<\App\Entities\AuditLogEntity>
      */
     public function getByUser(int $userId, int $limit = 50): array
     {
-        return $this->where('user_id', $userId)
+        return $this->onlyEntities($this->where('user_id', $userId)
             ->orderBy('created_at', 'DESC')
-            ->findAll($limit);
+            ->findAll($limit));
     }
 
     /**
      * Get recent audit logs
      *
      * @param int $limit
-     * @return array
+     * @return list<\App\Entities\AuditLogEntity>
      */
     public function getRecent(int $limit = 100): array
     {
-        return $this->orderBy('created_at', 'DESC')
-            ->findAll($limit);
+        return $this->onlyEntities($this->orderBy('created_at', 'DESC')
+            ->findAll($limit));
+    }
+
+    /**
+     * Narrow a findAll() result set (typed by the framework as
+     * list<object|row_array>) down to the AuditLogEntity instances it
+     * actually contains at runtime, since $returnType is fixed to
+     * AuditLogEntity::class and no caller switches it via asArray()/asObject().
+     *
+     * @param list<object|array<int|string, bool|float|int|object|string|null>> $rows
+     * @return list<\App\Entities\AuditLogEntity>
+     */
+    private function onlyEntities(array $rows): array
+    {
+        return array_values(array_filter(
+            $rows,
+            static fn ($row): bool => $row instanceof \App\Entities\AuditLogEntity
+        ));
     }
 
     /**
@@ -119,7 +136,7 @@ class AuditLogModel extends Model
      */
     public function getActionFacets(int $windowDays = 90, int $limit = 100): array
     {
-        $since = date('Y-m-d H:i:s', strtotime('-' . max(1, $windowDays) . ' days'));
+        $since = date('Y-m-d H:i:s', $this->windowStartTimestamp($windowDays));
         $query = $this->builder()
             ->select('action AS value, COUNT(*) AS count')
             ->where('created_at >=', $since)
@@ -144,7 +161,7 @@ class AuditLogModel extends Model
      */
     public function getEntityTypeFacets(int $windowDays = 90, int $limit = 100): array
     {
-        $since = date('Y-m-d H:i:s', strtotime('-' . max(1, $windowDays) . ' days'));
+        $since = date('Y-m-d H:i:s', $this->windowStartTimestamp($windowDays));
         $query = $this->builder()
             ->select('entity_type AS value, COUNT(*) AS count')
             ->where('created_at >=', $since)
@@ -162,5 +179,20 @@ class AuditLogModel extends Model
             'value' => (string) ($row['value'] ?? ''),
             'count' => (int) ($row['count'] ?? 0),
         ], $rows);
+    }
+
+    /**
+     * Resolve the Unix timestamp for the start of a facet window.
+     *
+     * strtotime() is statically typed as returning int|false; the input here
+     * is always a well-formed relative expression ("-N days"), so failure is
+     * not expected in practice, but we still guard it explicitly rather than
+     * asserting the type away, falling back to "now" if parsing ever fails.
+     */
+    private function windowStartTimestamp(int $windowDays): int
+    {
+        $timestamp = strtotime('-' . max(1, $windowDays) . ' days');
+
+        return $timestamp === false ? time() : $timestamp;
     }
 }
