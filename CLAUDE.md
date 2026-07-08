@@ -46,11 +46,11 @@ Browser/SPA → Domain App (here)        → Database (this app's tables)
 ## Essential commands
 
 ```bash
-# Dev server (default port 8090 to avoid colliding with hub on :8080 / admin on :8082)
+# Dev server (default port 8190 to avoid colliding with hub on :8180 / admin on :8182)
 # IMPORTANT: CI4 spark serve requires a SPACE before the port — equals sign is silently ignored:
-#   php spark serve --port 8090   ✅
-#   php spark serve --port=8090   ❌ (starts on :8080 without warning, collides with hub)
-php spark serve --port 8090
+#   php spark serve --port 8190   ✅
+#   php spark serve --port=8190   ❌ (starts on :8180 without warning, collides with hub)
+php spark serve --port 8190
 
 # Tests
 vendor/bin/phpunit
@@ -128,7 +128,7 @@ What's **different** here:
 ```bash
 bash vendor/bin/make-crud.sh Item Example 'name:string:required|searchable,description:text' yes
 php spark migrate
-pkill -f 'spark serve'; php spark serve --port 8090 &
+pkill -f 'spark serve'; php spark serve --port 8190 &
 ```
 
 The generator emits routes already wrapped in `domainauth + permission:items.read + throttle`
@@ -139,7 +139,7 @@ module needs distinct read/write codes.
 
 | Variable | Purpose |
 |---|---|
-| `hub.url` | Base URL of the hub (e.g. `http://localhost:8080`) |
+| `hub.url` | Base URL of the hub (e.g. `http://localhost:8180`) |
 | `hub.apiKey` | X-App-Key bound to this domain app's `applications` row in the hub |
 | `hub.appCode` | Application code as registered in the hub |
 | `hub.introspectCacheTtl` | (optional) TTL in seconds for cached introspect responses, default 60 |

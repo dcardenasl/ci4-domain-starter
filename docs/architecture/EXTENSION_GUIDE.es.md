@@ -8,7 +8,7 @@ Proceso completo paso a paso:
 1. **Scaffold primero** - `bash bin/make-crud.sh Product Catalog 'name:string:required|searchable,price:decimal:required' yes products`
 2. **Validar scaffold** - `php spark module:check Product --domain Catalog`
 3. **Ejecutar migración(es)** - `php spark migrate` (generada por scaffold)
-4. **Reiniciar servidor** - `pkill -f 'spark serve'; php spark serve --port 8080 &` (para que se carguen las rutas nuevas)
+4. **Reiniciar servidor** - `pkill -f 'spark serve'; php spark serve --port 8180 &` (para que se carguen las rutas nuevas)
 5. **Alinear entity/model** - campos, casts, validación, traits de query
 6. **Cerrar contratos DTO** - Request/Response DTOs + atributos OpenAPI
 7. **Cerrar servicio** - lógica pura + estrategia de repositorio

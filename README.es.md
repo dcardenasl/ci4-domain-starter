@@ -12,8 +12,8 @@ Plantilla de CodeIgniter 4 para **apps de dominio**: servicios que poseen su pro
 ```mermaid
 flowchart LR
     Cliente["Navegador / SPA"]
-    Dominio["App de dominio<br/>(este repo) :8090"]
-    Hub["Hub<br/>(ci4-api-starter) :8080"]
+    Dominio["App de dominio<br/>(este repo) :8190"]
+    Hub["Hub<br/>(ci4-api-starter) :8180"]
     BDD[("BD del dominio<br/>tablas de negocio")]
     BDH[("BD del hub<br/>users · roles · perms")]
 
@@ -42,10 +42,10 @@ El reparto:
 # JWT de superadmin opcional.
 # Ejecuta: composer install → migrate → domain:sync-permissions.
 
-php spark serve --port 8090
+php spark serve --port 8190
 ```
 
-El puerto por defecto es **8090** para no chocar con el hub (`:8080`) ni con el admin (`:8082`).
+El puerto por defecto es **8190** para no chocar con el hub (`:8180`) ni con el admin (`:8182`).
 
 ### Coordenadas del hub requeridas
 
@@ -86,7 +86,7 @@ Esto es una app de dominio, no el hub. Lo siguiente está **fuera de alcance** y
 
 ```bash
 # Servidor de desarrollo
-php spark serve --port 8090
+php spark serve --port 8190
 
 # Base de datos
 php spark migrate                    # Solo migraciones locales — nunca toca la BD del hub
@@ -116,7 +116,7 @@ Usa el wrapper de shell (compatible con entornos no-TTY — `php spark make:crud
 ```bash
 bash vendor/bin/make-crud.sh Item Example 'name:string:required|searchable,description:text' yes
 php spark migrate
-pkill -f 'spark serve'; php spark serve --port 8090 &     # las rutas no se recargan en caliente
+pkill -f 'spark serve'; php spark serve --port 8190 &     # las rutas no se recargan en caliente
 php spark swagger:generate
 ```
 
@@ -139,7 +139,7 @@ Variables de entorno requeridas (ver `.env.example`):
 
 | Variable | Propósito |
 |---|---|
-| `hub.url` | URL base del hub (ej. `http://localhost:8080`) |
+| `hub.url` | URL base del hub (ej. `http://localhost:8180`) |
 | `hub.apiKey` | `X-App-Key` vinculado a la fila de esta app en `applications` del hub |
 | `hub.appCode` | Código de aplicación tal como está registrado en el hub |
 | `hub.introspectCacheTtl` | *(opcional)* TTL del cache de introspect en segundos, por defecto `60` |

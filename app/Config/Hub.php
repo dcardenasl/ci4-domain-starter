@@ -16,7 +16,7 @@ use CodeIgniter\Config\BaseConfig;
 class Hub extends BaseConfig
 {
     /**
-     * Base URL of the hub (no trailing slash). e.g. http://localhost:8080
+     * Base URL of the hub (no trailing slash). e.g. http://localhost:8180
      */
     public string $url = '';
 
@@ -80,7 +80,7 @@ class Hub extends BaseConfig
                 'Missing hub.url in .env. '
                 . 'This domain app delegates JWT validation to a central hub. '
                 . 'Set hub.url to the hub API base URL. '
-                . 'Example: hub.url=http://localhost:8080'
+                . 'Example: hub.url=http://localhost:8180'
             );
         }
         $this->url = $url;

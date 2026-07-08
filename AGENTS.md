@@ -1,6 +1,6 @@
 # ci4-domain-starter
 
-Domain app template (port 8090). Owns its own business logic and database tables.
+Domain app template (port 8190). Owns its own business logic and database tables.
 Delegates auth and IAM to a central hub (`ci4-api-starter`). Never issues JWTs.
 
 ## Entry Points
@@ -17,12 +17,12 @@ Delegates auth and IAM to a central hub (`ci4-api-starter`). Never issues JWTs.
 - `DomainAuthFilter` (alias `domainauth`) replaces `jwtauth` on all protected routes.
 - `HubClient` is the only place that calls the hub — never call hub URLs directly from controllers.
 - Permission codes use `.` separator — never `:` (CI4 filter parser splits on `:`).
-- `php spark serve --port 8090` — always use SPACE before port, never `=` sign (spark silently ignores `=`).
+- `php spark serve --port 8190` — always use SPACE before port, never `=` sign (spark silently ignores `=`).
 
 ## Commands
 
 ```bash
-php spark serve --port 8090       # Note: SPACE not =
+php spark serve --port 8190       # Note: SPACE not =
 vendor/bin/phpunit
 composer quality
 php spark migrate
@@ -36,7 +36,7 @@ Adding a new CRUD module:
 ```bash
 bash vendor/bin/make-crud.sh ResourceName Domain 'field:type' yes
 php spark migrate
-pkill -f 'spark serve'; php spark serve --port 8090 &
+pkill -f 'spark serve'; php spark serve --port 8190 &
 ```
 Generated routes automatically use `domainauth + permission:items.read + throttle`.
 

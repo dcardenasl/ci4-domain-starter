@@ -12,8 +12,8 @@ CodeIgniter 4 template for **domain apps**: services that own their own business
 ```mermaid
 flowchart LR
     Client["Browser / SPA"]
-    Domain["Domain App<br/>(this repo) :8090"]
-    Hub["Hub<br/>(ci4-api-starter) :8080"]
+    Domain["Domain App<br/>(this repo) :8190"]
+    Hub["Hub<br/>(ci4-api-starter) :8180"]
     DDB[("Domain DB<br/>business tables")]
     HDB[("Hub DB<br/>users · roles · perms")]
 
@@ -41,10 +41,10 @@ The split:
 # Prompts for: hub URL, X-App-Key, app code, DB credentials, optional superadmin JWT.
 # Runs: composer install → migrate → domain:sync-permissions.
 
-php spark serve --port 8090
+php spark serve --port 8190
 ```
 
-Default port is **8090** to avoid colliding with the hub on `:8080` and the admin on `:8082`.
+Default port is **8190** to avoid colliding with the hub on `:8180` and the admin on `:8182`.
 
 ### Hub coordinates required
 
@@ -85,7 +85,7 @@ This is a domain app, not the hub. The following are **out of scope** here and l
 
 ```bash
 # Dev server
-php spark serve --port 8090
+php spark serve --port 8190
 
 # Database
 php spark migrate                    # Local migrations only — never touches the hub DB
@@ -138,7 +138,7 @@ Use the shell wrapper (non-TTY-safe — `php spark make:crud` directly hangs in 
 ```bash
 bash vendor/bin/make-crud.sh Item Example 'name:string:required|searchable,description:text' yes
 php spark migrate
-pkill -f 'spark serve'; php spark serve --port 8090 &     # routes are not hot-reloaded
+pkill -f 'spark serve'; php spark serve --port 8190 &     # routes are not hot-reloaded
 php spark swagger:generate
 ```
 
@@ -163,7 +163,7 @@ Required environment variables (see `.env.example`):
 
 | Variable | Purpose |
 |---|---|
-| `hub.url` | Base URL of the hub (e.g. `http://localhost:8080`) |
+| `hub.url` | Base URL of the hub (e.g. `http://localhost:8180`) |
 | `hub.apiKey` | `X-App-Key` bound to this app's `applications` row in the hub |
 | `hub.appCode` | Application code as registered in the hub |
 | `hub.introspectCacheTtl` | *(optional)* Introspect-response cache TTL in seconds, default `60` |

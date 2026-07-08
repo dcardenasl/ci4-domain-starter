@@ -299,7 +299,7 @@ class SyncPermissions extends BaseCommand
     {
         $header = json_encode(['typ' => 'JWT', 'alg' => 'HS256']);
         $payload = json_encode([
-            'iss' => 'http://localhost:8080',
+            'iss' => 'http://localhost:8180',
             'iat' => time(),
             'nbf' => time(),
             'exp' => time() + 3600,
