@@ -53,7 +53,7 @@ class GenerateSwagger extends BaseCommand
             CLI::write('  Reusable Responses: ' . $responseCount, 'white');
             CLI::write('  Request Bodies: ' . $requestBodyCount, 'white');
             CLI::write('', '');
-            CLI::write('You can view it at: http://localhost:8080/swagger.json', 'cyan');
+            CLI::write('You can view it at: http://localhost:8180/swagger.json', 'cyan');
         } catch (\Exception $e) {
             CLI::error('Failed to generate OpenAPI documentation');
             CLI::error($e->getMessage());

@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.9.0] — 2026-07-09
+
+### Fixed
+
+- **`guzzlehttp/psr7` CVE-2026-55766** — updated from 2.10.4 to 2.12.4 to patch a CRLF injection vulnerability in HTTP start-line serialization.
+- **`ConfigWiremanTest`** — updated to expect granular `product.create` / `product.update` permission codes instead of the legacy `product.write`, matching the scaffolding engine's granular permission model (`ci4-api-scaffolding` v1.0+).
+
+### Changed
+
+- **`Hub` configuration validation** — hub URL, API key, and app code are now strictly validated at boot time. Missing or empty values throw clear errors with remediation hints. `introspectCacheTtl` default lowered from 60s to 30s for faster revocation latency.
+- **`QueueManager` driver support** — configuration factory now supports `sync`, `redis`, and default queue drivers, enabling flexible queue backends for domain apps (configurable via `Queue::$driver`).
+- **Items example module removed** — the template no longer includes the Items CRUD scaffold example. Use `bash vendor/bin/make-crud.sh` to scaffold your own domain-specific modules.
+- **Hub permission sync documentation** — clarified that primary permission registration via `php spark domain:sync-permissions` uses only the domain's X-App-Key (`hub.apiKey`); `--admin-token` is required only when `--mirror-to-self` (deprecated) or `--assign-to-role` flags are set.
+- **Audit timestamp resolution** — refactored type hints and extracted timestamp resolution logic into dedicated helper for clarity and reusability across audit workflows.
+- **Hub integration** — enhanced permission sync and improved hub client integration for more robust multi-domain deployments.
+
 ## [1.8.2] — 2026-06-13
 
 ### Changed

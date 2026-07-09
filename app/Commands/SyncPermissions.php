@@ -21,6 +21,12 @@ use Config\Services;
  * --admin-token is only required when:
  *   - --mirror-to-self is set (registers under hub app self, ID=1, for admin UI access)
  *   - --assign-to-role is set (links permissions to an additional role)
+ *
+ * --mirror-to-self is [DEPRECATED]: the hub resolves permissions across every
+ * registered application via resolveAll(), so permissions registered here under
+ * this app's own X-App-Key are already included in issued JWTs without mirroring
+ * them into the hub's self (ID=1) namespace. The flag will be removed in a future
+ * release.
  */
 class SyncPermissions extends BaseCommand
 {
@@ -32,8 +38,8 @@ class SyncPermissions extends BaseCommand
     /** @var array<string, string> */
     protected $options = [
         '--admin-token'    => 'Superadmin JWT. Required only for --mirror-to-self or --assign-to-role.',
-        '--assign-to-role' => 'Also link permissions to this non-superadmin role ID or code.',
-        '--mirror-to-self' => 'Also register the same permissions under hub app self (ID=1) for admin UI access.',
+        '--assign-to-role' => 'Optionally link synced permissions to another role ID or code, in addition to superadmin — the hub attaches superadmin automatically, this flag is only for additional roles.',
+        '--mirror-to-self' => '[DEPRECATED] Also register the same permissions under hub app self (ID=1) for admin UI access. No longer necessary now that the hub resolves permissions across all applications via resolveAll(); will be removed in a future release.',
     ];
 
     private const SELF_APPLICATION_ID = 1;
@@ -41,7 +47,18 @@ class SyncPermissions extends BaseCommand
     public function run(array $params): int
     {
         $mirrorToSelf = $this->shouldMirrorToSelf();
-        $roleArg      = CLI::getOption('assign-to-role');
+
+        if ($mirrorToSelf) {
+            $this->writeLine(
+                '[DEPRECATED] --mirror-to-self is no longer needed. The hub now resolves permissions across '
+                . 'all registered applications via resolveAll(), so permissions registered under this app\'s own '
+                . 'X-App-Key are already picked up without mirroring them into the hub\'s self (ID=1) namespace. '
+                . 'This flag will be removed in a future release.',
+                'yellow'
+            );
+        }
+
+        $roleArg      = $this->resolveOption('assign-to-role');
         $roleArg      = is_string($roleArg) && $roleArg !== '' ? $roleArg : null;
 
         $needsToken = $mirrorToSelf || $roleArg !== null;
@@ -146,29 +163,7 @@ class SyncPermissions extends BaseCommand
 
         // Automatic cache clearing for development environments (DX improvement)
         if (ENVIRONMENT === 'development') {
-            $this->writeLine('Clearing local caches...', 'cyan');
-            @exec('php spark cache:clear');
-
-            $envPath = $this->findHubEnvPath();
-            if ($envPath) {
-                $hubDir = dirname($envPath);
-                if (is_file($hubDir . '/spark')) {
-                    @exec('php ' . escapeshellarg($hubDir . '/spark') . ' cache:clear');
-                    $this->writeLine('  Hub cache cleared.', 'green');
-                }
-
-                $siblings = [
-                    $hubDir . '/../ci4-multi-subscription-admin',
-                    $hubDir . '/../ci4-admin-starter',
-                ];
-                foreach ($siblings as $sib) {
-                    $sib = realpath($sib);
-                    if ($sib && is_file($sib . '/spark')) {
-                        @exec('php ' . escapeshellarg($sib . '/spark') . ' cache:clear');
-                        $this->writeLine('  Admin cache cleared.', 'green');
-                    }
-                }
-            }
+            $this->clearDevelopmentCaches();
         }
 
         return ($errors === 0 && $mirrorErrors === 0 && !$roleLinkFailed) ? 0 : 1;
@@ -176,7 +171,7 @@ class SyncPermissions extends BaseCommand
 
     protected function resolveAdminToken(): string
     {
-        $flag = CLI::getOption('admin-token');
+        $flag = $this->resolveOption('admin-token');
         if (is_string($flag) && $flag !== '') {
             return $flag;
         }
@@ -304,7 +299,7 @@ class SyncPermissions extends BaseCommand
     {
         $header = json_encode(['typ' => 'JWT', 'alg' => 'HS256']);
         $payload = json_encode([
-            'iss' => 'http://localhost:8080',
+            'iss' => 'http://localhost:8180',
             'iat' => time(),
             'nbf' => time(),
             'exp' => time() + 3600,
@@ -322,9 +317,80 @@ class SyncPermissions extends BaseCommand
         return $base64UrlHeader . "." . $base64UrlPayload . "." . $base64UrlSignature;
     }
 
+    protected function clearDevelopmentCaches(): void
+    {
+        $this->writeLine('Clearing local caches...', 'cyan');
+
+        $localSpark = $this->localSparkPath();
+        if ($localSpark !== null) {
+            $this->runSparkCacheClear($localSpark);
+        }
+
+        $envPath = $this->findHubEnvPath();
+        if (!$envPath) {
+            return;
+        }
+
+        $hubDir = dirname($envPath);
+        if (is_file($hubDir . '/spark')) {
+            $this->runSparkCacheClear($hubDir . '/spark');
+            $this->writeLine('  Hub cache cleared.', 'green');
+        }
+
+        $siblings = [
+            $hubDir . '/../ci4-multi-subscription-admin',
+            $hubDir . '/../ci4-admin-starter',
+        ];
+        foreach ($siblings as $sib) {
+            $sib = realpath($sib);
+            if ($sib && is_file($sib . '/spark')) {
+                $this->runSparkCacheClear($sib . '/spark');
+                $this->writeLine('  Admin cache cleared.', 'green');
+            }
+        }
+    }
+
+    protected function runSparkCacheClear(string $sparkPath): void
+    {
+        @exec(PHP_BINARY . ' ' . escapeshellarg($sparkPath) . ' cache:clear');
+    }
+
+    private function localSparkPath(): ?string
+    {
+        $sparkPath = realpath(__DIR__ . '/../../spark');
+
+        return ($sparkPath !== false && is_file($sparkPath)) ? $sparkPath : null;
+    }
+
     protected function shouldMirrorToSelf(): bool
     {
-        return CLI::getOption('mirror-to-self') !== null;
+        return $this->resolveOption('mirror-to-self') !== null;
+    }
+
+    /**
+     * Resolve a CLI option supporting both formats:
+     *   --option value   (CI4 native)
+     *   --option=value   (stored by CI4 as the raw option key)
+     *
+     * @return string|true|null
+     */
+    protected function resolveOption(string $name)
+    {
+        $value = CLI::getOption($name);
+
+        if ($value === null || $value === true) {
+            foreach (CLI::getOptions() as $key => $val) {
+                if (str_starts_with($key, "{$name}=")) {
+                    return substr($key, strlen($name) + 1);
+                }
+            }
+        }
+
+        if ($value === true) {
+            return true;
+        }
+
+        return $value;
     }
 
     protected function writeLine(string $message, string $color = 'white'): void

@@ -112,7 +112,7 @@ printf "This domain app delegates auth to a running ci4-api-starter (the hub).\n
 printf "You need: hub URL, an X-App-Key bound to a registered application,\n"
 printf "and the application code.\n\n"
 
-HUB_URL="$(ask_with_default 'Hub URL' "${CI4_DOMAIN_HUB_URL:-http://localhost:8080}")"
+HUB_URL="$(ask_with_default 'Hub URL' "${CI4_DOMAIN_HUB_URL:-http://localhost:8180}")"
 HUB_APP_CODE="$(ask_with_default 'Application code (registered in hub)' "${CI4_DOMAIN_APP_CODE:-example-domain}")"
 
 # Allow ci4-kickstart (and CI) to pre-supply the X-App-Key via env var so this
@@ -257,11 +257,11 @@ if [ "$SKIP_SERVER" = false ]; then
   case "$(echo "$START_SERVER" | tr '[:upper:]' '[:lower:]')" in
     y|yes)
       print_header "Starting development server"
-      printf "Server at http://localhost:8090 — press Ctrl+C to stop.\n\n"
-      php spark serve --port 8090
+      printf "Server at http://localhost:8190 — press Ctrl+C to stop.\n\n"
+      php spark serve --port 8190
       ;;
     *)
-      printf "Start server: php spark serve --port 8090\n"
+      printf "Start server: php spark serve --port 8190\n"
       ;;
   esac
 fi

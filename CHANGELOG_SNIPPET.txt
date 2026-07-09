@@ -1,0 +1,6 @@
+## [1.8.2] — 2026-06-13
+
+No significant changes (technical release).
+
+Note: ci4-api-scaffolding remains at v1.0.0 for this release. v1.1.0 compatibility 
+will be addressed in v1.8.3 after resolving test failures with the scaffolding engine.

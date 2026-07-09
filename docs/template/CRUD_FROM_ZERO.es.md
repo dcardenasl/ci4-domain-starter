@@ -143,7 +143,7 @@ Verifica el nombre de tabla (snake_case plural), la presencia de `deleted_at`, �
 ### 3.3 Reiniciar el servidor de desarrollo
 
 ```bash
-pkill -f 'spark serve'; php spark serve --port 8080 &
+pkill -f 'spark serve'; php spark serve --port 8180 &
 ```
 
 **Obligatorio.** CodeIgniter 4 carga archivos de rutas al arrancar desde `app/Config/Routes/v1/*.php`. Archivos nuevos generados desde el último arranque son invisibles hasta reiniciar.
@@ -245,7 +245,7 @@ Estás en un entorno no-TTY y tu shell consumió los pipes. Usa `bin/make-crud.s
 No reiniciaste el servidor. CI4 solo carga rutas al arrancar:
 
 ```bash
-pkill -f 'spark serve'; php spark serve --port 8080 &
+pkill -f 'spark serve'; php spark serve --port 8180 &
 ```
 
 ### La migración falla con "tabla X no existe" al usar `fk:X`

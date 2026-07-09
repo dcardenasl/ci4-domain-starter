@@ -22,7 +22,7 @@ Before tagging, every item below must be true. Treat any "no" as a blocker.
    ```
    The output must show a concrete constraint (e.g. `"^0.4.1"`), never `"dev-main"`. The workspace's path repository remains in place (marked `canonical: false`) for local cross-edit, but the published constraint is what downstream consumers will resolve via Packagist.
 6. **README badges match.** `Status:` in `README.md` / `README.es.md` reflects the version you're about to tag.
-7. **Fresh-clone smoke** is green against a running hub (`ci4-api-starter` on :8080 with the app registered and an X-App-Key issued):
+7. **Fresh-clone smoke** is green against a running hub (`ci4-api-starter` on :8180 with the app registered and an X-App-Key issued):
    ```bash
    cd /tmp && rm -rf domain-smoke && git clone --depth 1 -b dev <repo> domain-smoke && cd domain-smoke
    bash init.sh

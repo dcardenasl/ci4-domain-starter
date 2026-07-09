@@ -148,7 +148,7 @@ Check the table name (snake_case plural), soft-delete column presence, indexes, 
 ### 3.3 Restart the dev server
 
 ```bash
-pkill -f 'spark serve'; php spark serve --port 8080 &
+pkill -f 'spark serve'; php spark serve --port 8180 &
 ```
 
 **Required.** CodeIgniter 4 loads all route files at boot from `app/Config/Routes/v1/*.php`. New files generated since the last start are invisible until the server restarts.
@@ -250,7 +250,7 @@ You're running in a non-TTY environment and your shell consumed the pipe charact
 You didn't restart the dev server. CI4 loads route files at boot only:
 
 ```bash
-pkill -f 'spark serve'; php spark serve --port 8080 &
+pkill -f 'spark serve'; php spark serve --port 8180 &
 ```
 
 ### Migration fails: "table X doesn't exist" when using `fk:X`

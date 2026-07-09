@@ -78,7 +78,7 @@ Tras ejecutar `make:crud`, corre estos en orden. La justificación detallada por
 
 1. **Verificar wiring** — `php spark module:check {Recurso} --domain {Dominio}`
 2. **Aplicar schema** — `php spark migrate`
-3. **Reiniciar servidor** — `pkill -f 'spark serve'; php spark serve --port 8080 &` (CI4 no recarga archivos de rutas nuevos en caliente)
+3. **Reiniciar servidor** — `pkill -f 'spark serve'; php spark serve --port 8180 &` (CI4 no recarga archivos de rutas nuevos en caliente)
 4. **Regenerar spec** — `php spark swagger:generate`
 
 Tus nuevos endpoints estarán disponibles en `/api/v1/{ruta}`.

@@ -11,14 +11,14 @@ Cliente (browser / SPA / CLI / servicio)
         │
         │  Authorization: Bearer <jwt>
         ▼
-   App de dominio (este repo, :8090)
+   App de dominio (este repo, :8190)
         │
         │  POST /api/v1/auth/introspect          (valida JWT de usuario)
         │  POST /api/v1/auth/service-token       (M2M cuando esta app llama al hub)
         │  POST /api/v1/iam/permissions          (solo en setup — domain:sync-permissions)
         │  X-App-Key: <hub.apiKey>
         ▼
-        Hub (ci4-api-starter, :8080)
+        Hub (ci4-api-starter, :8180)
                 ▼
         users / roles / permissions / role_permissions / user_roles
 ```
