@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.9.0] — 2026-07-09
 
+### Fixed
+
+- **`guzzlehttp/psr7` CVE-2026-55766** — updated from 2.10.4 to 2.12.4 to patch a CRLF injection vulnerability in HTTP start-line serialization.
+- **`ConfigWiremanTest`** — updated to expect granular `product.create` / `product.update` permission codes instead of the legacy `product.write`, matching the scaffolding engine's granular permission model (`ci4-api-scaffolding` v1.0+).
+
 ### Changed
 
 - **`Hub` configuration validation** — hub URL, API key, and app code are now strictly validated at boot time. Missing or empty values throw clear errors with remediation hints. `introspectCacheTtl` default lowered from 60s to 30s for faster revocation latency.
