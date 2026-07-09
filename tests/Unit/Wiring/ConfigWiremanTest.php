@@ -40,7 +40,8 @@ final class ConfigWiremanTest extends TestCase
         $this->assertStringContainsString("'code' => 'product.read'", $content);
         $this->assertStringContainsString("'resource' => 'products'", $content);
         $this->assertStringContainsString("'description' => 'Read Products'", $content);
-        $this->assertStringContainsString("'code' => 'product.write'", $content);
+        $this->assertStringContainsString("'code' => 'product.create'", $content);
+        $this->assertStringContainsString("'code' => 'product.update'", $content);
         $this->assertStringContainsString("'code' => 'product.delete'", $content);
     }
 
@@ -54,7 +55,8 @@ final class ConfigWiremanTest extends TestCase
         $content = (string) file_get_contents($this->permissionsFile);
 
         $this->assertSame(1, substr_count($content, "'code' => 'product.read'"));
-        $this->assertSame(1, substr_count($content, "'code' => 'product.write'"));
+        $this->assertSame(1, substr_count($content, "'code' => 'product.create'"));
+        $this->assertSame(1, substr_count($content, "'code' => 'product.update'"));
         $this->assertSame(1, substr_count($content, "'code' => 'product.delete'"));
     }
 
