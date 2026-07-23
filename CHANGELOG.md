@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Container-friendly env var aliases** — `App`, `Database`, and `Hub` configuration now accept UPPERCASE alternatives (`APP_BASE_URL`, `DB_HOST`, `DB_PORT`, `MYSQL_DATABASE`, `MYSQL_USER`, `MYSQL_PASSWORD`, `HUB_URL`, `HUB_API_KEY`, `HUB_APP_CODE`) to the native dotted CI4 keys, since dotted names are unreliable to inject via Docker Compose env blocks or Kubernetes secrets. The native dotted key always wins when both are set.
+- **`docker/entrypoint.sh`** — waits for the database to accept connections, then runs `php spark migrate --all`, before starting Apache. Avoids a crash-loop when the DB container is still starting up.
+
+### Fixed
+
+- **`pagecache` filter** — removed from `app/Config/Filters.php`; CodeIgniter's page cache was serving stale JSON responses after the underlying data had already changed.
+
 ## [1.9.0] — 2026-07-09
 
 ### Fixed
