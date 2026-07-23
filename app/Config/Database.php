@@ -197,5 +197,15 @@ class Database extends Config
         if (ENVIRONMENT === 'testing') {
             $this->defaultGroup = 'tests';
         }
+
+        // UPPERCASE env var aliases for container deployments (Docker/K8s),
+        // where dotted keys like `database.default.hostname` are unreliable to
+        // inject via Compose env blocks or orchestrator secrets. The native
+        // dotted key always wins when both are set.
+        $this->default['hostname'] = env('database.default.hostname') ?? env('DB_HOST') ?? $this->default['hostname'];
+        $this->default['port']     = (int) (env('database.default.port') ?? env('DB_PORT') ?? $this->default['port']);
+        $this->default['database'] = env('database.default.database') ?? env('MYSQL_DATABASE') ?? $this->default['database'];
+        $this->default['username'] = env('database.default.username') ?? env('MYSQL_USER') ?? $this->default['username'];
+        $this->default['password'] = env('database.default.password') ?? env('MYSQL_PASSWORD') ?? $this->default['password'];
     }
 }

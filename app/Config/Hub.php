@@ -73,11 +73,13 @@ class Hub extends BaseConfig
     {
         parent::__construct();
 
-        // Hub URL is required for JWT introspection
-        $url = env('hub.url');
+        // Hub URL is required for JWT introspection. UPPERCASE env vars are
+        // accepted as a fallback for container deployments (Docker/K8s), where
+        // dotted keys like `hub.url` are unreliable to inject via Compose/secrets.
+        $url = env('hub.url') ?: env('HUB_URL');
         if (! is_string($url) || trim($url) === '') {
             throw new \LogicException(
-                'Missing hub.url in .env. '
+                'Missing hub.url in .env (or HUB_URL). '
                 . 'This domain app delegates JWT validation to a central hub. '
                 . 'Set hub.url to the hub API base URL. '
                 . 'Example: hub.url=http://localhost:8180'
@@ -86,10 +88,10 @@ class Hub extends BaseConfig
         $this->url = $url;
 
         // API key for hub calls (X-App-Key header)
-        $apiKey = env('hub.apiKey');
+        $apiKey = env('hub.apiKey') ?: env('HUB_API_KEY');
         if (! is_string($apiKey) || trim($apiKey) === '') {
             throw new \LogicException(
-                'Missing hub.apiKey in .env. '
+                'Missing hub.apiKey in .env (or HUB_API_KEY). '
                 . 'This is the X-App-Key that identifies this app to the hub. '
                 . 'Create it via `php spark apps:bootstrap <code>` on the hub. '
                 . 'Example: hub.apiKey=apk_xxxx...'
@@ -98,10 +100,10 @@ class Hub extends BaseConfig
         $this->apiKey = $apiKey;
 
         // App code as registered in hub
-        $appCode = env('hub.appCode');
+        $appCode = env('hub.appCode') ?: env('HUB_APP_CODE');
         if (! is_string($appCode) || trim($appCode) === '') {
             throw new \LogicException(
-                'Missing hub.appCode in .env. '
+                'Missing hub.appCode in .env (or HUB_APP_CODE). '
                 . 'This is the application code as registered in the hub. '
                 . 'Set it to match the app entry in the hub. '
                 . 'Example: hub.appCode=domain-1'
