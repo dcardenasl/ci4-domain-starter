@@ -85,16 +85,16 @@
         },
         {
             "name": "dcardenasl/ci4-api-core",
-            "version": "v1.0.0",
+            "version": "v1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dcardenasl/ci4-api-core.git",
-                "reference": "514a948522aa2eb61640c97506011301ba5905a0"
+                "reference": "2be461a58ab811993f6ea1798629bef967b4ce58"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dcardenasl/ci4-api-core/zipball/514a948522aa2eb61640c97506011301ba5905a0",
-                "reference": "514a948522aa2eb61640c97506011301ba5905a0",
+                "url": "https://api.github.com/repos/dcardenasl/ci4-api-core/zipball/2be461a58ab811993f6ea1798629bef967b4ce58",
+                "reference": "2be461a58ab811993f6ea1798629bef967b4ce58",
                 "shasum": ""
             },
             "require": {
@@ -170,7 +170,7 @@
                 "issues": "https://github.com/dcardenasl/ci4-api-core/issues",
                 "source": "https://github.com/dcardenasl/ci4-api-core"
             },
-            "time": "2026-06-04T08:12:21+00:00"
+            "time": "2026-07-23T22:57:33+00:00"
         },
         {
             "name": "guzzlehttp/psr7",
@@ -2476,16 +2476,16 @@
         },
         {
             "name": "dcardenasl/ci4-api-scaffolding",
-            "version": "v1.1.0",
+            "version": "v1.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dcardenasl/ci4-api-scaffolding.git",
-                "reference": "a046fb50b26bce451c58a3a8b0f532ed37a028fb"
+                "reference": "88c4694f003d0cfa41d4227853b6b4eb030719a6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dcardenasl/ci4-api-scaffolding/zipball/a046fb50b26bce451c58a3a8b0f532ed37a028fb",
-                "reference": "a046fb50b26bce451c58a3a8b0f532ed37a028fb",
+                "url": "https://api.github.com/repos/dcardenasl/ci4-api-scaffolding/zipball/88c4694f003d0cfa41d4227853b6b4eb030719a6",
+                "reference": "88c4694f003d0cfa41d4227853b6b4eb030719a6",
                 "shasum": ""
             },
             "require": {
@@ -2559,7 +2559,7 @@
                 "issues": "https://github.com/dcardenasl/ci4-api-scaffolding/issues",
                 "source": "https://github.com/dcardenasl/ci4-api-scaffolding"
             },
-            "time": "2026-06-13T04:35:50+00:00"
+            "time": "2026-07-23T23:53:35+00:00"
         },
         {
             "name": "ergebnis/agent-detector",
