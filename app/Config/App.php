@@ -183,6 +183,13 @@ class App extends BaseConfig
     {
         parent::__construct();
 
+        // UPPERCASE env var alias for container deployments (Docker/K8s), where
+        // a dotted key like `app.baseURL` is unreliable to inject via Compose
+        // env blocks or orchestrator secrets. The native dotted key wins when set.
+        if ($this->baseURL === '') {
+            $this->baseURL = (string) (env('APP_BASE_URL') ?? '');
+        }
+
         // Allow comma-separated `cidr=header` pairs in .env so deployments
         // behind ALB / nginx / Cloudflare can whitelist their proxy without
         // touching this Config class.

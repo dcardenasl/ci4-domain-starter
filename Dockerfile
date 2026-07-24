@@ -70,6 +70,9 @@ RUN chown -R www-data:www-data /var/www/html \
 RUN mkdir -p writable/cache writable/logs writable/session writable/uploads writable/debugbar \
     && chown -R www-data:www-data writable
 
+# Entrypoint: waits for the DB and runs migrations before starting Apache
+RUN chmod +x docker/entrypoint.sh
+
 # Health check — uses /ping (lightweight, no DB dependency)
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
     CMD curl -f http://localhost/ping || exit 1
@@ -79,6 +82,8 @@ EXPOSE 80
 
 # Switch to www-data user
 USER www-data
+
+ENTRYPOINT ["docker/entrypoint.sh"]
 
 # Start Apache
 CMD ["apache2-foreground"]
