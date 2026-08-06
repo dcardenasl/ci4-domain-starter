@@ -11,9 +11,10 @@ use RecursiveIteratorIterator;
 use SplFileInfo;
 
 /**
- * Every business model under app/Models must extend BaseAuditableModel so audit
- * logging is automatic. The scan is dynamic: a newly scaffolded model is covered
- * the moment it lands, without editing this test.
+ * Every business model under app/Models must extend BaseAuditableModel — directly,
+ * or transitively via one of core's own intermediate abstracts (BaseTranslationModel,
+ * BasePublicSlugModel) — so audit logging is automatic. The scan is dynamic: a newly
+ * scaffolded model is covered the moment it lands, without editing this test.
  */
 class AuditableModelConventionsTest extends CIUnitTestCase
 {
@@ -56,8 +57,17 @@ class AuditableModelConventionsTest extends CIUnitTestCase
                 continue;
             }
 
+            // BaseTranslationModel / BasePublicSlugModel are core-provided abstracts
+            // that themselves extend BaseAuditableModel (LOC-006) — a leaf model
+            // extending one of those IS audited, just not directly, so it belongs
+            // here alongside the direct-extends check rather than in NON_AUDITABLE
+            // (which is for models that genuinely carry no audit trail at all).
             $extendsBase = str_contains($source, 'extends BaseAuditableModel')
-                || str_contains($source, 'extends \dcardenasl\Ci4ApiCore\Models\BaseAuditableModel');
+                || str_contains($source, 'extends \dcardenasl\Ci4ApiCore\Models\BaseAuditableModel')
+                || str_contains($source, 'extends BaseTranslationModel')
+                || str_contains($source, 'extends \dcardenasl\Ci4ApiCore\Models\BaseTranslationModel')
+                || str_contains($source, 'extends BasePublicSlugModel')
+                || str_contains($source, 'extends \dcardenasl\Ci4ApiCore\Models\BasePublicSlugModel');
             if (! $extendsBase) {
                 $violations[] = "{$name}: must extend BaseAuditableModel (or be added to NON_AUDITABLE with rationale)";
             }
