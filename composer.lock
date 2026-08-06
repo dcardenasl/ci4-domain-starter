@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "10fbdc65d07ad9e73c00d922c843a199",
+    "content-hash": "bbb0327c0d860da7e1b139142f6cba26",
     "packages": [
         {
             "name": "codeigniter4/framework",
@@ -2476,16 +2476,16 @@
         },
         {
             "name": "dcardenasl/ci4-api-scaffolding",
-            "version": "v1.1.2",
+            "version": "v1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dcardenasl/ci4-api-scaffolding.git",
-                "reference": "67c2cb72d5fc607b4a86fdd9abed3bd73aba9fa4"
+                "reference": "ace71df1b3a27cff15adc5b4af608a296bbf2083"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dcardenasl/ci4-api-scaffolding/zipball/67c2cb72d5fc607b4a86fdd9abed3bd73aba9fa4",
-                "reference": "67c2cb72d5fc607b4a86fdd9abed3bd73aba9fa4",
+                "url": "https://api.github.com/repos/dcardenasl/ci4-api-scaffolding/zipball/ace71df1b3a27cff15adc5b4af608a296bbf2083",
+                "reference": "ace71df1b3a27cff15adc5b4af608a296bbf2083",
                 "shasum": ""
             },
             "require": {
@@ -2511,7 +2511,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-main": "0.7.x-dev"
+                    "dev-main": "1.2.x-dev"
                 },
                 "codeigniter4": {
                     "commands": [
@@ -2559,7 +2559,7 @@
                 "issues": "https://github.com/dcardenasl/ci4-api-scaffolding/issues",
                 "source": "https://github.com/dcardenasl/ci4-api-scaffolding"
             },
-            "time": "2026-07-24T04:46:02+00:00"
+            "time": "2026-08-06T03:12:09+00:00"
         },
         {
             "name": "ergebnis/agent-detector",

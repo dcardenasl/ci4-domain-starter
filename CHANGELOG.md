@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Content localization** — adopted the sidecar translation/public-slug runtime from `dcardenasl/ci4-api-core` v1.2.0: `Config\Localization` registry, `TranslationModel`/`PublicSlugModel`, `translations`/`public_slugs` migrations, and `requestLocaleResolver()`/`localizedTranslationStore()`/`publicSlugStore()` service factories. Infrastructure only — no scaffolded resource composes it yet; see the "Adding content localization to a resource" section in `CLAUDE.md`.
 
+### Changed
+
+- **`dcardenasl/ci4-api-scaffolding`** `^1.0` → `^1.2` — picks up `make:crud --translatable` / `--sluggable=<field>` support, so a domain app scaffolding a translatable resource composes the localization runtime above automatically instead of hand-wiring the service traits.
+
 ## [1.10.0] — 2026-07-24
 
 ### Added
