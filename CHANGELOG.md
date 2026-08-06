@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.11.1] — 2026-08-06
+
 ### Fixed
 
 - **`Config\Scaffolding`'s `permissionCodePrefix` (SCAFF-008)** — was hardcoded to `'cms'`, unrelated to
