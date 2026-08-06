@@ -3,7 +3,7 @@
 > Fuente de verdad para trabajo en este repo.
 > Historial de completadas: ver `TASKS_ARCHIVE.md`.
 > Cross-repo: ver `../TASKS.md`.
-> Última actualización: 2026-06-04 (DOM-109 completado — sync-permissions fail-loud + HubClient fix)
+> Última actualización: 2026-08-06 (DOM-112 completado — `Config\Scaffolding`'s `permissionCodePrefix` ya no hardcodea `'cms'`)
 
 ---
 
@@ -18,6 +18,12 @@
 ---
 
 ## ✅ Completadas
+
+### DOM-112 — `Config\Scaffolding`'s `permissionCodePrefix` hardcodeaba `'cms'` (SCAFF-008)
+- **Qué**: `app/Config/Scaffolding.php` traía `permissionCodePrefix: 'cms'` fijo, sin relación con el `hub.appCode` real de cada proyecto generado desde este template. El hub rechaza cualquier permiso cuyo código no empiece con `{app.code}.`, así que el primer `domain:sync-permissions` de cualquier proyecto nuevo fallaba para todos los permisos scaffoldeados hasta corregirlo a mano.
+- **Por qué**: encontrado durante el E2E de LOC-008 (`ci4-platform/TASKS.md`) scaffoldeando un recurso real contra un proyecto `vanilla` recién generado. Registrado como **SCAFF-008** en `ci4-api-scaffolding/TASKS.md`.
+- **Fix**: `permissionCodePrefix` ahora lee `(new Hub())->appCode` en vez de un literal — una sola fuente de verdad con `Config\Hub`, que ya valida `hub.appCode` de forma fail-loud (lanza `LogicException` si falta). Cero cambios necesarios en `init.sh`/`ci4-kickstart`: el valor se deriva de `.env`, no de un placeholder a sustituir en el bootstrap.
+- **Verificado**: test nuevo `tests/Unit/Config/ScaffoldingTest.php` (2 tests) confirma que `permissionCodePrefix` seguimiento a `hub.appCode` en dos proyectos distintos. `composer quality` verde (PHPStan 8, CS-Fixer, 179 tests/448 assertions — mismo skip preexistente de siempre).
 
 ### DOM-110 — Automatización de Sync de Permisos en Desarrollo (DX)
 - Modificar `app/Commands/SyncPermissions.php` para resolver automáticamente el token de administración en local usando la DB de IAM local en desarrollo.
