@@ -135,6 +135,38 @@ The generator emits routes already wrapped in `domainauth + permission:items.rea
 — no manual filter wiring needed. Update the route filters per HTTP verb if your
 module needs distinct read/write codes.
 
+## Adding content localization to a resource
+
+The content-localization runtime (translations sidecar + public slugs) ships in
+`dcardenasl/ci4-api-core` v1.2.0+; this app wires the app-owned half —
+`app/Config/Localization.php` (registry), `app/Models/TranslationModel.php` /
+`PublicSlugModel.php` (thin subclasses of the core abstract models), the
+`translations` / `public_slugs` migrations, and the `requestLocaleResolver()` /
+`localizedTranslationStore()` / `publicSlugStore()` factories in
+`app/Config/LocalizationServices.php`. Currently unused by any resource — this is
+infrastructure only, ready for the first scaffolded module that needs it (LOC-006).
+
+To make a scaffolded resource translatable and/or sluggable:
+
+1. Register the resource in `app/Config/Localization.php`:
+   ```php
+   public array $translatableFields = [
+       'item' => ['name', 'description'],
+   ];
+   ```
+2. Compose `HasLocalizedTranslations` (and `HasPublicSlugs` if the resource needs a
+   public routing slug) in the service, following the exact wiring example in
+   `vendor/dcardenasl/ci4-api-core/docs/EXTENDING_LOCALIZATION.md` (trait aliasing,
+   constructor injection of the two stores, the six lifecycle-hook overrides).
+3. Use `NormalizesLocalizedPayload` in the resource's request DTO to accept the
+   canonical `translations: [{locale, ...fields}]` row-list shape.
+
+**Do not build a bespoke translation table per resource** — the whole point of the
+sidecar design is one `translations` / `public_slugs` pair for the entire app, keyed
+by `resource_type`. `ci4-api-scaffolding` does not yet generate this wiring
+automatically (tracked as `LOC-007` in `../TASKS.md`); until then, wire it by hand
+per the doc above.
+
 ## Required environment variables
 
 | Variable | Purpose |

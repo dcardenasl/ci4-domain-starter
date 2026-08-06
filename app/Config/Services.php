@@ -10,6 +10,7 @@ require_once __DIR__ . '/ApiCoreServices.php';
 require_once __DIR__ . '/ExampleDomainServices.php';
 require_once __DIR__ . '/SystemMonitoringServices.php';
 require_once __DIR__ . '/RepositoryModelServices.php';
+require_once __DIR__ . '/LocalizationServices.php';
 
 /**
  * Services Configuration file.
@@ -20,6 +21,7 @@ class Services extends BaseService
     use ExampleDomainServices;
     use SystemMonitoringServices;
     use RepositoryModelServices;
+    use LocalizationServices;
 
     public static function hubClient(bool $getShared = true): \App\Libraries\Hub\HubClient
     {
