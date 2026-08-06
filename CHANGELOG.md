@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.11.1] — 2026-08-06
+
+### Fixed
+
+- **`Config\Scaffolding`'s `permissionCodePrefix` (SCAFF-008)** — was hardcoded to `'cms'`, unrelated to
+  the app's actual `hub.appCode`. The hub rejects any permission code that doesn't start with
+  `{app.code}.`, so the first `domain:sync-permissions` on any newly generated project rejected every
+  scaffolded permission until fixed by hand. Now derives from `(new Hub())->appCode`, reusing
+  `Config\Hub`'s existing fail-loud `hub.appCode` validation as the single source of truth.
+
 ## [1.11.0] — 2026-08-06
 
 ### Added

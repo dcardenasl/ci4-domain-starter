@@ -37,7 +37,12 @@ class Scaffolding extends BaseScaffoldingConfig
             filterableTraitFqcn: $defaults->filterableTraitFqcn,
             searchableTraitFqcn: $defaults->searchableTraitFqcn,
             apiVersion: $defaults->apiVersion,
-            permissionCodePrefix: 'cms',
+            // Must match this app's own hub.appCode — the hub rejects any
+            // permission whose code doesn't start with "{app.code}.". Reading
+            // it from Config\Hub (rather than hardcoding it) means scaffolded
+            // permissions always match whatever this app is actually
+            // registered as, with no separate value to keep in sync by hand.
+            permissionCodePrefix: (new Hub())->appCode,
         );
     }
 }
